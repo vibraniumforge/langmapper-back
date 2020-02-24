@@ -1,10 +1,10 @@
 Rails.application.routes.draw do
+  resources :translations
+  resources :languages
   namespace :api do
     namespace :v1 do
       resources :words
-      resources :translations
-      resources :languages
-    end
+            end
   end
 end
 
