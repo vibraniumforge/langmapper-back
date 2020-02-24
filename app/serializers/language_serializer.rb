@@ -1,3 +1,3 @@
 class LanguageSerializer < ActiveModel::Serializer
-  attributes :id, :name, :abbreviation, :alphabet, :family, :subfamily, :area
+  attributes :id, :name, :abbreviation, :alphabet, :family, :subfamily, :area, :notes
 end
