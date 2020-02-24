@@ -6,6 +6,7 @@ class CreateTranslations < ActiveRecord::Migration[6.0]
       t.string :translation
       t.string :romanization
       t.string :link
+      t.string :gender
       t.string :etymology
 
       t.timestamps
