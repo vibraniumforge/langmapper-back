@@ -6,6 +6,7 @@ class CreateLanguages < ActiveRecord::Migration[6.0]
       t.string :alphabet
       t.string :family
       t.string :subfamily
+      t.string :area
 
       t.timestamps
     end
