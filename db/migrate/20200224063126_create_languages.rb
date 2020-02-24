@@ -9,10 +9,11 @@ class CreateLanguages < ActiveRecord::Migration[6.0]
       t.string :subfamily
       t.string :area
       t.string :area2
+      t.string :area3
       t.string :notes
       t.string :alive
-
-      t.timestamps
+      t.datetime :created_at
+      t.datetime :updated_at
     end
   end
 end

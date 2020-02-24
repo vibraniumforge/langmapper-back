@@ -8,8 +8,8 @@ class CreateTranslations < ActiveRecord::Migration[6.0]
       t.string :link
       t.string :gender
       t.string :etymology
-
-      t.timestamps
+      t.datetime :created_at
+      t.datetime :updated_at
     end
   end
 end
