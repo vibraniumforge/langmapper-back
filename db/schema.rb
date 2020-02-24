@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_24_044405) do
+ActiveRecord::Schema.define(version: 2020_02_24_063146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,10 +24,11 @@ ActiveRecord::Schema.define(version: 2020_02_24_044405) do
     t.string "subfamily"
     t.string "area"
     t.string "area2"
+    t.string "area3"
     t.string "notes"
     t.string "alive"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "translations", force: :cascade do |t|
@@ -38,8 +39,8 @@ ActiveRecord::Schema.define(version: 2020_02_24_044405) do
     t.string "link"
     t.string "gender"
     t.string "etymology"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.index ["language_id"], name: "index_translations_on_language_id"
     t.index ["word_id"], name: "index_translations_on_word_id"
   end
