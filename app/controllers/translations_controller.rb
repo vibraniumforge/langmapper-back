@@ -1,4 +1,2 @@
-module Api::V1
-  class TranslationsController < ApplicationController
-  end
+class TranslationsController < ApplicationController
 end
