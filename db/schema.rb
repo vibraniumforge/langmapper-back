@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_24_002814) do
+ActiveRecord::Schema.define(version: 2020_02_24_005559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,13 +21,14 @@ ActiveRecord::Schema.define(version: 2020_02_24_002814) do
     t.string "alphabet"
     t.string "family"
     t.string "subfamily"
+    t.string "area"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "translations", force: :cascade do |t|
-    t.bigint "language_id", null: false, foreign_key: true
-    t.bigint "word_id", null: false, foreign_key: true
+    t.bigint "language_id", null: false
+    t.bigint "word_id", null: false
     t.string "translation"
     t.string "romanization"
     t.string "link"
