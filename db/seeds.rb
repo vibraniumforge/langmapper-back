@@ -113,6 +113,18 @@ Language.create({name: "Turkish", abbreviation: "tk", alphabet: "Latn", macrofam
 # Mongolian
 Language.create({name: "Mongolian", abbreviation: "mn", alphabet: "Mong", macrofamily: "Mongolic", family: "", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
 
+# Tungusic
+Language.create({name: "Xibe", abbreviation: "sjo", alphabet: "Mong", macrofamily: "Tungusic", family: "", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
+
+# Japonic
+Language.create({name: "Japanese", abbreviation: "ja", alphabet: "Jpan", macrofamily: "Japonic", family: "", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
+
+# Koreanic
+Language.create({name: "Korean", abbreviation: "ko", alphabet: "Kore", macrofamily: "Koreanic", family: "", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
+
+# Ainu
+Language.create({name: "Ainu", abbreviation: "ain", alphabet: "Latn", macrofamily: "Isolate", family: "Ainu", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
+
 # Kartvelian
 Language.create({name: "Georgian", abbreviation: "ka", alphabet: "Geor", macrofamily: "Kartvelian", family: "", area: "Anatolia", area2: "Caucasus", area3: "", notes: "", alive: true })
 
@@ -122,12 +134,29 @@ Language.create({name: "Avar", abbreviation: "av", alphabet: "Cyrl", macrofamily
 # Northwest Caucasian
 Language.create({name: "Ubykh", abbreviation: "uby", alphabet: "Latn", macrofamily: "Northwest Caucasian", family: "", area: "Caucasus", area2: "", area3: "", notes: "", alive: true })
 
-
 # Semitic
 Language.create({name: "Arabic", abbreviation: "ar", alphabet: "Arab", macrofamily: "Semitic", family: "Arabic", area: "Middle East", area2: "", area3: "", notes: "", alive: true })
 
 # Niger-Congo
 Language.create({name: "Swahili", abbreviation: "sw", alphabet: "Latn", macrofamily: "Niger-Congo", family: "Arabic", area: "Africa", area2: "", area3: "", notes: "", alive: true })
+
+# Burushkaski
+Language.create({name: "Burushkaski", abbreviation: "bsk", alphabet: "Latn", macrofamily: "Isolate", family: "Burushkaski", area: "South Asia", area2: "", area3: "", notes: "", alive: true })
+
+# Kusunda
+Language.create({name: "Kusunda", abbreviation: "kgg", alphabet: "Latn", macrofamily: "Isolate", family: "Kusunda", area: "South Asia", area2: "", area3: "", notes: "", alive: true })
+
+# Chukotko-Kamchatkan 
+Language.create({name: "Chukchi", abbreviation: "ckt", alphabet: "Cyrl", macrofamily: "Isolate", family: "Chukotko-Kamchatkan ", area: "North Asia", area2: "", area3: "", notes: "", alive: true })
+
+# Nivkh
+Language.create({name: "Nivkh", abbreviation: "niv", alphabet: "Cyrl", macrofamily: "Isolate", family: "Nivkh", area: "North Asia", area2: "", area3: "", notes: "", alive: true })
+
+# Yukaghir
+Language.create({name: "Omak", abbreviation: "omk", alphabet: "Cyrl", macrofamily: "Isolate", family: "Yukaghir", area: "North Asia", area2: "", area3: "", notes: "", alive: true })
+
+# Yeniseian
+Language.create({name: "Ket", abbreviation: "ket", alphabet: "Cyrl", macrofamily: "Isolate", family: "Yeniseian", area: "North Asia", area2: "", area3: "", notes: "", alive: true })
 
 # Extinct, but famous
 Language.create({name: "Latin", abbreviation: "la", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", area: "Europe", area2: "Italy", area3: "", notes: "", alive: false })
