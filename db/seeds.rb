@@ -183,19 +183,11 @@ Language.create({name: "Iberian", abbreviation: "xib", alphabet: "Ital", macrofa
 Language.create({name: "Tartessian", abbreviation: "txr", alphabet: "Grek", macrofamily: "Isolate", family: "Tartessian", area: "Iberia", area2: "", area3: "", notes: "", alive: false })
 
 
-
-
-
-
-
 Word.create({ name: "gold" })
 
+# Translation.create({language_id: Language.find_by(abbreviation: "").id, word_id: Word.find_by(name: "").id, translation: "", romanization: "", link: "", etymology: "From latin aurum", gender: "" })
 
-
-
-# Translation.create({language_id: Language.find_by(abbreviation: "").id, word_id: Word.find_by(name: "").id, translation: "or", romanization: '', link: "", etymology: "From latin aurum", gender: "m" })
-
-Translation.create({language_id: Language.find_by(abbreviation: "fr").id, word_id: Word.find_by(name: "gold").id, translation:"or", romanization:'', link:"", etymology: "From latin aurum", gender: "m" })
+Translation.create({language_id: Language.find_by(abbreviation: "fr").id, word_id: Word.find_by(name: "gold").id, translation:"or", romanization:"", link:"", etymology: "From latin aurum", gender: "m" })
 
 
  
