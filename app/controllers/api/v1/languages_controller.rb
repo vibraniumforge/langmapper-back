@@ -36,7 +36,7 @@ module Api::V1
         render json: { message: "Language not found", success: false }, status: 406
       end
       if @language.update(language_params)
-        puts "Language updated"
+        puts "=> language updated"
         render json: { message: "Language successfully saved.", success: true, data: @language }, status: 200
       else
         puts "Language not saved"
@@ -45,19 +45,19 @@ module Api::V1
       end
     end
 
-      def destroy
-        if @language.destroy
-          render json: { message: "Language successfully deleted.", success: true, data: @language }, status: 200
-        else
-          render json: { message: "Language NOT successfully deleted.", success:false, data: @language.errors.full_messages.join(", ") }, status: 406
-          puts "Error in delete: #{@language.errors.full_messages.join(", ")}"
-        end
+    def destroy
+      if @language.destroy
+        render json: { message: "Language successfully deleted.", success: true, data: @language }, status: 200
+      else 
+        render json: { message: "Language NOT successfully deleted.", success:false, data: @language.errors.full_messages.join(", ") }, status: 406
+        puts "Error in delete: #{@language.errors.full_messages.join(", ")}"
       end
+    end
 
     private
 
       def find_language
-        @languages = Language.find(params[:id])
+        @language = Language.find(params[:id])
       end
 
       def language_params
