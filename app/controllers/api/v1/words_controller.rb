@@ -60,13 +60,13 @@ module Api::V1
 
     private
 
-      def find_word
-        @word = Word.find(params[:id])
-      end
+    def find_word
+      @word = Word.find(params[:id])
+    end
 
-      def word_params
-        params.require(:word).permit(:name)
-      end
+    def word_params
+      params.require(:word).permit(:name)
+    end
       
   end
 end
