@@ -49,7 +49,10 @@ class Translation < ApplicationRecord
 
     puts "Word ID: #{word_id}"
 
+    # {language_id, word_id, language_name, translation, romanization, full_link_eng, etymology, gender }
+
     all_li_array.each_with_index do |li, index|
+      etymology = nil
       language_name = li.text.split(":")[0]
 
       if li.css("span.gender")[0]&.text
@@ -58,8 +61,11 @@ class Translation < ApplicationRecord
         gender = nil
       end
 
+      if index ==11
+        byebug
+      end
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
-        translation = li.css("span")[0]&.text 
+        translation = li.css("span")&.text.gsub(/\(compound\)/, "")
       else
         translation = nil
       end
@@ -67,7 +73,7 @@ class Translation < ApplicationRecord
       if li.css("span.tr.Latn")[0]
         romanization = li.css("span.tr.Latn")[0].children[0].text 
       else
-        romanization = chosen_word
+        romanization = translation
       end
 
       link_eng = li.children[1].children[0].attributes["href"]&.value || "NONE"
