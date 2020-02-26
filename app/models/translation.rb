@@ -63,23 +63,38 @@ class Translation < ApplicationRecord
       if link_eng != "NONE"
         full_link_eng = 'https://en.wiktionary.org' << link_eng
         # "https://en.wiktionary.org/wiki/goud#Afrikaans"
-        if full_link_eng
-          etymology_page = Faraday.get(URI.parse(URI.escape(full_link_eng)))
-        end
-        if etymology_page.success? 
-          @etymology_page_body = etymology_page.body
-        else
-          break
-        end
-        parsed_etymology_page = Nokogiri::HTML(@etymology_page_body)
-    
-        if parsed_etymology_page.css("[id^='Etymology']").length > 0
+      end
+
+      puts "full_link_eng: #{full_link_eng}"
+      if full_link_eng
+        @escaped_full_link_eng = URI.parse(URI.escape(full_link_eng))
+      end
+      puts "@escaped_full_link_eng: #{@escaped_full_link_eng}"
+
+      # if full_link_eng
+      #   etymology_page = Nokogiri::HTML(open(URI.parse(URI.escape(full_link_eng))))
+      # end
+
+      # if etymology_page.success? 
+      #   @etymology_page_body = etymology_page.body
+      # else
+      #   puts 'error in else'
+      #   break
+      # end
+
+      if index == 144
+        byebug
+      end
+      
+      parsed_etymology_page = Nokogiri::HTML(@escaped_full_link_eng)
+      
+      if parsed_etymology_page.css("[id^='Etymology']").length > 0
           correct_lang_parsed_etymology_page = parsed_etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
           etymology = correct_lang_parsed_etymology_page.text
-        else
+      else
           etymology = nil
-        end
       end
+      
 
       puts "#{index+1}. #{language_name} - T: #{translation ? translation : "NONE"} - R: #{romanization} - G: #{gender ? gender : "NONE"} - E: #{etymology ? etymology : "NONE"}"
 
@@ -90,7 +105,7 @@ class Translation < ApplicationRecord
       Translation.create({language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
 
     end
-
+    puts "\ndone \n"
   end
 
 end
