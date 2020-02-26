@@ -14,6 +14,7 @@ class CreateLanguages < ActiveRecord::Migration[6.0]
       t.string :alive
       t.datetime :created_at
       t.datetime :updated_at
+      t.timestamps
     end
   end
 end
