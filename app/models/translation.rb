@@ -6,33 +6,15 @@ class Translation < ApplicationRecord
   # require 'open-uri'
 
 
-
   def self.scrape(chosen_word)
     t1 = Time.now
-    # agent = Mechanize.new
-    # con  = Faraday::Connection.new("https://en.wiktionary.org/wiki/#{chosen_word}#Translations")
-    # page = con.get
     page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
-    # if page.success? 
-    #   @page_body = page.body
-    # else
-    #   puts "Error"
-    # end
-
-    # @noko_page_body = Nokogiri::HTML(@page_body)
-
-    # first_definition = page.css("table.translations")[0]
-    # first_table = first_definition.children[1].children[0].children[1].children[1].children
-    # second_table = first_definition.children[1].children[0].children[5].children[1].children
-    # better below
 
     first_table1 = page.css("td.translations-cell")[0].children.children
     second_table1 = page.css("td.translations-cell")[1].children.children
     
 
-    puts "=================================================================="
-    puts "Word: #{chosen_word}"
-    puts "Definition: #{page.css("table.translations")[0].attributes["data-gloss"].value}"
+   
 
     all_li_array =[]
     first_table1.each do |item|
@@ -46,6 +28,10 @@ class Translation < ApplicationRecord
         all_li_array << item
       end
     end
+
+    puts "=================================================================="
+    puts "Word: #{chosen_word}"
+    puts "Definition: #{page.css("table.translations")[0].attributes["data-gloss"].value}"
 
     puts "Li Count: #{all_li_array.count}"
 
@@ -78,7 +64,6 @@ class Translation < ApplicationRecord
         romanization = translation
       end
 
-      # REFACTOR BELOW .CHILDREN ETC
       if li.children[1].children[0].attributes["href"]&.value
         short_link_eng = li.children[1].children[0].attributes["href"]&.value
       else
@@ -86,7 +71,6 @@ class Translation < ApplicationRecord
       end
       # => "/wiki/goud#Afrikaans"
   
-   
 
       if !short_link_eng.nil?
         full_link_eng = 'https://en.wiktionary.org' << short_link_eng
@@ -99,18 +83,16 @@ class Translation < ApplicationRecord
         end
       end
 
-      if etymology_page && etymology_page.css("[id^='Etymology']").length > 0
+      if !etymology_page.nil? && etymology_page.css("[id^='Etymology']").length > 0
           correct_lang_parsed_etymology_page = etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
           etymology = correct_lang_parsed_etymology_page.text.strip
       else
           etymology = nil
       end
 
-      puts "Etymology: #{etymology}"
-
       language_id = Language.find_or_create_by(name: language_name).id
       
-      puts language_id
+      puts "language_id: #{language_id}"
 
       puts "#{index+1}. #{language_name} - T: #{translation ? translation : "NONE"} - R: #{romanization} - G: #{gender ? gender : "NONE"} - E: #{etymology ? etymology : "NONE"}"
       puts "\n"
@@ -130,16 +112,31 @@ class Translation < ApplicationRecord
     matching_langs = Language.where(macrofamily: macrofamily)
     return_ar = []
     matching_langs.each do |lang|
-      results = Translation.where(language_name: lang.name)
-      results.map do |translation|
-        return_ar << [translation.language_name, translation.romanization, translation.etymology]
-      end
+      return_ar << lang.translations
     end
     return_ar
   end
 
   def self.ety_query(query)
     Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
+  end
+
+  def self.group_etys(query)
+    array = []
+    ety_hash = Hash.new{|k, v|}
+    Translation.where(word_id: Word.find_by(name: query)).each do |trans|
+      array << trans.etymology
+      if ety_hash[trans.etymology] {
+        byebug
+        ety_hash[trans.etymology] << trans.language
+      } else {
+        byebug
+        ety_hash[trans.etymology] = []
+      }
+      end
+    end
+    byebug
+    array << ety_hash 
   end
 
 end
