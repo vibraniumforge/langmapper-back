@@ -8,6 +8,18 @@ class Translation < ApplicationRecord
   require 'nokogiri'
   require 'open-uri'
 
+  def self.all_by_macrofamily(macrofamily)
+    matching_langs = Language.where(macrofamily: macrofamily)
+    return_ar = []
+    matching_langs.each do |lang|
+      x = Translation.where(language_name: lang.name)
+      x.map do |tr|
+        return_ar << [tr.language_name, tr.romanization, tr.etymology]
+      end
+    end
+    p return_ar
+  end
+
   def self.scrape(chosen_word)
     t1 = Time.now
     # agent = Mechanize.new
@@ -67,7 +79,7 @@ class Translation < ApplicationRecord
       if li.css("span.tr.Latn")[0]
         romanization = li.css("span.tr.Latn")[0].children[0].text 
       else
-        romanization = chosen_word
+        romanization = translation
       end
 
       link_eng = li.children[1].children[0].attributes["href"]&.value || "NONE"
@@ -134,7 +146,7 @@ class Translation < ApplicationRecord
 
       if parsed_etymology_page.css("[id^='Etymology']").length > 0
           correct_lang_parsed_etymology_page = parsed_etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
-          etymology = correct_lang_parsed_etymology_page.text
+          etymology = correct_lang_parsed_etymology_page.text.strip
       else
           etymology = nil
       end
