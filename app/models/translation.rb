@@ -53,6 +53,7 @@ class Translation < ApplicationRecord
       end
 
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
+        # should be span[0]& text
         translation = li.css("span")&.text.gsub(/\(compound\)/, "")
       else
         translation = nil
@@ -118,7 +119,7 @@ class Translation < ApplicationRecord
   end
 
   def self.ety_query(query)
-    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
+    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :gender)
   end
 
   def self.group_etys(query)
@@ -126,13 +127,12 @@ class Translation < ApplicationRecord
     ety_hash = Hash.new{|k, v|}
     Translation.where(word_id: Word.find_by(name: query)).each do |trans|
       array << trans.etymology
-      if ety_hash[trans.etymology] {
+      if ety_hash[trans.etymology] 
         byebug
         ety_hash[trans.etymology] << trans.language
-      } else {
+      else 
         byebug
         ety_hash[trans.etymology] = []
-      }
       end
     end
     byebug
