@@ -109,13 +109,12 @@ class Translation < ApplicationRecord
     puts "in #{time} seconds"
   end
 
+  # refactor here
   def self.all_by_macrofamily(macrofamily)
     matching_langs = Language.where(macrofamily: macrofamily)
-    return_ar = []
-    matching_langs.each do |lang|
-      return_ar << lang.translations
+    matching_langs.map do |lang|
+      lang.translations
     end
-    return_ar
   end
 
   def self.ety_query(query)
