@@ -27,8 +27,8 @@ ActiveRecord::Schema.define(version: 2020_02_26_034032) do
     t.string "area3"
     t.string "notes"
     t.string "alive"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "translations", force: :cascade do |t|
