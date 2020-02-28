@@ -106,7 +106,7 @@ class Translation < ApplicationRecord
     t2 = Time.now
     time = t2 - t1
     puts "====================="
-    puts "\n DONE \n"
+    puts "\nDONE \n"
     puts "Count: #{all_li_array.count}"
     puts "in #{time.round(2)} seconds"
   end
