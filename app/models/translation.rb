@@ -80,14 +80,15 @@ class Translation < ApplicationRecord
           etymology_page = nil
         end
       end
-
+      byebug
       if !etymology_page.nil? && etymology_page.css("[id^='Etymology']").length > 0
-          correct_lang_parsed_etymology_page = etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
-          etymology = correct_lang_parsed_etymology_page.text.strip
+          # correct_lang_parsed_etymology_page = etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
+          # etymology = correct_lang_parsed_etymology_page.text.strip
+          etymology = etymology_page.css("[id=#{language_name}]")[0].parent.next_element.next_element.text.strip
       else
           etymology = nil
       end
-
+      byebug
       language_id = Language.find_or_create_by(name: language_name).id
       
       puts "language_id: #{language_id}"
