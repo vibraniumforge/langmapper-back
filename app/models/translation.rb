@@ -84,11 +84,23 @@ class Translation < ApplicationRecord
       if language_name.include?("'")
         etymology_page=nil
       end
+      
       language_name_span_id = language_name.split(" ").join("_")
-      if !etymology_page.nil? && etymology_page.css("[id=#{language_name.split(" ").join("_")}]").length > 0
+      if !etymology_page.nil? && etymology_page.css("[id=#{language_name.split(" ").join("_")}]").length > 0 && etymology_page.css("[id^='Etymology']").length > 0
         # correct_lang_parsed_etymology_page = etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
         # etymology = correct_lang_parsed_etymology_page.text.strip
-        etymology = etymology_page.css("[id=#{language_name.split(" ").join("_")}]")[0]&.parent&.next_element&.next_element&.text&.strip
+
+        next_node = etymology_page.css("[id=#{language_name.split(" ").join("_")}]")[0]&.parent
+        while next_node.name != "p"
+          next_node = next_node.next_element
+        end
+        # etymology_page.search("table.floatright.wikitable").remove
+        # etymology_page.search("div.thumb.tright").remove
+        # if etymology_page.search("span#Alternative_forms")
+        #   etymology_page.search("span#Alternative_forms")[0]&.parent&.remove
+        # end
+        # etymology = etymology_page.css("[id=#{language_name.split(" ").join("_")}]")[0]&.parent&.next_element&.next_element&.text&.strip
+        etymology = next_node.text.strip
       else
         etymology = nil
       end
@@ -144,15 +156,16 @@ class Translation < ApplicationRecord
         short_etymology = trans.etymology.slice(0,60).strip
       end
       if ety_hash[short_etymology] 
-        # byebug
         ety_hash[short_etymology] << trans.language.name
       else 
-        # byebug
         ety_hash[short_etymology] = [trans.language.name]
       end
     end
-    byebug
+    # byebug
     array << ety_hash 
+    pp ety_hash
+    # pp array
+    # p array
   end
 
 end
