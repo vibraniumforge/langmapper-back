@@ -2,8 +2,8 @@ class Translation < ApplicationRecord
   belongs_to :language
   belongs_to :word
 
-  # require 'nokogiri'
-  # require 'open-uri'
+  require 'nokogiri'
+  require 'open-uri'
 
 
   def self.scrape(chosen_word)
@@ -13,9 +13,6 @@ class Translation < ApplicationRecord
     first_table1 = page.css("td.translations-cell")[0].children.children
     second_table1 = page.css("td.translations-cell")[1].children.children
     
-
-   
-
     all_li_array =[]
     first_table1.each do |item|
       if item.to_s != "\n"
@@ -40,7 +37,7 @@ class Translation < ApplicationRecord
 
     puts "Word ID: #{word_id}"
 
-    # {language_id, word_id, language_name, translation, romanization, full_link_eng, etymology, gender }
+    # {language_id, word_id, translation, romanization, full_link_eng, etymology, gender }
 
     all_li_array.each_with_index do |li, index|
       etymology = nil
@@ -106,32 +103,48 @@ class Translation < ApplicationRecord
     puts "====================="
     puts "\n DONE \n"
     puts "Count: #{all_li_array.count}"
-    puts "in #{time} seconds"
+    puts "in #{time.round(2)} seconds"
   end
 
   # refactor here
+  # all the translations in a macrofamily
   def self.all_by_macrofamily(macrofamily)
     matching_langs = Language.where(macrofamily: macrofamily)
     matching_langs.map do |lang|
+      byebug
       lang.translations
     end
   end
 
+  # translations with a certain word in the query
   def self.ety_query(query)
     Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :gender)
+  end
+
+  # all the translations by language
+  def self.translations_by_lang(language)
+    arr = Translation.where(language_id: Language.where(name: language)).pluck(:word_id, :romanization, :etymology)
+    result = arr.map do |translation|
+      [{word: Word.find(translation[0]).name},{romanization: translation[1]},{etymology: translation[2]}]
+    end
+    # pp result
   end
 
   def self.group_etys(query)
     array = []
     ety_hash = Hash.new{|k, v|}
     Translation.where(word_id: Word.find_by(name: query)).each do |trans|
-      array << trans.etymology
-      if ety_hash[trans.etymology] 
-        byebug
-        ety_hash[trans.etymology] << trans.language
+      if trans.etymology.nil?
+        short_etymology = "Null"
+      else
+        short_etymology = trans.etymology.slice(0,60).strip
+      end
+      if ety_hash[short_etymology] 
+        # byebug
+        ety_hash[short_etymology] << trans.language.name
       else 
-        byebug
-        ety_hash[trans.etymology] = []
+        # byebug
+        ety_hash[short_etymology] = [trans.language.name]
       end
     end
     byebug
