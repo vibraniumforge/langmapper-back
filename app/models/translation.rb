@@ -1,10 +1,9 @@
+
 class Translation < ApplicationRecord
   belongs_to :language
   belongs_to :word
 
-  require 'nokogiri'
   require 'open-uri'
-
 
   def self.scrape(chosen_word)
     t1 = Time.now
@@ -34,12 +33,12 @@ class Translation < ApplicationRecord
 
     # add logic to prevent dupes here
     word_id = Word.find_or_create_by(name: chosen_word).id
-
     puts "Word ID: #{word_id}"
 
-    # {language_id, word_id, translation, romanization, full_link_eng, etymology, gender }
+    # NEED: language_id, word_id, translation, romanization, full_link_eng, etymology, gender 
 
     all_li_array.each_with_index do |li, index|
+
       etymology = nil
       language_name = li.text.split(":")[0]
 
@@ -50,25 +49,25 @@ class Translation < ApplicationRecord
       end
 
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
-        # should be span[0]& text
-        translation = li.css("span")&.text.gsub(/\(compound\)/, "")
+        translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
       else
         translation = nil
       end
 
-      if li.css("span.tr.Latn")[0]
-        romanization = li.css("span.tr.Latn")[0].children[0].text 
+      if !li.css("span.tr.Latn")[0].nil?
+        # romanization = li.css("span.tr.Latn")[0].children[0].text 
+        romanization = li.css("span.tr.Latn")[0].text 
       else
         romanization = translation
       end
 
-      if li.children[1].children[0].attributes["href"]&.value
-        short_link_eng = li.children[1].children[0].attributes["href"]&.value
+      # if li.children[1].children[0].attributes["href"]&.value
+      if !li.css("a")[0].nil? && li.css("a")[0]&.attributes["href"]&.value
+        short_link_eng = li.css("a")[0]&.attributes["href"].value
       else
         short_link_eng = nil
       end
       # => "/wiki/goud#Afrikaans"
-  
 
       if !short_link_eng.nil?
         full_link_eng = 'https://en.wiktionary.org' << short_link_eng
@@ -80,15 +79,20 @@ class Translation < ApplicationRecord
           etymology_page = nil
         end
       end
-      byebug
-      if !etymology_page.nil? && etymology_page.css("[id^='Etymology']").length > 0
-          # correct_lang_parsed_etymology_page = etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
-          # etymology = correct_lang_parsed_etymology_page.text.strip
-          etymology = etymology_page.css("[id=#{language_name}]")[0].parent.next_element.next_element.text.strip
-      else
-          etymology = nil
+      puts "Lang Name: #{language_name}"
+  
+      if language_name.include?("'")
+        etymology_page=nil
       end
-      byebug
+      language_name_span_id = language_name.split(" ").join("_")
+      if !etymology_page.nil? && etymology_page.css("[id=#{language_name.split(" ").join("_")}]").length > 0
+        # correct_lang_parsed_etymology_page = etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
+        # etymology = correct_lang_parsed_etymology_page.text.strip
+        etymology = etymology_page.css("[id=#{language_name.split(" ").join("_")}]")[0]&.parent&.next_element&.next_element&.text&.strip
+      else
+        etymology = nil
+      end
+
       language_id = Language.find_or_create_by(name: language_name).id
       
       puts "language_id: #{language_id}"
@@ -112,14 +116,13 @@ class Translation < ApplicationRecord
   def self.all_by_macrofamily(macrofamily)
     matching_langs = Language.where(macrofamily: macrofamily)
     matching_langs.map do |lang|
-      byebug
-      lang.translations
+      lang.translations.pluck(:language_name, :romanization, :translation, :gender, :etymology)
     end
   end
 
   # translations with a certain word in the query
   def self.ety_query(query)
-    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :gender)
+    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :romanization, :gender, :etymology)
   end
 
   # all the translations by language
