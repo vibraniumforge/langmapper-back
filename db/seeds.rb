@@ -129,9 +129,6 @@ Language.create({name: "Japanese", abbreviation: "ja", alphabet: "Jpan", macrofa
 # Koreanic
 Language.create({name: "Korean", abbreviation: "ko", alphabet: "Kore", macrofamily: "Isolate", family: "Koreanic", subfamily: "", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
 
-# Ainu
-Language.create({name: "Ainu", abbreviation: "ain", alphabet: "Latn", macrofamily: "Isolate", family: "Ainu", subfamily: "", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
-
 # Kartvelian
 Language.create({name: "Georgian", abbreviation: "ka", alphabet: "Geor", macrofamily: "Kartvelian", family: "", subfamily: "", area: "Anatolia", area2: "Caucasus", area3: "", notes: "", alive: true })
 
@@ -164,6 +161,9 @@ Language.create({name: "Omak", abbreviation: "omk", alphabet: "Cyrl", macrofamil
 
 # Yeniseian
 Language.create({name: "Ket", abbreviation: "ket", alphabet: "Cyrl", macrofamily: "Isolate", family: "Yeniseian", subfamily: "", area: "North Asia", area2: "", area3: "", notes: "", alive: true })
+
+# Ainu
+Language.create({name: "Ainu", abbreviation: "ain", alphabet: "Latn", macrofamily: "Isolate", family: "Ainu", subfamily: "", area: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
 
 # Extinct, but famous
 Language.create({name: "Latin", abbreviation: "la", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "", area: "Europe", area2: "Italy", area3: "", notes: "", alive: false })
@@ -198,4 +198,4 @@ Language.create({name: "Tartessian", abbreviation: "txr", alphabet: "Grek", macr
 
 
 
-puts "seeds done."
+puts "Seeded database."
