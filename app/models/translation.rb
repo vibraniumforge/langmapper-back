@@ -5,7 +5,7 @@ class Translation < ApplicationRecord
 
   require 'open-uri'
 
-  def self.scrape(chosen_word)
+  def self.find(chosen_word)
     t1 = Time.now
     page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
 
@@ -79,10 +79,9 @@ class Translation < ApplicationRecord
           etymology_page = nil
         end
       end
-      puts "Lang Name: #{language_name}"
   
       if language_name.include?("'")
-        etymology_page=nil
+        etymology_page = nil
       end
       
       language_name_span_id = language_name.split(" ").join("_")
@@ -106,10 +105,9 @@ class Translation < ApplicationRecord
       end
 
       language_id = Language.find_or_create_by(name: language_name).id
-      
+      put "\n"
       puts "language_id: #{language_id}"
-
-      puts "#{index+1}. #{language_name} - T: #{translation ? translation : "NONE"} - R: #{romanization} - G: #{gender ? gender : "NONE"} - E: #{etymology ? etymology : "NONE"}"
+      puts "#{index+1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
       puts "\n"
       puts "====================="
       Translation.create({language_id: language_id, word_id: word_id, language_name: language_name, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
@@ -123,7 +121,11 @@ class Translation < ApplicationRecord
     puts "in #{time.round(2)} seconds"
   end
 
-  # refactor here
+  # translations with a certain word in the query
+  def self.ety_query(query)
+    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :romanization, :gender, :etymology)
+  end
+
   # all the translations in a macrofamily
   def self.all_by_macrofamily(macrofamily)
     matching_langs = Language.where(macrofamily: macrofamily)
@@ -132,33 +134,44 @@ class Translation < ApplicationRecord
     end
   end
 
-  # translations with a certain word in the query
-  def self.ety_query(query)
-    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :romanization, :gender, :etymology)
-  end
-
-  # all the translations by language
+  # all the translations by a language
   def self.translations_by_lang(language)
-    arr = Translation.where(language_id: Language.where(name: language)).pluck(:word_id, :romanization, :etymology)
+    language_id = Language.find_by(name: language).id
+    arr = Translation.where(language_id: language_id).pluck(:word_id, :romanization, :etymology)
     result = arr.map do |translation|
-      [{word: Word.find(translation[0]).name},{romanization: translation[1]},{etymology: translation[2]}]
+      [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
     end
     # pp result
+    result
   end
 
+  # genreate a hash of [ {word: {lang: gender}}, ...]
+  def self.compare_genders(word)
+    word_id = Word.find_by(name: word.downcase).id
+    translations_array = Translation.where(word_id: word_id)
+    result = translations_array.map do |translation|
+      if !translation.gender.nil?
+        [{language: translation.language_name}, {word: translation.romanization}, {gender: translation.gender}]
+      end
+    end
+    pp result
+    # result
+  end
+
+  # make a hash group by etymology
   def self.group_etys(query)
     array = []
     ety_hash = Hash.new{|k, v|}
-    Translation.where(word_id: Word.find_by(name: query)).each do |trans|
-      if trans.etymology.nil?
+    Translation.where(word_id: Word.find_by(name: query)).each do |translation|
+      if translation.etymology.nil?
         short_etymology = "Null"
       else
-        short_etymology = trans.etymology.slice(0,60).strip
+        short_etymology = translation.etymology.slice(0,60).strip
       end
       if ety_hash[short_etymology] 
-        ety_hash[short_etymology] << trans.language.name
+        ety_hash[short_etymology] << translation.language.name
       else 
-        ety_hash[short_etymology] = [trans.language.name]
+        ety_hash[short_etymology] = [translation.language.name]
       end
     end
     # byebug
