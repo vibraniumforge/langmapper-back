@@ -19,7 +19,7 @@ module Api::V1
       if @word.save
         puts "=> Word saved"
         render json: { message: "Word successfully saved.", success: true, data: @translation }, status: 200
-        Translation.scrape(@word.name)
+        Translation.find(@word.name)
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
