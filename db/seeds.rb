@@ -138,8 +138,8 @@ Language.create({name: "Avar", abbreviation: "av", alphabet: "Cyrl", macrofamily
 # Northwest Caucasian
 Language.create({name: "Ubykh", abbreviation: "uby", alphabet: "Latn", macrofamily: "Northwest Caucasian", family: "", subfamily: "", area: "Caucasus", area2: "", area3: "", notes: "", alive: true })
 
-# Semitic
-Language.create({name: "Arabic", abbreviation: "ar", alphabet: "Arab", macrofamily: "Semitic", family: "Arabic", subfamily: "", area: "Middle East", area2: "", area3: "", notes: "", alive: true })
+# Afro-Asiatic
+Language.create({name: "Arabic", abbreviation: "ar", alphabet: "Arab", macrofamily: "Afro-Asiatic", family: "Semitic", subfamily: "Arabic", area: "Middle East", area2: "", area3: "", notes: "", alive: true })
 
 # Niger-Congo
 Language.create({name: "Swahili", abbreviation: "sw", alphabet: "Latn", macrofamily: "Niger-Congo", family: "", subfamily: "", area: "Africa", area2: "", area3: "", notes: "", alive: true })
