@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_26_034032) do
+ActiveRecord::Schema.define(version: 3) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,16 +32,16 @@ ActiveRecord::Schema.define(version: 2020_02_26_034032) do
   end
 
   create_table "translations", force: :cascade do |t|
-    t.bigint "language_id", null: false
-    t.bigint "word_id", null: false
+    t.integer "language_id", null: false
+    t.integer "word_id", null: false
     t.string "language_name"
     t.string "translation"
     t.string "romanization"
     t.string "link"
     t.string "gender"
     t.string "etymology"
-    t.index ["language_id"], name: "index_translations_on_language_id"
-    t.index ["word_id"], name: "index_translations_on_word_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "words", force: :cascade do |t|
@@ -50,6 +50,4 @@ ActiveRecord::Schema.define(version: 2020_02_26_034032) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "translations", "languages"
-  add_foreign_key "translations", "words"
 end
