@@ -148,25 +148,22 @@ class Translation < ApplicationRecord
     result
   end
 
-  # genreate a hash of [ {word: {lang: gender}}, ...]
+  # genreate a hash of [{:id=>48}, {:family=>"Albanian"}, {:language=>"Albanian"}, {:romanization=>"patë"}, {:gender=>"f"}]
   def self.compare_genders(word, macrofamily="Indo-European")
     # word_id = Word.find_by("name = ?", params[:word].downcase).id)
     word_id = Word.find_by(name: word.downcase).id
-    # translations_array = Translation.where("word_id = ?", params[:word_id]).joins(:language).order(:language.family)
-    translations_array = Translation.joins(:language, :word).where(word_id: word_id).order(sanitize_sql_for_order("language.family ASC"), sanitize_sql_for_order("language.name ASC"))
-    valid_results = translations_array.select{|tr| !tr.gender.nil? }
-    second_result = valid_results.select{|tr| tr.language.macrofamily == macrofamily}
-    result = second_result.map do |translation|
-      [{family: translation.language.family}, {language: translation.language_name}, {word: translation.romanization}, {gender: translation.gender}]
+
+    translations_array = Language.select(
+      [:id, :family, :name, :romanization, :gender])
+      .joins(:translations)
+      .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
+      .order(:family, :name)
+      byebug
+    result = translations_array.map do |translation|
+      [{id: translation.id}, {family: translation.family}, {language: translation.name}, {romanization: translation.romanization}, {gender: translation.gender}]
     end
-    # pp result
-    # x=result.sort do |a, d| 
-    #   (a[0][:family] <=> d[0][:family]) == 0 ? (a[0][:language] <=> d[0][:language]) : (a[0][:family] <=> d[0][:family])
-    # end.uniq
-    x = result.sort_by {|y| [y[0][:family], y[0][:language]] }
-    byebug
-    pp x
-    x
+    pp result
+    result
   end
 
   # make a hash group by etymology
