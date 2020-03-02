@@ -49,6 +49,12 @@ class Translation < ApplicationRecord
         gender = nil
       end
 
+      if language_name == "Serbo-Croatian" 
+        byebug
+      end
+
+      # fix serbo-croat
+
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
         translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
       else
@@ -121,22 +127,23 @@ class Translation < ApplicationRecord
     puts "in #{time.round(2)} seconds"
   end
 
-  # translations with a certain word in the query
+  # etymologies with a that have the query word inside.
   def self.ety_query(query)
+    # Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(params[:query])}%").pluck(:language_name, :translation, :romanization, :gender, :etymology)
     Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :romanization, :gender, :etymology)
   end
 
   # all the translations in a macrofamily
   def self.all_by_macrofamily(macrofamily)
-    matching_langs = Language.where("macrofamily = ?", params[:macrofamily])
-    # matching_langs = Language.where(macrofamily: macrofamily)
+    # matching_langs = Language.where("macrofamily = ?", params[:macrofamily])
+    matching_langs = Language.where(macrofamily: macrofamily)
     matching_langs.map do |lang|
       lang.translations.pluck(:language_name, :romanization, :translation, :gender, :etymology)
     end
   end
 
-  # all the translations by a language
-  def self.translations_by_lang(language)
+  # all the translations in a specified language
+  def self.all_by_lang(language)
     # language_id = Language.find_by("name = ?": params[:language]).id
     language_id = Language.find_by(name: language).id
     # arr = Translation.where("language_id = ?", params[:language_id]).pluck(:word_id, :romanization, :etymology)
@@ -158,7 +165,6 @@ class Translation < ApplicationRecord
       .joins(:translations)
       .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
       .order(:family, :name)
-      byebug
     result = translations_array.map do |translation|
       [{id: translation.id}, {family: translation.family}, {language: translation.name}, {romanization: translation.romanization}, {gender: translation.gender}]
     end
@@ -167,26 +173,38 @@ class Translation < ApplicationRecord
   end
 
   # make a hash group by etymology
-  def self.group_etys(query)
+  def self.group_etys(query, macrofamily="Indo-European")
     array = []
     ety_hash = Hash.new{|k, v|}
-    # word_id = Word.find_by("name = ?", params[:query)
-    Translation.where(word_id: word_id).each do |translation|
+    # word_id = Word.find_by("name = ?", params[:query].downcase).id
+    # word = Word.find_by("name = ?", params[:query].downcase).name
+    word_id = Word.find_by("name = ?", query.downcase).id
+    word = Word.find_by("name = ?", query.downcase).name
+    translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
+      .joins(:translations)
+      .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
+      .order(:etymology)
+      # can I make a hash of these server side?
+      # why doesnt etymology appear when look at translations_array?
+    translations_array.each do |translation|
       if translation.etymology.nil?
         short_etymology = "Null"
       else
-        short_etymology = translation.etymology.slice(0,60).strip
+        short_etymology = translation.etymology.strip
+        # short_etymology = translation.etymology.slice(0,60).strip
       end
       if ety_hash[short_etymology] 
-        ety_hash[short_etymology] << translation.language.name
+        ety_hash[short_etymology] << translation.name
       else 
-        ety_hash[short_etymology] = [translation.language.name]
+        ety_hash[short_etymology] = [translation.name]
       end
     end
     array << ety_hash 
     pp ety_hash
     # pp array
     # p array
+    byebug
+    array
   end
 
 end
