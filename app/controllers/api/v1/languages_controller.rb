@@ -56,13 +56,13 @@ module Api::V1
 
     private
 
-      def find_language
-        @language = Language.find(params[:id])
-      end
+    def find_language
+      @language = Language.find(params[:id])
+    end
 
-      def language_params
-        params.require(:language).permit(:name, :abbreviation, :alphabet, :macrofamily, :family, :subfamily, :area, :area2, :notes, :alive)
-      end
+    def language_params
+      params.require(:language).permit(:name, :abbreviation, :alphabet, :macrofamily, :family, :subfamily, :area, :area2, :notes, :alive)
+    end
 
   end
 end
