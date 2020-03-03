@@ -32,7 +32,7 @@ class Translation < ApplicationRecord
     puts "Li Count: #{all_li_array.count}"
 
     # add logic to prevent dupes here
-    # word_id = Word.find_or_create_by("name = ?", params[:chosen_word]).id
+
     word_id = Word.find_or_create_by(name: chosen_word).id
     puts "Word ID: #{word_id}"
 
@@ -53,8 +53,6 @@ class Translation < ApplicationRecord
       end
 
       # fix serbo-croat here
-
-     
 
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can" 
         translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
@@ -100,10 +98,6 @@ class Translation < ApplicationRecord
       # if language_name.include?("'")
       #   etymology_page = nil
       # end
-
-      # if ['Avar', 'Coptic', 'Malagasay', 'Oroqen', 'Tatar'].include?(language_name)
-      #   byebug
-      # end
       
       language_name_span_id = language_name.split(" ").join("_")
       # format the name to the wiktionary style
@@ -145,13 +139,11 @@ class Translation < ApplicationRecord
 
   # etymologies with a that have the query word inside.
   def self.ety_query(query)
-    # Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(params[:query])}%").pluck(:language_name, :translation, :romanization, :gender, :etymology)
-    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%").pluck(:language_name, :translation, :romanization, :gender, :etymology)
+    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
   end
 
   # all the translations in a macrofamily
   def self.all_by_macrofamily(macrofamily)
-    # matching_langs = Language.where("macrofamily = ?", params[:macrofamily])
     matching_langs = Language.where(macrofamily: macrofamily)
     matching_langs.map do |lang|
       lang.translations.pluck(:language_name, :romanization, :translation, :gender, :etymology)
@@ -160,9 +152,7 @@ class Translation < ApplicationRecord
 
   # all the translations in a specified language
   def self.all_by_lang(language)
-    # language_id = Language.find_by("name = ?": params[:language]).id
     language_id = Language.find_by(name: language).id
-    # arr = Translation.where("language_id = ?", params[:language_id]).pluck(:word_id, :romanization, :etymology)
     arr = Translation.where(language_id: language_id).pluck(:word_id, :romanization, :etymology)
     result = arr.map do |translation|
       [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
@@ -173,9 +163,7 @@ class Translation < ApplicationRecord
 
   # genreate a hash of [{:id=>48, :family=>"Albanian", :language=>"Albanian", :romanization=>"patë", :link=> "www.",:gender=>"f"}]
   def self.find_all_genders(word, macrofamily="Indo-European")
-    # word_id = Word.find_by("name = ?", params[:word].downcase).id)
     word_id = Word.find_by(name: word.downcase).id
-
     translations_array = Language.select(
       [:id, :family, :name, :romanization, :link, :gender])
       .joins(:translations)
@@ -192,8 +180,6 @@ class Translation < ApplicationRecord
   def self.group_etys(query, macrofamily="Indo-European")
     array = []
     ety_hash = Hash.new{|k, v|}
-    # word_id = Word.find_by("name = ?", params[:query].downcase).id
-    # word = Word.find_by("name = ?", params[:query].downcase).name
     word_id = Word.find_by("name = ?", query.downcase).id
     word = Word.find_by("name = ?", query.downcase).name
     translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
