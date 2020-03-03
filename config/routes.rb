@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       resources :translations
       resources :languages
       resources :words
+      get '/search/:word', to: 'translations#search', as: 'search_path'
     end
   end
 end
