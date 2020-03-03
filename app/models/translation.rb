@@ -41,29 +41,37 @@ class Translation < ApplicationRecord
     all_li_array.each_with_index do |li, index|
 
       etymology = nil
+
       language_name = li.text.split(":")[0]
 
+      # if ['Azerbaijani', 'Chinese'].include?(language_name)
+  
       if li.css("span.gender")[0]&.text
-        gender = li.css("span.gender")[0]&.text 
+        gender = li.css("span.gender")[0].text 
       else 
         gender = nil
       end
 
-      if language_name == "Serbo-Croatian" 
-        byebug
-      end
+      # fix serbo-croat here
 
-      # fix serbo-croat
+     
 
-      if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
+      if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can" 
         translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
       else
         translation = nil
       end
 
+      # old one didnt work for serbo-croat
+      # if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
+      #   translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
+      # else
+      #   translation = nil
+      # end
+
       if !li.css("span.tr.Latn")[0].nil?
         # romanization = li.css("span.tr.Latn")[0].children[0].text 
-        romanization = li.css("span.tr.Latn")[0].text 
+        romanization = li.css("span.Latn")[0].text 
       else
         romanization = translation
       end
@@ -78,7 +86,9 @@ class Translation < ApplicationRecord
 
       if !short_link_eng.nil?
         full_link_eng = 'https://en.wiktionary.org' << short_link_eng
-        if full_link_eng.ascii_only? && !full_link_eng.include?("&action=edit")
+        if language_name.include?("'")
+          etymology_page = nil
+        elsif full_link_eng.ascii_only? && !full_link_eng.include?("&action=edit")
           etymology_page = Nokogiri::HTML(open(full_link_eng))
         else
           etymology_page = nil
@@ -86,26 +96,32 @@ class Translation < ApplicationRecord
       end
       # "https://en.wiktionary.org/wiki/goud#Afrikaans" || nil
   
-      if language_name.include?("'")
-        etymology_page = nil
-      end
+      # added to method above
+      # if language_name.include?("'")
+      #   etymology_page = nil
+      # end
+
+      # if ['Avar', 'Coptic', 'Malagasay', 'Oroqen', 'Tatar'].include?(language_name)
+      #   byebug
+      # end
       
       language_name_span_id = language_name.split(" ").join("_")
-      if !etymology_page.nil? && etymology_page.css("[id=#{language_name.split(" ").join("_")}]").length > 0 && etymology_page.css("[id^='Etymology']").length > 0
-        # correct_lang_parsed_etymology_page = etymology_page.css("[id^='Etymology']")[0]&.parent&.next_element
-        # etymology = correct_lang_parsed_etymology_page.text.strip
-
-        next_node = etymology_page.css("[id=#{language_name.split(" ").join("_")}]")[0]&.parent
-        while next_node.name != "p"
-          next_node = next_node.next_element
+      # format the name to the wiktionary style
+      if !etymology_page.nil? && etymology_page.css("[id=#{language_name_span_id}]").length > 0 && etymology_page.css("[id^='Etymology']").length > 0
+        # if the page exists, and the page has the language on it, and there is an etymology element
+        current_element = etymology_page.css("[id=#{language_name_span_id}]")[0]&.parent.next_element
+        # get the element with the id of the language_name, which is a SPAN under h2 with the lang_name. then, get the parent, the h2 tag, and then the next element. I need the current element to not be a h2, because that is my stop sign. Some pages have another h2 beneath with an ety from another lang. This is not right. This way, NULL goes in the DB, which is right, and not a wrong value.
+        while !current_element.nil? && current_element.name != "h2"
+          if current_element.name == "h3" && current_element.text.include?("Etymology") && !current_element.next_element.text.include?("(This etymology is missing or incomplete.")
+            # usually it is a h3 with etymology, then the next p tag that has the etymology. But not always. This gets the h3 tag, and loops until it finds the p tag, THEN takes the value.
+          while current_element.name != "p"
+            current_element = current_element.next_element
+          end
+            etymology = current_element.text.strip
+            break
+          end
+          current_element = current_element.next_element
         end
-        # etymology_page.search("table.floatright.wikitable").remove
-        # etymology_page.search("div.thumb.tright").remove
-        # if etymology_page.search("span#Alternative_forms")
-        #   etymology_page.search("span#Alternative_forms")[0]&.parent&.remove
-        # end
-        # etymology = etymology_page.css("[id=#{language_name.split(" ").join("_")}]")[0]&.parent&.next_element&.next_element&.text&.strip
-        etymology = next_node.text.strip
       else
         etymology = nil
       end
@@ -203,7 +219,6 @@ class Translation < ApplicationRecord
     pp ety_hash
     # pp array
     # p array
-    byebug
     array
   end
 
