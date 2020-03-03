@@ -57,15 +57,21 @@ module Api::V1
       end
     end
 
+    def search
+      puts "Search fires"
+      translation = Translation.find_all_translations(params[:word])
+      render json: translation
+    end
+
     private
 
-      def find_translation
-        @translation = Translation.find(params[:id])
-      end
+    def find_translation
+      @translation = Translation.find(params[:id])
+    end
 
-      def translation_params
-        params.require(:translation).permit(:translation, :romanization, :link, :gender, :etymology)
-      end
+    def translation_params
+      params.require(:translation).permit(:translation, :romanization, :link, :gender, :etymology)
+    end
 
   end
 end
