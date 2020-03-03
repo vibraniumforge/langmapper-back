@@ -11,6 +11,7 @@ Language.create({name: "English", abbreviation: "en", alphabet: "Latn", macrofam
 Language.create({name: "Scots", abbreviation: "sco", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Western Europe", area3: "British Isles", notes: "Lowland Scots (Germanic)", alive: true })
 
 Language.create({name: "Dutch", abbreviation: "nl", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic",  area: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
+Language.create({name: "Afrikaans", abbreviation: "af", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Western Europe", area3: "Africa", notes: "", alive: true })
 Language.create({name: "West Frisian", abbreviation: "fy", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Central Europe", area3: "", notes: "Netherlands", alive: true })
 Language.create({name: "North Frisian", abbreviation: "frr", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic",  area: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
 Language.create({name: "Saterland Frisian", abbreviation: "stq", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
@@ -69,6 +70,7 @@ Language.create({name: "Slovene", abbreviation: "sl", alphabet: "Latn", macrofam
 Language.create({name: "Lithuanian", abbreviation: "lt", alphabet: "Latn", macrofamily: "Indo-European", family: "Baltic", subfamily: "Eastern Baltic", area: "Europe", area2: "North Europe", area3: "", notes: "", alive: true })
 Language.create({name: "Latvian", abbreviation: "lv", alphabet: "Latn", macrofamily: "Indo-European", family: "Baltic", subfamily: "Eastern Baltic", area: "Europe", area2: "North Europe", area3: "", notes: "", alive: true })
 
+# Singles
 Language.create({name: "Greek", abbreviation: "el", alphabet: "Grek", macrofamily: "Indo-European", family: "Hellenic", subfamily: "", area: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
 
 Language.create({name: "Albanian", abbreviation: "sq", alphabet: "Latn", macrofamily: "Indo-European", family: "Albanian", subfamily: "", area: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
@@ -91,6 +93,7 @@ Language.create({name: "Hungarian", abbreviation: "hu", alphabet: "Latn", macrof
 
 # Dravidian
 Language.create({name: "Telugu", abbreviation: "te", alphabet: "Telu", macrofamily: "Dravidian", family: "South Central", subfamily: "", area: "South Asia", area2: "", area3: "", notes: "", alive: true })
+Language.create({name: "Tamil", abbreviation: "ta", alphabet: "Taml", macrofamily: "Dravidian", family: "South", subfamily: "", area: "South Asia", area2: "", area3: "", notes: "", alive: true })
 
 # Austro-Asiatic
 Language.create({name: "Khmer", abbreviation: "km", alphabet: "Khmr", macrofamily: "Austro-Asiatic", family: "Khmeric", subfamily: "", area: "Southeast Asia", area2: "", area3: "", notes: "a.k.a Cambodian", alive: true })
@@ -185,11 +188,13 @@ Language.create({name: "Elamite", abbreviation: "elx", alphabet: "Xsux", macrofa
 
 Language.create({name: "Ancient Egyptian", abbreviation: "egy", alphabet: "Egyp", macrofamily: "Semitic", family: "Egyptian", subfamily: "", area: "Middle East", area2: "", area3: "", notes: "", alive: false })
 
-Language.create({name: "Estruscan", abbreviation: "ett", alphabet: "Ital", macrofamily: "Isolate", family: "Etruscan", subfamily: "", area: "Italy", area2: "", area3: "", notes: "", alive: false })
+Language.create({name: "Etruscan", abbreviation: "ett", alphabet: "Ital", macrofamily: "Isolate", family: "Etruscan", subfamily: "", area: "Italy", area2: "", area3: "", notes: "", alive: false })
 
 Language.create({name: "Iberian", abbreviation: "xib", alphabet: "Ital", macrofamily: "Isolate", family: "Iberian", subfamily: "", area: "Iberia", area2: "", area3: "", notes: "", alive: false })
 
 Language.create({name: "Tartessian", abbreviation: "txr", alphabet: "Grek", macrofamily: "Isolate", family: "Tartessian", subfamily: "", area: "Iberia", area2: "", area3: "", notes: "", alive: false })
+
+Language.create({name: "Proto-Indo-European", abbreviation: "pie", alphabet: "Grek", macrofamily: "Isolate", family: "Tartessian", subfamily: "", area: "Iberia", area2: "", area3: "", notes: "", alive: false })
 
 
 # Word.create({ name: "" })
