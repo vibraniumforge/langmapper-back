@@ -58,6 +58,10 @@ module Api::V1
       end
     end
 
+    def search
+      puts "Search fires"
+    end
+
     private
 
     def find_word
