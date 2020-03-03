@@ -67,6 +67,11 @@ module Api::V1
       render json: @genders
     end
 
+    def find_etymology_containing
+      @etymologies = Translation.ety_query(params[:word])
+      render json: @etymologies
+    end
+
     private
 
     def find_translation
