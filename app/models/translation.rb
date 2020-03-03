@@ -222,4 +222,11 @@ class Translation < ApplicationRecord
     array
   end
 
+  def self.find_all_translations(query)
+    puts "find_all_translations fires"
+    word_id = Word.find_by("name = ?", query.downcase).id
+    word = Word.find_by("name = ?", query.downcase).name
+    Translation.where(word_id: word_id).limit(10)
+  end
+
 end
