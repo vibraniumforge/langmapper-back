@@ -171,18 +171,18 @@ class Translation < ApplicationRecord
     result
   end
 
-  # genreate a hash of [{:id=>48}, {:family=>"Albanian"}, {:language=>"Albanian"}, {:romanization=>"patë"}, {:gender=>"f"}]
-  def self.compare_genders(word, macrofamily="Indo-European")
+  # genreate a hash of [{:id=>48, :family=>"Albanian", :language=>"Albanian", :romanization=>"patë", :link=> "www.",:gender=>"f"}]
+  def self.find_all_genders(word, macrofamily="Indo-European")
     # word_id = Word.find_by("name = ?", params[:word].downcase).id)
     word_id = Word.find_by(name: word.downcase).id
 
     translations_array = Language.select(
-      [:id, :family, :name, :romanization, :gender])
+      [:id, :family, :name, :romanization, :link, :gender])
       .joins(:translations)
       .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
       .order(:family, :name)
     result = translations_array.map do |translation|
-      [{id: translation.id}, {family: translation.family}, {language: translation.name}, {romanization: translation.romanization}, {gender: translation.gender}]
+      {id: translation.id, family: translation.family, language: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender}
     end
     pp result
     result
@@ -225,8 +225,8 @@ class Translation < ApplicationRecord
   def self.find_all_translations(query)
     puts "find_all_translations fires"
     word_id = Word.find_by("name = ?", query.downcase).id
-    word = Word.find_by("name = ?", query.downcase).name
-    Translation.where(word_id: word_id).limit(10)
+    # word = Word.find_by("name = ?", query.downcase).name
+    Translation.where(word_id: word_id).order(:language_name)
   end
 
 end
