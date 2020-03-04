@@ -186,7 +186,7 @@ Language.create({name: "Sumerian", abbreviation: "sux", alphabet: "Latn", macrof
 
 Language.create({name: "Elamite", abbreviation: "elx", alphabet: "Xsux", macrofamily: "Isolate", family: "Elamite", subfamily: "", area: "Middle East", area2: "", area3: "", notes: "", alive: false })
 
-Language.create({name: "Ancient Egyptian", abbreviation: "egy", alphabet: "Egyp", macrofamily: "Semitic", family: "Egyptian", subfamily: "", area: "Middle East", area2: "", area3: "", notes: "", alive: false })
+Language.create({name: "Ancient Egyptian", abbreviation: "egy", alphabet: "Egyp", macrofamily: "Afro-Asiatic", family: "Egyptian", subfamily: "", area: "Middle East", area2: "", area3: "", notes: "", alive: false })
 
 Language.create({name: "Etruscan", abbreviation: "ett", alphabet: "Ital", macrofamily: "Isolate", family: "Etruscan", subfamily: "", area: "Italy", area2: "", area3: "", notes: "", alive: false })
 
@@ -194,12 +194,24 @@ Language.create({name: "Iberian", abbreviation: "xib", alphabet: "Ital", macrofa
 
 Language.create({name: "Tartessian", abbreviation: "txr", alphabet: "Grek", macrofamily: "Isolate", family: "Tartessian", subfamily: "", area: "Iberia", area2: "", area3: "", notes: "", alive: false })
 
-Language.create({name: "Proto-Indo-European", abbreviation: "pie", alphabet: "Grek", macrofamily: "Isolate", family: "Tartessian", subfamily: "", area: "Iberia", area2: "", area3: "", notes: "", alive: false })
+# Proto Languages
+Language.create({name: "Proto-Indo-European", abbreviation: "pie", alphabet: "Latn", macrofamily: "Indo-European", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
 
+Language.create({name: "Proto-Uralic", abbreviation: "", alphabet: "Latn", macrofamily: "Uralic", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
+
+Language.create({name: "Proto-Basque", abbreviation: "", alphabet: "Latn", macrofamily: "Basque", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
+
+Language.create({name: "Proto-Afro-Asiatic", abbreviation: "", alphabet: "Latn", macrofamily: "Afro-Asiatic", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
+
+Language.create({name: "Proto-Dravidian", abbreviation: "", alphabet: "Latn", macrofamily: "Dravidian", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
+
+Language.create({name: "Proto-Turkic", abbreviation: "", alphabet: "Latn", macrofamily: "Turkic", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
+
+Language.create({name: "Proto-Austro-Asiatic", abbreviation: "", alphabet: "Latn", macrofamily: "Austro-Asiatic", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
 
 # Word.create({ name: "" })
 
-# Translation.create({language_id: Language.find_by(abbreviation: "").id, word_id: Word.find_by(name: "").id, translation: "", romanization: "", link: "", etymology: "From latin aurum", gender: "" })
+# Translation.create({language_id: Language.find_by(abbreviation: "").id, word_id: Word.find_by(name: "").id, translation: "", romanization: "", link: "", etymology: "", gender: "" })
 
 
 
