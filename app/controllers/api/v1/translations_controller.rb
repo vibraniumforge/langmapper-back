@@ -72,6 +72,11 @@ module Api::V1
       render json: @etymologies
     end
 
+    def find_grouped_etymologies
+      @etymologies = Translation.find_grouped_etymologies(params[:word], params[:macrofamily])
+      render json: @etymologies
+    end
+
     private
 
     def find_translation
