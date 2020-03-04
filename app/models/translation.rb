@@ -31,8 +31,6 @@ class Translation < ApplicationRecord
 
     puts "Li Count: #{all_li_array.count}"
 
-    # add logic to prevent dupes here
-
     word_id = Word.find_or_create_by(name: chosen_word).id
     puts "Word ID: #{word_id}"
 
@@ -93,11 +91,6 @@ class Translation < ApplicationRecord
         end
       end
       # "https://en.wiktionary.org/wiki/goud#Afrikaans" || nil
-  
-      # added to method above
-      # if language_name.include?("'")
-      #   etymology_page = nil
-      # end
       
       language_name_span_id = language_name.split(" ").join("_")
       # format the name to the wiktionary style
@@ -137,38 +130,16 @@ class Translation < ApplicationRecord
     puts "in #{time.round(2)} seconds"
   end
 
+  # # # # # # # # # # 
+  
   # DONE
-  # etymologies with a that have the query word inside.
-  def self.ety_query(query)
-    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
+  # Find all translations of a word in All languages
+  def self.find_all_translations(query)
+    word_id = Word.find_by("name = ?", query.downcase).id
+    Translation.where(word_id: word_id).order(:language_name)
   end
 
-  # DONE
-  # all the translations in a macrofamily
-  def self.all_languages_by_macrofamily(macrofamily)
-    translations_array = Language.select(:name, :id, :link, :family, :romanization, :translation, :gender, :etymology)
-    .joins(:translations)
-    .where("macrofamily = ?", macrofamily)
-    .order(:name)
-    result = translations_array.map do |translation|
-      {id: translation.id, family: translation.family, name: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender, translation: translation.translation, etymology: translation.etymology}
-    end
-    result
-  end
-
-
-  # all the translations in a specified language
-  def self.all_by_lang(language)
-    language_id = Language.find_by(name: language).id
-    arr = Translation.where(language_id: language_id).pluck(:word_id, :romanization, :etymology)
-    result = arr.map do |translation|
-      [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
-    end
-    # pp result
-    result
-  end
-
-  # DONE
+ # DONE
   # genreate a hash of [{:id=>48, :family=>"Albanian", :language=>"Albanian", :romanization=>"patë", :link=> "www.",:gender=>"f"}]
   def self.find_all_genders(word, macrofamily="Indo-European")
     word_id = Word.find_by(name: word.downcase).id
@@ -182,6 +153,12 @@ class Translation < ApplicationRecord
     end
     pp result
     result
+  end
+
+  # DONE
+  # etymologies with a that have the query word inside.
+  def self.ety_query(query)
+    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
   end
 
   # DONE
@@ -220,9 +197,57 @@ class Translation < ApplicationRecord
   end
 
   # DONE
-  def self.find_all_translations(query)
-    word_id = Word.find_by("name = ?", query.downcase).id
-    Translation.where(word_id: word_id).order(:language_name)
+  # all the translations in a macrofamily
+  def self.find_all_translations_by_macrofamily(macrofamily)
+    # translations_array = Language.select([:id, :name, :macrofamily], Translation[:word_id, :link, :romanization, :translation, :gender, :etymology], Word[:id, :name])
+    # .joins(:translations)
+    # .where("macrofamily = ?", macrofamily)
+    # .joins(:words)
+    # .where("word_id = ?", Translation.word_id)
+    # .order(:name)
+
+    translations_array = Language.select(
+      [
+        Language.arel_table[:id], Language.arel_table[:name], Language.arel_table[:family], Translation.arel_table[:translation], Translation.arel_table[:romanization], Translation.arel_table[:link], Translation.arel_table[:gender],  Translation.arel_table[:etymology], Translation.arel_table[:word_id], Word.arel_table[:id], Word.arel_table[:name]
+      ]
+    ).where(
+      Language.arel_table[:macrofamily].eq(macrofamily)
+    ).joins(
+      Language.arel_table.join(Translation.arel_table).on(
+        Arel::Nodes::Group.new(
+          Language.arel_table[:id].eq(Translation.arel_table[:language_id])
+        )
+      ).join_sources
+    ).joins(
+      Language.arel_table.join(Word.arel_table).on(
+        Arel::Nodes::Group.new(
+          Word.arel_table[:id].eq(Translation.arel_table[:word_id])
+        )
+      ).join_sources
+    ).order(
+      Language.arel_table[:family], Language.arel_table[:name]
+    )
+    result = translations_array.map do |translation|
+      {id: translation.id, family: translation.family, name: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender, translation: translation.translation, etymology: translation.etymology}
+    end
+    result
   end
+
+  # 
+  # all the translations in a specified language
+  def self.all_by_lang(language)
+    language_id = Language.find_by(name: language).id
+    arr = Translation.where(language_id: language_id).pluck(:word_id, :romanization, :etymology)
+    result = arr.map do |translation|
+      [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
+    end
+    # pp result
+    result
+  end
+
+ 
+
+
+ 
 
 end
