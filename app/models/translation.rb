@@ -137,18 +137,25 @@ class Translation < ApplicationRecord
     puts "in #{time.round(2)} seconds"
   end
 
+  # DONE
   # etymologies with a that have the query word inside.
   def self.ety_query(query)
     Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
   end
 
+  # DONE
   # all the translations in a macrofamily
-  def self.all_by_macrofamily(macrofamily)
-    matching_langs = Language.where(macrofamily: macrofamily)
-    matching_langs.map do |lang|
-      lang.translations.pluck(:language_name, :romanization, :translation, :gender, :etymology)
+  def self.all_languages_by_macrofamily(macrofamily)
+    translations_array = Language.select(:name, :id, :link, :family, :romanization, :translation, :gender, :etymology)
+    .joins(:translations)
+    .where("macrofamily = ?", macrofamily)
+    .order(:name)
+    result = translations_array.map do |translation|
+      {id: translation.id, family: translation.family, name: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender, translation: translation.translation, etymology: translation.etymology}
     end
+    result
   end
+
 
   # all the translations in a specified language
   def self.all_by_lang(language)
@@ -161,6 +168,7 @@ class Translation < ApplicationRecord
     result
   end
 
+  # DONE
   # genreate a hash of [{:id=>48, :family=>"Albanian", :language=>"Albanian", :romanization=>"patë", :link=> "www.",:gender=>"f"}]
   def self.find_all_genders(word, macrofamily="Indo-European")
     word_id = Word.find_by(name: word.downcase).id
@@ -176,6 +184,7 @@ class Translation < ApplicationRecord
     result
   end
 
+  # DONE
   # make a hash group by etymology
   def self.find_grouped_etymologies(query, macrofamily="Indo-European")
     array = []
@@ -210,6 +219,7 @@ class Translation < ApplicationRecord
     array
   end
 
+  # DONE
   def self.find_all_translations(query)
     word_id = Word.find_by("name = ?", query.downcase).id
     Translation.where(word_id: word_id).order(:language_name)
