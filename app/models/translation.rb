@@ -177,7 +177,7 @@ class Translation < ApplicationRecord
   end
 
   # make a hash group by etymology
-  def self.group_etys(query, macrofamily="Indo-European")
+  def self.find_grouped_etymologies(query, macrofamily="Indo-European")
     array = []
     ety_hash = Hash.new{|k, v|}
     word_id = Word.find_by("name = ?", query.downcase).id
@@ -201,7 +201,9 @@ class Translation < ApplicationRecord
         ety_hash[short_etymology] = [translation.name]
       end
     end
-    array << ety_hash 
+    ety_hash.each do |h|
+      array << h
+    end
     pp ety_hash
     # pp array
     # p array
@@ -209,9 +211,7 @@ class Translation < ApplicationRecord
   end
 
   def self.find_all_translations(query)
-    puts "find_all_translations fires"
     word_id = Word.find_by("name = ?", query.downcase).id
-    # word = Word.find_by("name = ?", query.downcase).name
     Translation.where(word_id: word_id).order(:language_name)
   end
 
