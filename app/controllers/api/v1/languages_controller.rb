@@ -54,7 +54,7 @@ module Api::V1
       end
     end
 
-    def find_all_macrofamilies
+    def find_all_macrofamily_names
       @macrofamilies = Language.select(:macrofamily).distinct.order(:macrofamily)
       render json: { message: "Macrofamilies successfully returned.", success: true, data: @macrofamilies }, status: 200
     end
