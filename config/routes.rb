@@ -4,9 +4,11 @@ Rails.application.routes.draw do
       resources :translations
       resources :languages
       resources :words
-      get '/search/translation/:word', to: 'translations#find_all_translations', as: 'find_translations_path'
-      get '/search/gender/:word', to: 'translations#find_all_genders', as: 'find_genders_path'
-      get '/search/etymology/:word', to: 'translations#find_etymology_containing', as: 'find_etymology_path'
+      get '/search/translation/:word', to: 'translations#find_all_translations'
+      get '/search/gender/:word', to: 'translations#find_all_genders'
+      get '/search/etymology/:word', to: 'translations#find_etymology_containing'
+      get '/search/grouped_etymology/:word/:macrofamily', to: 'translations#find_grouped_etymologies'
+      get '/search/all_macrofamily_names', to: 'languages#find_all_macrofamilies'
     end
   end
 end
