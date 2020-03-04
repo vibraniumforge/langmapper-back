@@ -77,13 +77,14 @@ module Api::V1
       render json: @etymologies
     end
 
-    def find_all_by_macrofamily
-      @translations = Translation.where(macrofamily: macrofamily)
+    def find_all_translations_by_macrofamily
+      @translations = Translation.find_all_translations_by_macrofamily(params[:macrofamily])
+      render json: { message: "Translations successfully returned.", success: true, data: @translations }, status: 200
     end
 
     def all_languages_by_macrofamily
-      @translations = Translation.all_by_macrofamily(macrofamily: params[:macrofamily])
-      render json: { message: "Translations successfully returned.", success: true, data: @macrofamilies }, status: 200
+      @macrofamilies = Translation.find_all_translations_by_macrofamily(macrofamily: params[:macrofamily])
+      render json: { message: "All macrofamilies successfully returned.", success: true, data: @macrofamilies }, status: 200
     end
 
     private
