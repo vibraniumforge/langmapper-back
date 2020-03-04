@@ -192,23 +192,17 @@ class Translation < ApplicationRecord
     end
     pp ety_hash
     # pp array
-    # p array
+    # pp array
     array
   end
 
   # DONE
   # all the translations in a macrofamily
   def self.find_all_translations_by_macrofamily(macrofamily)
-    # translations_array = Language.select([:id, :name, :macrofamily], Translation[:word_id, :link, :romanization, :translation, :gender, :etymology], Word[:id, :name])
-    # .joins(:translations)
-    # .where("macrofamily = ?", macrofamily)
-    # .joins(:words)
-    # .where("word_id = ?", Translation.word_id)
-    # .order(:name)
 
-    translations_array = Language.select(
+    Language.select(
       [
-        Language.arel_table[:id], Language.arel_table[:name], Language.arel_table[:family], Translation.arel_table[:translation], Translation.arel_table[:romanization], Translation.arel_table[:link], Translation.arel_table[:gender],  Translation.arel_table[:etymology], Translation.arel_table[:word_id], Word.arel_table[:id], Word.arel_table[:name]
+        Language.arel_table[:id], Language.arel_table[:name], Language.arel_table[:family], Translation.arel_table[:translation], Translation.arel_table[:romanization], Translation.arel_table[:link], Translation.arel_table[:gender], Translation.arel_table[:etymology], Translation.arel_table[:word_id], Word.arel_table[:id], Word.arel_table[:name].as('word_name')
       ]
     ).where(
       Language.arel_table[:macrofamily].eq(macrofamily)
@@ -227,10 +221,6 @@ class Translation < ApplicationRecord
     ).order(
       Language.arel_table[:family], Language.arel_table[:name]
     )
-    result = translations_array.map do |translation|
-      {id: translation.id, family: translation.family, name: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender, translation: translation.translation, etymology: translation.etymology}
-    end
-    result
   end
 
   # 
