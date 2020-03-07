@@ -58,8 +58,9 @@ module Api::V1
       end
     end
 
-    def search
-      puts "Search fires"
+    def find_all_word_names
+      @words = Word.all
+      render json: { message: "Words found.", success: true, data:  @words  }, status: 200
     end
 
     private
