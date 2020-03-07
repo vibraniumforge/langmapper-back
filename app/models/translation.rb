@@ -224,14 +224,15 @@ class Translation < ApplicationRecord
 
   # 
   # all the translations in a specified language
-  def self.all_by_lang(language)
+  def self.find_all_translations_by_language(language)
+    # language_id = Language.find_by(name: language).id
+    # arr = Translation.where(language_id: language_id).pluck(:word_id, :romanization, :etymology)
+    # result = arr.map do |translation|
+    #   [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
+    # end
+    # result
     language_id = Language.find_by(name: language).id
-    arr = Translation.where(language_id: language_id).pluck(:word_id, :romanization, :etymology)
-    result = arr.map do |translation|
-      [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
-    end
-    # pp result
-    result
+    Translation.where(language_id: language_id).order(:romanization)
   end
 
  
