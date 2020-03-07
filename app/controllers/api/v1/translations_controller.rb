@@ -52,7 +52,7 @@ module Api::V1
       if @translation.destroy
         render json: { message: "Translation successfully deleted.", success: true, data: @translation }, status: 200
       else
-        render json: { message: "Translation NOT successfully deleted.", success:false, data: @translation.errors.full_messages.join(", ") }, status: 406
+        render json: { message: "Translation NOT successfully deleted.", success: false, data: @translation.errors.full_messages.join(", ") }, status: 406
         puts "Error in delete: #{@translation.errors.full_messages.join(", ")}"
       end
     end
@@ -85,6 +85,11 @@ module Api::V1
     def all_languages_by_macrofamily
       @macrofamilies = Translation.find_all_translations_by_macrofamily(macrofamily: params[:macrofamily])
       render json: { message: "All macrofamilies successfully returned.", success: true, data: @macrofamilies }, status: 200
+    end
+
+    def find_all_translations_by_language
+      @translations = Translation.find_all_translations_by_language(params[:language])
+      render json: { message: "All translations successfully returned.", success: true, data: @translations }, status: 200
     end
 
     private
