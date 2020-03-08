@@ -2,6 +2,15 @@ class Translation < ApplicationRecord
   belongs_to :language
   belongs_to :word
 
+  validates :translation, presence: true
+  validates :link, presence: true
+
+  # t.string :translation
+  # t.string :romanization
+  # t.string :link
+  # t.string :gender
+  # # t.text :etymology
+
   require 'open-uri'
 
   def self.find(chosen_word)
@@ -24,6 +33,8 @@ class Translation < ApplicationRecord
       end
     end
 
+  
+
     puts "=================================================================="
     puts "Word: #{chosen_word}"
     puts "Definition: #{page.css("table.translations")[0].attributes["data-gloss"].value}"
@@ -32,6 +43,14 @@ class Translation < ApplicationRecord
 
     word_id = Word.find_or_create_by(name: chosen_word).id
     puts "Word ID: #{word_id}"
+
+  
+    
+    # English 
+
+    etymology_eng = page.css("span#Etymology")[0].parent.next_element.text
+
+     Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_eng, gender: nil })
 
     # NEED: language_id, word_id, translation, romanization, full_link_eng, etymology, gender 
 
@@ -118,7 +137,7 @@ class Translation < ApplicationRecord
       puts "#{index+1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
       puts "\n"
       puts "====================="
-      Translation.create({language_id: language_id, word_id: word_id, language_name: language_name, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
+      Translation.create({language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
 
     end
     t2 = Time.now
@@ -231,7 +250,7 @@ class Translation < ApplicationRecord
     #   [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
     # end
     # result
-    language_id = Language.find_by(name: language).id
+    language_id = Language.find_by(name: language.capitalize).id
     Translation.where(language_id: language_id).order(:romanization)
   end
 
