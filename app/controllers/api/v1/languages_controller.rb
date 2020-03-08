@@ -28,9 +28,11 @@ module Api::V1
     end
 
     def edit
+      find_language
     end
 
     def update
+      find_language
       if @language.nil?
         puts "Language not found"
         render json: { message: "Language not found", success: false }, status: 406
@@ -46,6 +48,7 @@ module Api::V1
     end
 
     def destroy
+      find_language
       if @language.destroy
         render json: { message: "Language successfully deleted.", success: true, data: @language }, status: 200
       else 
@@ -57,6 +60,16 @@ module Api::V1
     def find_all_macrofamily_names
       @macrofamilies = Language.select(:macrofamily).distinct.order(:macrofamily)
       render json: { message: "Macrofamilies successfully returned.", success: true, data: @macrofamilies }, status: 200
+    end
+
+    def find_all_alphabets
+      @alphabets = Language.select(:alphabet).distinct.pluck(:alphabet)
+      render json: { message: "Alphabets successfully returned.", success: true, data: @alphabets }, status: 200
+    end
+
+    def language_count
+      @languages = Language.count
+      render json: { message: "Languages count successfully returned.", success: true, data: @languages }, status: 200
     end
 
     private
