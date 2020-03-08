@@ -18,14 +18,13 @@ module Api::V1
       @word = Word.new(word_params)
       if @word.save
         puts "=> Word saved"
-        render json: { message: "Word successfully saved.", success: true, data: @translation }, status: 200
+        render json: { message: "Word successfully saved.", success: true, data: @word }, status: 200
         Translation.find(@word.name)
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
         render json: { message: "Word NOT saved because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
       end
-      
     end
 
     def edit
@@ -58,9 +57,14 @@ module Api::V1
       end
     end
 
-    def find_all_word_names
+    def find_all_words
       @words = Word.all
-      render json: { message: "Words found.", success: true, data:  @words  }, status: 200
+      render json: { message: "Words successfully returned.", success: true, data: @words }, status: 200
+    end
+
+    def word_count
+      @count = Word.count
+      render json: { message: "Word count returned.", success: true, data: @count }, status: 200
     end
 
     private
