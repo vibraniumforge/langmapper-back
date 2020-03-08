@@ -10,8 +10,8 @@ class CreateLanguages < ActiveRecord::Migration[6.0]
       t.string :area
       t.string :area2
       t.string :area3
-      t.string :notes
-      t.string :alive
+      t.text :notes
+      t.boolean :alive
 
       t.timestamps
     end
