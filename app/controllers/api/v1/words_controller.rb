@@ -15,6 +15,11 @@ module Api::V1
     end
 
     def create
+      if find_word_by_name
+        puts "=> Word already exists."
+        render json: { message: "Word already exists.", success: true, data: @word_by_name }, status: 200
+        return
+      end
       @word = Word.new(word_params)
       if @word.save
         puts "=> Word saved"
@@ -71,6 +76,10 @@ module Api::V1
 
     def find_word
       @word = Word.find(params[:id])
+    end
+
+    def find_word_by_name
+      @word_by_name = Word.find_by(name: params[:name])
     end
 
     def word_params
