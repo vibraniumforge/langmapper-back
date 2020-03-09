@@ -9,8 +9,33 @@ class Translation < ApplicationRecord
 
   def self.find(chosen_word)
     t1 = Time.now
-    page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
 
+    query_page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
+
+    etymology_english = query_page.css("[id^='Etymology']")[0].parent.next_element.text
+    word_id = Word.find_or_create_by(name: chosen_word).id
+
+    Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
+
+
+     # layout2 = page.find("#{chosen_word}/translations § Noun")
+    path1 = query_page.xpath('//a[contains(text(), "/translations § Noun")]')
+    path2 = query_page.xpath('//a[contains(text(), "/translations#Noun")]')
+    if path1.length > 0
+      layout_path = path1[0]["href"]
+    else
+      layout_path = path2[0]["href"]
+    end
+
+    if layout_path.length > 0
+      puts "if fires"
+      # layout_alt = query_page.xpath('//a[contains(text(), "/translations § Noun")]')[0]["href"]
+      page = Nokogiri::HTML(open("https://en.wiktionary.org#{layout_path}"))
+    else
+      puts " => else fires"
+      page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
+    end
+     
     first_table1 = page.css("td.translations-cell")[0].children.children
     second_table1 = page.css("td.translations-cell")[1].children.children
     
@@ -27,22 +52,17 @@ class Translation < ApplicationRecord
       end
     end
 
-  
-
     puts "=================================================================="
     puts "Word: #{chosen_word}"
     puts "Definition: #{page.css("table.translations")[0].attributes["data-gloss"].value}"
     puts "Li Count: #{all_li_array.count}"
-
-    word_id = Word.find_or_create_by(name: chosen_word).id
+    # word_id = Word.find_or_create_by(name: chosen_word).id
     puts "Word ID: #{word_id}"
 
-    # English 
-
+    # English moved to above
     # etymology_eng = page.css("span#Etymology")[0].parent.next_element.text
-    etymology_eng = page.css("[id^='Etymology']")[0].parent.next_element.text
-
-     Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_eng, gender: nil })
+    # etymology_english = page.css("[id^='Etymology']")[0].parent.next_element.text
+    #  Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
 
     # NEED: language_id, word_id, translation, romanization, full_link_eng, etymology, gender 
 
