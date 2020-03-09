@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 3) do
     t.string "area"
     t.string "area2"
     t.string "area3"
-    t.string "notes"
-    t.string "alive"
+    t.text "notes"
+    t.boolean "alive"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -34,12 +34,11 @@ ActiveRecord::Schema.define(version: 3) do
   create_table "translations", force: :cascade do |t|
     t.integer "language_id", null: false
     t.integer "word_id", null: false
-    t.string "language_name"
     t.string "translation"
     t.string "romanization"
     t.string "link"
     t.string "gender"
-    t.string "etymology"
+    t.text "etymology"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
