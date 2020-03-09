@@ -20,7 +20,7 @@ Language.create({name: "Low Saxon", abbreviation: "nds", alphabet: "Latn", macro
 
 Language.create({name: "German", abbreviation: "de", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
 Language.create({name: "Bavarian", abbreviation: "bar", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
-Language.create({name: "Alemanic", abbreviation: "gsw", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
+Language.create({name: "Alemannic German", abbreviation: "gsw", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
 
 
 Language.create({name: "Swedish", abbreviation: "sv", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "North Germanic", area: "Europe", area2: "North Europe", area3: "Scandanavia", notes: "", alive: true })
@@ -104,7 +104,7 @@ Language.create({name: "Indonesian", abbreviation: "id", alphabet: "Latn", macro
 Language.create({name: "Tagalog", abbreviation: "tl", alphabet: "Latn", macrofamily: "Austronesian", family: "", subfamily: "", area: "Southeast Asia", area2: "", area3: "", notes: "", alive: true })
 
 # Sino-Tibetan
-Language.create({name: "Mandarin Chinese", abbreviation: "cmn", alphabet: "Hani", macrofamily: "Sino-Tibetan", family: "", subfamily: "", area: "East Asia", area2: "", area3: "", notes: "", alive: true })
+Language.create({name: "Chinese", abbreviation: "cmn", alphabet: "Hani", macrofamily: "Sino-Tibetan", family: "", subfamily: "", area: "East Asia", area2: "", area3: "", notes: "", alive: true })
 Language.create({name: "Tibetan", abbreviation: "bo", alphabet: "Tibt", macrofamily: "Sino-Tibetan", family: "", subfamily: "", area: "South Asia", area2: "", area3: "", notes: "", alive: true })
 Language.create({name: "Burmese", abbreviation: "my", alphabet: "Mymr", macrofamily: "Sino-Tibetan", family: "", subfamily: "", area: "Southeast Asia", area2: "", area3: "", notes: "", alive: true })
 
