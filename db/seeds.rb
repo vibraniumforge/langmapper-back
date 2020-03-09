@@ -37,7 +37,7 @@ Language.create({name: "Italian", abbreviation: "it", alphabet: "Latn", macrofam
 Language.create({name: "Romanian", abbreviation: "ro", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Eastern Romance", area: "Europe", area2: "East Europe", area3: "", notes: "", alive: true })
 Language.create({name: "Catalan", abbreviation: "ca", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Western Romance", area: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
 Language.create({name: "Occitan", abbreviation: "oc", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Western Romance", area: "Europe", area2: "Western Europe", area3: "France", notes: "", alive: true })
-Language.create({name: "Romansh", abbreviation: "rm", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Western Romance", area: "Europe", area2: "Western Europe", area3: "France", notes: "Switzerland", alive: true })
+Language.create({name: "Romansch", abbreviation: "rm", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Western Romance", area: "Europe", area2: "Western Europe", area3: "France", notes: "Switzerland", alive: true })
 Language.create({name: "Sardinian", abbreviation: "sc", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Eastern Romance", area: "Europe", area2: "Western Europe", area3: "Italy", notes: "", alive: true })
 Language.create({name: "Franco-Provençal", abbreviation: "frp", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Western Romance", area: "Europe", area2: "Western Europe", area3: "France", notes: "", alive: true })
 Language.create({name: "Friulian", abbreviation: "fur", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Western Romance", area: "Europe", area2: "Central Europe", area3: "Italy", notes: "", alive: true })
@@ -55,7 +55,7 @@ Language.create({name: "Breton", abbreviation: "br", alphabet: "Latn", macrofami
 
 # Slavic
 Language.create({name: "Russian", abbreviation: "ru", alphabet: "Cyrl", macrofamily: "Indo-European", family: "Slavic", subfamily: "East Slavic", area: "Europe", area2: "East Europe", area3: "", notes: "", alive: true })
-Language.create({name: "Ukranian", abbreviation: "uk", alphabet: "Cyrl", macrofamily: "Indo-European", family: "Slavic", subfamily: "East Slavic", area: "Europe", area2: "East Europe", area3: "", notes: "", alive: true })
+Language.create({name: "Ukrainian", abbreviation: "uk", alphabet: "Cyrl", macrofamily: "Indo-European", family: "Slavic", subfamily: "East Slavic", area: "Europe", area2: "East Europe", area3: "", notes: "", alive: true })
 Language.create({name: "Belarusian", abbreviation: "be", alphabet: "Cyrl", macrofamily: "Indo-European", family: "Slavic", subfamily: "East Slavic", area: "Europe", area2: "East Europe", area3: "", notes: "", alive: true })
 
 Language.create({name: "Polish", abbreviation: "pl", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
