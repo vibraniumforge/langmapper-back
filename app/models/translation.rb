@@ -5,12 +5,6 @@ class Translation < ApplicationRecord
   validates :translation, presence: true
   validates :link, presence: true
 
-  # t.string :translation
-  # t.string :romanization
-  # t.string :link
-  # t.string :gender
-  # # t.text :etymology
-
   require 'open-uri'
 
   def self.find(chosen_word)
@@ -38,17 +32,15 @@ class Translation < ApplicationRecord
     puts "=================================================================="
     puts "Word: #{chosen_word}"
     puts "Definition: #{page.css("table.translations")[0].attributes["data-gloss"].value}"
-
     puts "Li Count: #{all_li_array.count}"
 
     word_id = Word.find_or_create_by(name: chosen_word).id
     puts "Word ID: #{word_id}"
 
-  
-    
     # English 
 
-    etymology_eng = page.css("span#Etymology")[0].parent.next_element.text
+    # etymology_eng = page.css("span#Etymology")[0].parent.next_element.text
+    etymology_eng = page.css("[id^='Etymology']")[0].parent.next_element.text
 
      Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_eng, gender: nil })
 
@@ -76,15 +68,7 @@ class Translation < ApplicationRecord
         translation = nil
       end
 
-      # old one didnt work for serbo-croat
-      # if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
-      #   translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
-      # else
-      #   translation = nil
-      # end
-
       if !li.css("span.tr.Latn")[0].nil?
-        # romanization = li.css("span.tr.Latn")[0].children[0].text 
         romanization = li.css("span.Latn")[0].text 
       else
         romanization = translation
@@ -131,18 +115,25 @@ class Translation < ApplicationRecord
         etymology = nil
       end
 
-      language_id = Language.find_or_create_by(name: language_name).id
-      puts "\n"
-      puts "language_id: #{language_id}"
-      puts "#{index+1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
-      puts "\n"
-      puts "====================="
-      Translation.create({language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
+      language_id = Language.find_or_create_by!(name: language_name).id
+
+      @translation = Translation.new({language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
+
+      if @translation.save
+        puts "\n"
+        puts "language_id: #{language_id}"
+        puts "#{index+1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
+        puts "\n"
+        puts "====================="
+      else
+        puts "Translation not saved for #{language_name}"
+        puts "Errors= #{@translation.errors.full_messages.join(", ")}" 
+      end
 
     end
     t2 = Time.now
     time = t2 - t1
-    puts "====================="
+    puts "+++++++++++++++++++++"
     puts "\nDONE \n"
     puts "Count: #{all_li_array.count}"
     puts "in #{time.round(2)} seconds"
@@ -154,32 +145,33 @@ class Translation < ApplicationRecord
   # Find all translations of a word in All languages
   def self.find_all_translations(query)
     word_id = Word.find_by("name = ?", query.downcase).id
-    Translation.where(word_id: word_id).order(:language_name)
-  end
-
- # DONE
-  # genreate a hash of [{:id=>48, :family=>"Albanian", :language=>"Albanian", :romanization=>"patë", :link=> "www.",:gender=>"f"}]
-  def self.find_all_genders(word, macrofamily="Indo-European")
-    word_id = Word.find_by(name: word.downcase).id
-    translations_array = Language.select(
-      [:id, :family, :name, :romanization, :link, :gender])
-      .joins(:translations)
-      .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
-      .order(:family, :name)
-    result = translations_array.map do |translation|
-      {id: translation.id, family: translation.family, language: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender}
-    end
-    pp result
-    result
+    # Translation.where(word_id: word_id).order(:language_name)
+    Translation.joins(:language).where(word_id: word_id).order(:name)
   end
 
   # DONE
-  # etymologies with a that have the query word inside.
+  # all translations of a WORD in a MACROFAMILY.
+  def self.find_all_genders(word, macrofamily="Indo-European")
+    word_id = Word.find_by(name: word.downcase).id
+    # translations_array = Language.select(
+    #   [:id, :family, :name, :romanization, :link, :gender])
+    #   .joins(:translations)
+    #   .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
+    #   .order(:family, :name)
+    # result = translations_array.map do |translation|
+    #   {id: translation.id, family: translation.family, language: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender}
+    # end
+    # pp result
+    # result
+ 
+    Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family, :name)
+  end
+
+  # etymologies that contain the query word inside.
   def self.ety_query(query)
     Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
   end
 
-  # DONE
   # make a hash group by etymology
   def self.find_grouped_etymologies(query, macrofamily="Indo-European")
     array = []
@@ -215,30 +207,33 @@ class Translation < ApplicationRecord
   end
 
   # DONE
-  # all the translations in a macrofamily
+  # all the translations of EVERY WORD in a macrofamily
   def self.find_all_translations_by_macrofamily(macrofamily)
 
-    Language.select(
-      [
-        Language.arel_table[:id], Language.arel_table[:name], Language.arel_table[:family], Translation.arel_table[:translation], Translation.arel_table[:romanization], Translation.arel_table[:link], Translation.arel_table[:gender], Translation.arel_table[:etymology], Translation.arel_table[:word_id], Word.arel_table[:id], Word.arel_table[:name].as('word_name')
-      ]
-    ).where(
-      Language.arel_table[:macrofamily].eq(macrofamily)
-    ).joins(
-      Language.arel_table.join(Translation.arel_table).on(
-        Arel::Nodes::Group.new(
-          Language.arel_table[:id].eq(Translation.arel_table[:language_id])
-        )
-      ).join_sources
-    ).joins(
-      Language.arel_table.join(Word.arel_table).on(
-        Arel::Nodes::Group.new(
-          Word.arel_table[:id].eq(Translation.arel_table[:word_id])
-        )
-      ).join_sources
-    ).order(
-      Language.arel_table[:family], Language.arel_table[:name]
-    )
+    # Language.select(
+    #   [
+    #     Language.arel_table[:id], Language.arel_table[:name], Language.arel_table[:family], Translation.arel_table[:translation], Translation.arel_table[:romanization], Translation.arel_table[:link], Translation.arel_table[:gender], Translation.arel_table[:etymology], Translation.arel_table[:word_id], Word.arel_table[:id], Word.arel_table[:name].as('word_name')
+    #   ]
+    # ).where(
+    #   Language.arel_table[:macrofamily].eq(macrofamily)
+    # ).joins(
+    #   Language.arel_table.join(Translation.arel_table).on(
+    #     Arel::Nodes::Group.new(
+    #       Language.arel_table[:id].eq(Translation.arel_table[:language_id])
+    #     )
+    #   ).join_sources
+    # ).joins(
+    #   Language.arel_table.join(Word.arel_table).on(
+    #     Arel::Nodes::Group.new(
+    #       Word.arel_table[:id].eq(Translation.arel_table[:word_id])
+    #     )
+    #   ).join_sources
+    # ).order(
+    #   Language.arel_table[:family], Language.arel_table[:name]
+    # )
+
+    Translation.joins(:language, :word).where("macrofamily = ?", macrofamily).order(:family, :name)
+
   end
 
   # 
@@ -253,10 +248,5 @@ class Translation < ApplicationRecord
     language_id = Language.find_by(name: language.capitalize).id
     Translation.where(language_id: language_id).order(:romanization)
   end
-
- 
-
-
- 
 
 end
