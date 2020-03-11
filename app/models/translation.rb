@@ -21,13 +21,15 @@ class Translation < ApplicationRecord
      # layout2 = page.find("#{chosen_word}/translations § Noun")
     path1 = query_page.xpath('//a[contains(text(), "/translations § Noun")]')
     path2 = query_page.xpath('//a[contains(text(), "/translations#Noun")]')
+
     if path1.length > 0
       layout_path = path1[0]["href"]
-    else
+    end
+    if path2.length > 0
       layout_path = path2[0]["href"]
     end
 
-    if layout_path.length > 0
+    if !layout_path.nil?
       puts "if fires"
       # layout_alt = query_page.xpath('//a[contains(text(), "/translations § Noun")]')[0]["href"]
       page = Nokogiri::HTML(open("https://en.wiktionary.org#{layout_path}"))
@@ -52,12 +54,16 @@ class Translation < ApplicationRecord
       end
     end
 
+    definition = page.css("table.translations")[0].attributes["data-gloss"].value
+
     puts "=================================================================="
     puts "Word: #{chosen_word}"
-    puts "Definition: #{page.css("table.translations")[0].attributes["data-gloss"].value}"
+    puts "Definition: #{definition}"
     puts "Li Count: #{all_li_array.count}"
     # word_id = Word.find_or_create_by(name: chosen_word).id
     puts "Word ID: #{word_id}"
+
+    errors_ar = []
 
     # English moved to above
     # etymology_eng = page.css("span#Etymology")[0].parent.next_element.text
@@ -113,8 +119,10 @@ class Translation < ApplicationRecord
         end
       end
       # "https://en.wiktionary.org/wiki/goud#Afrikaans" || nil
+
       language_name_span_id = language_name.split(" ").join("_")
       # format the name to the wiktionary style
+
       if !etymology_page.nil? && etymology_page.css("[id=#{language_name_span_id}]").length > 0 && etymology_page.css("[id^='Etymology']").length > 0
         # if the page exists, and the page has the language on it, and there is an etymology element
         current_element = etymology_page.css("[id=#{language_name_span_id}]")[0]&.parent.next_element
@@ -122,9 +130,9 @@ class Translation < ApplicationRecord
         while !current_element.nil? && current_element.name != "h2"
           if current_element.name == "h3" && current_element.text.include?("Etymology") && !current_element.next_element.text.include?("(This etymology is missing or incomplete.")
             # usually it is a h3 with etymology, then the next p tag that has the etymology. But not always. This gets the h3 tag, and loops until it finds the p tag, THEN takes the value.
-          while current_element.name != "p"
-            current_element = current_element.next_element
-          end
+            while !current_element.nil? && current_element.name != "p" && current_element.name != "div" 
+              current_element = current_element.next_element
+            end
             etymology = current_element.text.strip
             break
           end
@@ -138,24 +146,31 @@ class Translation < ApplicationRecord
 
       @translation = Translation.new({language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
 
-      if @translation.save
+     
+
+      if !full_link_eng.nil? && @translation.save
         puts "\n"
         puts "language_id: #{language_id}"
         puts "#{index+1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
         puts "\n"
-        puts "====================="
+        puts "==================================================="
+        puts "\n"
       else
         puts "Translation not saved for #{language_name}"
         puts "Errors= #{@translation.errors.full_messages.join(", ")}" 
+        errors_ar << @translation.errors.full_messages
+        errors_ar << language_name
+
       end
 
     end
     t2 = Time.now
     time = t2 - t1
     puts "+++++++++++++++++++++"
-    puts "\nDONE \n"
-    puts "Count: #{all_li_array.count}"
+    puts "\nDONE with <<< #{chosen_word}, #{definition} >>> \n"
+    puts "Count: #{all_li_array.count} entries"
     puts "in #{time.round(2)} seconds"
+    p errors_ar
   end
 
   # # # # # # # # # # 
