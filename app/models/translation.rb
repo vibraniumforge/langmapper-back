@@ -104,7 +104,7 @@ class Translation < ApplicationRecord
 
       if !short_link_eng.nil?
         full_link_eng = 'https://en.wiktionary.org' << short_link_eng
-        if language_name.include?("'")
+        if language_name.include?("'") || language_name.include?("(")
           etymology_page = nil
         elsif full_link_eng.ascii_only? && !full_link_eng.include?("&action=edit")
           etymology_page = Nokogiri::HTML(open(full_link_eng))
@@ -113,7 +113,6 @@ class Translation < ApplicationRecord
         end
       end
       # "https://en.wiktionary.org/wiki/goud#Afrikaans" || nil
-      
       language_name_span_id = language_name.split(" ").join("_")
       # format the name to the wiktionary style
       if !etymology_page.nil? && etymology_page.css("[id=#{language_name_span_id}]").length > 0 && etymology_page.css("[id^='Etymology']").length > 0
@@ -197,7 +196,6 @@ class Translation < ApplicationRecord
     array = []
     ety_hash = Hash.new{|k, v|}
     word_id = Word.find_by("name = ?", query.downcase).id
-    word = Word.find_by("name = ?", query.downcase).name
     translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
       .joins(:translations)
       .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
@@ -252,8 +250,7 @@ class Translation < ApplicationRecord
     #   Language.arel_table[:family], Language.arel_table[:name]
     # )
 
-    Translation.joins(:language, :word).where("macrofamily = ?", macrofamily).order(:family, :name)
-
+    Translation.joins(:language).where("macrofamily = ?", macrofamily).order(:family, :name)
   end
 
   # 
@@ -265,7 +262,7 @@ class Translation < ApplicationRecord
     #   [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
     # end
     # result
-    language_id = Language.find_by(name: language.capitalize).id
+    language_id = Language.find_by(name: language.titleize).id
     Translation.where(language_id: language_id).order(:romanization)
   end
 
