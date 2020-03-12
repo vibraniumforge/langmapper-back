@@ -175,7 +175,6 @@ class Translation < ApplicationRecord
 
   # # # # # # # # # # 
   
-  # DONE
   # Find all translations of a word in All languages
   def self.find_all_translations(query)
     word_id = Word.find_by("name = ?", query.downcase).id
@@ -183,7 +182,6 @@ class Translation < ApplicationRecord
     Translation.joins(:language).where(word_id: word_id).order(:name)
   end
 
-  # DONE
   # all translations of a WORD in a MACROFAMILY.
   def self.find_all_genders(word, macrofamily="Indo-European")
     word_id = Word.find_by(name: word.downcase).id
@@ -239,7 +237,6 @@ class Translation < ApplicationRecord
     array
   end
 
-  # DONE
   # all the translations of EVERY WORD in a macrofamily
   def self.find_all_translations_by_macrofamily(macrofamily)
 
@@ -265,10 +262,10 @@ class Translation < ApplicationRecord
     #   Language.arel_table[:family], Language.arel_table[:name]
     # )
 
-    Translation.joins(:language).where("macrofamily = ?", macrofamily).order(:family, :name)
+    Translation.joins(:word, :language).select("translations.*, languages.*, words.name as word_name").where("macrofamily = ?", macrofamily).order(:family, :name)
   end
 
-  # 
+
   # all the translations in a specified language
   def self.find_all_translations_by_language(language)
     # language_id = Language.find_by(name: language).id
@@ -278,7 +275,7 @@ class Translation < ApplicationRecord
     # end
     # result
     language_id = Language.find_by(name: language.titleize).id
-    Translation.where(language_id: language_id).order(:romanization)
+    Translation.joins(:word).select("translations.*, words.name").where("language_id = ?", language_id).order(:romanization)
   end
 
 end
