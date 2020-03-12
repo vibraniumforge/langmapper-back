@@ -7,7 +7,7 @@ class CreateLanguages < ActiveRecord::Migration[6.0]
       t.string :macrofamily
       t.string :family
       t.string :subfamily
-      t.string :area
+      t.string :area1
       t.string :area2
       t.string :area3
       t.text :notes
