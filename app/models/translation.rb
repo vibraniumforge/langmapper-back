@@ -146,7 +146,6 @@ class Translation < ApplicationRecord
 
       @translation = Translation.new({language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
 
-     
 
       if !full_link_eng.nil? && @translation.save
         puts "\n"
@@ -160,9 +159,7 @@ class Translation < ApplicationRecord
         puts "Errors= #{@translation.errors.full_messages.join(", ")}" 
         errors_ar << @translation.errors.full_messages
         errors_ar << language_name
-
       end
-
     end
     t2 = Time.now
     time = t2 - t1
@@ -173,7 +170,7 @@ class Translation < ApplicationRecord
     p errors_ar
   end
 
-  # # # # # # # # # # 
+  # # # # # # # # # # # # # # # # # # # # 
   
   # Find all translations of a word in All languages
   def self.find_all_translations(query)
