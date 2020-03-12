@@ -60,7 +60,7 @@ Has alternate layout with See ""/translations § Noun.
 
 - [ ] Day
 
-BROKEN
+WAS BROKEN
 
 - [ ] Duck
 - [ ] Dog - Leti Indonesia
