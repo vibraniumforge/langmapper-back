@@ -209,9 +209,68 @@ Language.create({name: "Proto-Turkic", abbreviation: "", alphabet: "Latn", macro
 
 Language.create({name: "Proto-Austro-Asiatic", abbreviation: "", alphabet: "Latn", macrofamily: "Austro-Asiatic", family: "", subfamily: "", area: "", area2: "", area3: "", notes: "", alive: false })
 
-# Word.create({ name: "" })
+# Word.create({ name: "Gold" })
+# Word.create({ name: "Silver" })
+# Word.create({ name: "Iron" })
+# Word.create({ name: "Copper" })
+# Word.create({ name: "Tin" })
+# Word.create({ name: "Lead" })
+# Word.create({ name: "Mercury" })
+# Word.create({ name: "Salt" })
 
-# Translation.create({language_id: Language.find_by(abbreviation: "").id, word_id: Word.find_by(name: "").id, translation: "", romanization: "", link: "", etymology: "", gender: "" })
+# Word.create({ name: "Swan" })
+# Word.create({ name: "Goose" })
+# Word.create({ name: "Wolf" })
+# Word.create({ name: "Horse" })
+# Word.create({ name: "Cow" })
+# Word.create({ name: "Sheep" })
+# Word.create({ name: "Mouse" })
+# Word.create({ name: "Pig" })
+# Word.create({ name: "Fox" })
+# Word.create({ name: "Bear" })
+# Word.create({ name: "Duck" })
+# Word.create({ name: "Dog" })
+# Word.create({ name: "Snake" })
+# Word.create({ name: "Weasel" })
+
+# Word.create({ name: "Honey" })
+# Word.create({ name: "Apple" })
+# Word.create({ name: "Milk" })
+
+# Word.create({ name: "Tree" })
+
+# Word.create({ name: "Snow" })
+# Word.create({ name: "Rain" })
+# Word.create({ name: "Wind" })
+# Word.create({ name: "Ice" })
+# Word.create({ name: "Frost" })
+
+# Word.create({ name: "Tongue" })
+# Word.create({ name: "Tooth" })
+# Word.create({ name: "Ear" })
+# Word.create({ name: "Eye" })
+# Word.create({ name: "Nose" })
+# Word.create({ name: "Hand" })
+# Word.create({ name: "Leg" })
+
+# Word.create({ name: "Wheel" })
+
+# Word.create({ name: "Dawn" })
+# Word.create({ name: "Night" })
+# Word.create({ name: "Day" })
+
+# Word.create({ name: "Sun" })
+# Word.create({ name: "Moon" })
+# Word.create({ name: "Star" })
+# Word.create({ name: "Sky" })
+
+
+# Word.create({ name: "Winter" })
+# Word.create({ name: "Spring" })
+# Word.create({ name: "Summer" })
+# Word.create({ name: "Autumn" })
+
+# Translation.create({language_id: Language.find_by(name: "").id, word_id: Word.find_by(name: "").id, translation: "", romanization: "", link: "", etymology: "", gender: "" })
 
 
 
