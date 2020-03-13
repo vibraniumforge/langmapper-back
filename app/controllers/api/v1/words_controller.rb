@@ -1,7 +1,6 @@
 module Api::V1
   class WordsController < ApplicationController
-
-    def index 
+    def index
       @words = Word.all
       render json: @words
     end
@@ -57,10 +56,12 @@ module Api::V1
       if @word.destroy
         render json: { message: "Word successfully deleted.", success: true, data: @word }, status: 200
       else
-        render json: { message: "Word NOT successfully deleted.", success:false, data: @word.errors.full_messages.join(", ") }, status: 406
+        render json: { message: "Word NOT successfully deleted.", success: false, data: @word.errors.full_messages.join(", ") }, status: 406
         puts "Error in delete: #{@word.errors.full_messages.join(", ")}"
       end
     end
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     def find_all_words
       @words = Word.all
@@ -85,6 +86,5 @@ module Api::V1
     def word_params
       params.require(:word).permit(:name)
     end
-      
   end
 end
