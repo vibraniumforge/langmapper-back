@@ -56,7 +56,7 @@ module Api::V1
       end
     end
 
-    # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     def find_all_macrofamily_names
       @macrofamilies = Language.select(:macrofamily).distinct.order(:macrofamily).pluck(:macrofamily)
@@ -66,11 +66,6 @@ module Api::V1
     def find_all_alphabets
       @alphabets = Language.select(:alphabet).distinct.pluck(:alphabet)
       render json: { message: "Alphabets successfully returned.", success: true, data: @alphabets }, status: 200
-    end
-
-    def language_count
-      @languages = Language.count
-      render json: { message: "Languages count successfully returned.", success: true, data: @languages }, status: 200
     end
 
     def find_all_languages_by_area
@@ -86,6 +81,11 @@ module Api::V1
       @areas_ar << Language.select(:area3).distinct.pluck(:area3)
       @areas = @areas_ar.flatten.compact.uniq.sort
       render json: { message: "Language areas successfully returned.", success: true, data: @areas }, status: 200
+    end
+
+    def language_count
+      @languages = Language.count
+      render json: { message: "Languages count successfully returned.", success: true, data: @languages }, status: 200
     end
 
     private
