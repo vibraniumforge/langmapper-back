@@ -1,7 +1,6 @@
 module Api::V1
   class TranslationsController < ApplicationController
-
-    def index 
+    def index
       @translations = Translation.all
       render json: @translations
     end
@@ -57,6 +56,8 @@ module Api::V1
       end
     end
 
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
     def find_all_translations
       @translations = Translation.find_all_translations(params[:word])
       render json: @translations
@@ -79,7 +80,7 @@ module Api::V1
 
     def find_all_translations_by_macrofamily
       @translations = Translation.find_all_translations_by_macrofamily(params[:macrofamily])
-      render json: { message: "Translations successfully returned.", success: true, data: @translations }, status: 200
+      render json: { message: "Translations by macrofamily successfully returned.", success: true, data: @translations }, status: 200
     end
 
     def all_languages_by_macrofamily
@@ -89,7 +90,12 @@ module Api::V1
 
     def find_all_translations_by_language
       @translations = Translation.find_all_translations_by_language(params[:language])
-      render json: { message: "All translations successfully returned.", success: true, data: @translations }, status: 200
+      render json: { message: "Translations by language successfully returned.", success: true, data: @translations }, status: 200
+    end
+
+    def find_all_translations_by_area
+      @translations = Translation.find_all_translations_by_area(params[:location], params[:word])
+      render json: { message: "Translations by area successfully returned.", success: true, data: @translations }, status: 200
     end
 
     def translation_count
@@ -106,6 +112,5 @@ module Api::V1
     def translation_params
       params.require(:translation).permit(:translation, :romanization, :link, :gender, :etymology)
     end
-
   end
 end
