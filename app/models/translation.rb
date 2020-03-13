@@ -8,7 +8,7 @@ class Translation < ApplicationRecord
 
   require "open-uri"
 
-  def self.find(chosen_word)
+  def self.find_info(chosen_word)
     t1 = Time.now
 
     query_page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
@@ -88,7 +88,7 @@ class Translation < ApplicationRecord
       # fix serbo-croat here
 
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
-        translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
+        translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "").gsub(/\(please verify\)/, "").strip
       else
         translation = nil
       end
@@ -180,16 +180,6 @@ class Translation < ApplicationRecord
   # all translations of a WORD in a MACROFAMILY.
   def self.find_all_genders(word, macrofamily = "Indo-European")
     word_id = Word.find_by(name: word.downcase).id
-    # translations_array = Language.select(
-    #   [:id, :family, :name, :romanization, :link, :gender])
-    #   .joins(:translations)
-    #   .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
-    #   .order(:family, :name)
-    # result = translations_array.map do |translation|
-    #   {id: translation.id, family: translation.family, language: translation.name, romanization: translation.romanization, link: translation.link, gender: translation.gender}
-    # end
-    # pp result
-    # result
 
     Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family, :name)
   end
@@ -234,29 +224,6 @@ class Translation < ApplicationRecord
 
   # all the translations of EVERY WORD in a macrofamily
   def self.find_all_translations_by_macrofamily(macrofamily)
-
-    # Language.select(
-    #   [
-    #     Language.arel_table[:id], Language.arel_table[:name], Language.arel_table[:family], Translation.arel_table[:translation], Translation.arel_table[:romanization], Translation.arel_table[:link], Translation.arel_table[:gender], Translation.arel_table[:etymology], Translation.arel_table[:word_id], Word.arel_table[:id], Word.arel_table[:name].as('word_name')
-    #   ]
-    # ).where(
-    #   Language.arel_table[:macrofamily].eq(macrofamily)
-    # ).joins(
-    #   Language.arel_table.join(Translation.arel_table).on(
-    #     Arel::Nodes::Group.new(
-    #       Language.arel_table[:id].eq(Translation.arel_table[:language_id])
-    #     )
-    #   ).join_sources
-    # ).joins(
-    #   Language.arel_table.join(Word.arel_table).on(
-    #     Arel::Nodes::Group.new(
-    #       Word.arel_table[:id].eq(Translation.arel_table[:word_id])
-    #     )
-    #   ).join_sources
-    # ).order(
-    #   Language.arel_table[:family], Language.arel_table[:name]
-    # )
-
     Translation.joins(:word, :language).select("translations.*, languages.*, words.name as word_name").where("macrofamily = ?", macrofamily).order(:family, :name)
   end
 
@@ -275,6 +242,6 @@ class Translation < ApplicationRecord
   # find all the translations that inclue the location in area1, area2, area3.
   def self.find_all_translations_by_area(location, word)
     word_id = Word.find_by(name: word.downcase).id
-    Translation.joins(:language, :word).select("translations.*, languages.*, words.name").where("area = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+    Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
   end
 end
