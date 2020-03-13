@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Translation < ApplicationRecord
   belongs_to :language
   belongs_to :word
@@ -5,7 +6,7 @@ class Translation < ApplicationRecord
   validates :translation, presence: true
   validates :link, presence: true
 
-  require 'open-uri'
+  require "open-uri"
 
   def self.find(chosen_word)
     t1 = Time.now
@@ -15,10 +16,9 @@ class Translation < ApplicationRecord
     etymology_english = query_page.css("[id^='Etymology']")[0].parent.next_element.text
     word_id = Word.find_or_create_by(name: chosen_word).id
 
-    Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
+    Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
 
-
-     # layout2 = page.find("#{chosen_word}/translations § Noun")
+    # layout2 = page.find("#{chosen_word}/translations § Noun")
     path1 = query_page.xpath('//a[contains(text(), "/translations § Noun")]')
     path2 = query_page.xpath('//a[contains(text(), "/translations#Noun")]')
 
@@ -37,11 +37,11 @@ class Translation < ApplicationRecord
       puts " => else fires"
       page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
     end
-     
+
     first_table1 = page.css("td.translations-cell")[0].children.children
     second_table1 = page.css("td.translations-cell")[1].children.children
-    
-    all_li_array =[]
+
+    all_li_array = []
     first_table1.each do |item|
       if item.to_s != "\n"
         all_li_array << item
@@ -70,32 +70,31 @@ class Translation < ApplicationRecord
     # etymology_english = page.css("[id^='Etymology']")[0].parent.next_element.text
     #  Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
 
-    # NEED: language_id, word_id, translation, romanization, full_link_eng, etymology, gender 
+    # NEED: language_id, word_id, translation, romanization, full_link_eng, etymology, gender
 
     all_li_array.each_with_index do |li, index|
-
       etymology = nil
 
       language_name = li.text.split(":")[0]
 
       # if ['Azerbaijani', 'Chinese'].include?(language_name)
-  
+
       if li.css("span.gender")[0]&.text
-        gender = li.css("span.gender")[0].text 
-      else 
+        gender = li.css("span.gender")[0].text
+      else
         gender = nil
       end
 
       # fix serbo-croat here
 
-      if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can" 
+      if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
         translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "")
       else
         translation = nil
       end
 
       if !li.css("span.tr.Latn")[0].nil?
-        romanization = li.css("span.Latn")[0].text 
+        romanization = li.css("span.Latn")[0].text
       else
         romanization = translation
       end
@@ -109,7 +108,7 @@ class Translation < ApplicationRecord
       # => "/wiki/goud#Afrikaans" || nil
 
       if !short_link_eng.nil?
-        full_link_eng = 'https://en.wiktionary.org' << short_link_eng
+        full_link_eng = "https://en.wiktionary.org" << short_link_eng
         if language_name.include?("'") || language_name.include?("(")
           etymology_page = nil
         elsif full_link_eng.ascii_only? && !full_link_eng.include?("&action=edit")
@@ -130,7 +129,7 @@ class Translation < ApplicationRecord
         while !current_element.nil? && current_element.name != "h2"
           if current_element.name == "h3" && current_element.text.include?("Etymology") && !current_element.next_element.text.include?("(This etymology is missing or incomplete.")
             # usually it is a h3 with etymology, then the next p tag that has the etymology. But not always. This gets the h3 tag, and loops until it finds the p tag, THEN takes the value.
-            while !current_element.nil? && current_element.name != "p" && current_element.name != "div" 
+            while !current_element.nil? && current_element.name != "p" && current_element.name != "div"
               current_element = current_element.next_element
             end
             etymology = current_element.text.strip
@@ -144,19 +143,18 @@ class Translation < ApplicationRecord
 
       language_id = Language.find_or_create_by!(name: language_name).id
 
-      @translation = Translation.new({language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
-
+      @translation = Translation.new({ language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
 
       if !full_link_eng.nil? && @translation.save
         puts "\n"
         puts "language_id: #{language_id}"
-        puts "#{index+1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
+        puts "#{index + 1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
         puts "\n"
         puts "==================================================="
         puts "\n"
       else
         puts "Translation not saved for #{language_name}"
-        puts "Errors= #{@translation.errors.full_messages.join(", ")}" 
+        puts "Errors= #{@translation.errors.full_messages.join(", ")}"
         errors_ar << @translation.errors.full_messages
         errors_ar << language_name
       end
@@ -170,8 +168,8 @@ class Translation < ApplicationRecord
     p errors_ar
   end
 
-  # # # # # # # # # # # # # # # # # # # # 
-  
+  # # # # # # # # # # # # # # # # # # # #
+
   # Find all translations of a word in All languages
   def self.find_all_translations(query)
     word_id = Word.find_by("name = ?", query.downcase).id
@@ -180,7 +178,7 @@ class Translation < ApplicationRecord
   end
 
   # all translations of a WORD in a MACROFAMILY.
-  def self.find_all_genders(word, macrofamily="Indo-European")
+  def self.find_all_genders(word, macrofamily = "Indo-European")
     word_id = Word.find_by(name: word.downcase).id
     # translations_array = Language.select(
     #   [:id, :family, :name, :romanization, :link, :gender])
@@ -192,7 +190,7 @@ class Translation < ApplicationRecord
     # end
     # pp result
     # result
- 
+
     Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family, :name)
   end
 
@@ -202,16 +200,16 @@ class Translation < ApplicationRecord
   end
 
   # make a hash group by etymology
-  def self.find_grouped_etymologies(query, macrofamily="Indo-European")
+  def self.find_grouped_etymologies(query, macrofamily = "Indo-European")
     array = []
-    ety_hash = Hash.new{|k, v|}
+    ety_hash = Hash.new { |k, v| }
     word_id = Word.find_by("name = ?", query.downcase).id
     translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
       .joins(:translations)
       .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
       .order(:etymology)
-      # can I make a hash of these server side?
-      # why doesnt etymology appear when look at translations_array?
+    # can I make a hash of these server side?
+    # why doesnt etymology appear when look at translations_array?
     translations_array.each do |translation|
       if translation.etymology.nil?
         short_etymology = "Null"
@@ -219,9 +217,9 @@ class Translation < ApplicationRecord
         short_etymology = translation.etymology.strip
         # short_etymology = translation.etymology.slice(0,60).strip
       end
-      if ety_hash[short_etymology] 
+      if ety_hash[short_etymology]
         ety_hash[short_etymology] << translation.name
-      else 
+      else
         ety_hash[short_etymology] = [translation.name]
       end
     end
@@ -262,7 +260,6 @@ class Translation < ApplicationRecord
     Translation.joins(:word, :language).select("translations.*, languages.*, words.name as word_name").where("macrofamily = ?", macrofamily).order(:family, :name)
   end
 
-
   # all the translations in a specified language
   def self.find_all_translations_by_language(language)
     # language_id = Language.find_by(name: language).id
@@ -275,4 +272,9 @@ class Translation < ApplicationRecord
     Translation.joins(:word).select("translations.*, words.name").where("language_id = ?", language_id).order(:romanization)
   end
 
+  # find all the translations that inclue the location in area1, area2, area3.
+  def self.find_all_translations_by_area(location, word)
+    word_id = Word.find_by(name: word.downcase).id
+    Translation.joins(:language, :word).select("translations.*, languages.*, words.name").where("area = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+  end
 end
