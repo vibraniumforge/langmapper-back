@@ -244,4 +244,35 @@ class Translation < ApplicationRecord
     word_id = Word.find_by(name: word.downcase).id
     Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
   end
+
+  # find all the translations that inclue the location in area1, area2, area3.
+  def self.find_all_translations_by_area_text(location, word)
+    result_array = []
+    etymology_array = []
+    translation_array = []
+    ety_hash = Hash.new { |k, v| }
+
+    word_id = Word.find_by("name = ?", word.downcase).id
+    search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
+
+    # nl	water	green
+    search_results.each do |result|
+      if !result.etymology.nil?
+        etymology = result.etymology.strip
+        if etymology_array.any? { |ety| ety.include?(etymology) }
+          puts "in if"
+          # byebug
+          index = etymology_array.index(etymology)
+          result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i + 1]
+        else
+          puts "in else"
+          # byebug
+          etymology_array << etymology
+          result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
+        end
+      end
+    end
+    byebug
+    result_array
+  end
 end
