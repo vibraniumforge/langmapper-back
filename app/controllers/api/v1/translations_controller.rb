@@ -103,6 +103,11 @@ module Api::V1
       render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
     end
 
+    def find_all_translations_by_area_text
+      @translations = Translation.find_all_translations_by_area_text(params[:location], params[:word])
+      render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
+    end
+
     private
 
     def find_translation
