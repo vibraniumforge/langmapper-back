@@ -127,7 +127,7 @@ module Api::V1
         counter += 1
       end
       # FileUtils.copy_entry(src, dest, preserve = false, dereference = false)
-      FileUtils.copy_entry("public/europe_template.svg", "public/europe__copy_template.svg", preserve = false, dereference = false, remove_destination = true)
+      FileUtils.copy_entry("public/europe_template.svg", "public/europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
 
       the_new_map = open("public/europe_copy_template.svg", "w")
       the_new_map.write(file_source)
