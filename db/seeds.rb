@@ -74,8 +74,8 @@ Language.create({ name: "Megleno-Romanian", abbreviation: "ruq", alphabet: "Latn
 # Celtic
 Language.create({ name: "Irish", abbreviation: "ga", alphabet: "Latn", macrofamily: "Indo-European", family: "Celtic", subfamily: "Goidelic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "a.k.a. Gaelic", alive: true })
 Language.create({ name: "Scottish Gaelic", abbreviation: "gd", alphabet: "Latn", macrofamily: "Indo-European", family: "Celtic", subfamily: "Goidelic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "", alive: true })
-Language.create({ name: "Welsh", abbreviation: "cy", alphabet: "Latn", macrofamily: "Indo-European", family: "Celtic", subfamily: "Brittonic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "", alive: true })
 Language.create({ name: "Manx", abbreviation: "gv", alphabet: "Latn", macrofamily: "Indo-European", family: "Celtic", subfamily: "Goidelic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "", alive: true })
+Language.create({ name: "Welsh", abbreviation: "cy", alphabet: "Latn", macrofamily: "Indo-European", family: "Celtic", subfamily: "Brittonic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "", alive: true })
 Language.create({ name: "Cornish", abbreviation: "kw", alphabet: "Latn", macrofamily: "Indo-European", family: "Celtic", subfamily: "Brittonic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "", alive: true })
 Language.create({ name: "Breton", abbreviation: "br", alphabet: "Latn", macrofamily: "Indo-European", family: "Celtic", subfamily: "Brittonic", area1: "Europe", area2: "Western Europe", area3: "France", notes: "", alive: true })
 
@@ -90,8 +90,8 @@ Language.create({ name: "Slovak", abbreviation: "sk", alphabet: "Latn", macrofam
 Language.create({ name: "Polish", abbreviation: "pl", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
 Language.create({ name: "Silesian", abbreviation: "szl", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
 Language.create({ name: "Kashubian", abbreviation: "csb", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
-Language.create({ name: "Upper Sorbian", abbreviation: "hsb", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
-Language.create({ name: "Lower Sorbian", abbreviation: "dsb", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
+Language.create({ name: "Upper Sorbian", abbreviation: "hsb", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
+Language.create({ name: "Lower Sorbian", abbreviation: "dsb", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
 
 Language.create({ name: "Bulgarian", abbreviation: "bg", alphabet: "Cyrl", macrofamily: "Indo-European", family: "Slavic", subfamily: "South Slavic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
 Language.create({ name: "Serbo-Croatian", abbreviation: "sh", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "South Slavic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
@@ -121,7 +121,7 @@ Language.create({ name: "Basque", abbreviation: "eu", alphabet: "Latn", macrofam
 
 # Uralic
 Language.create({ name: "Finnish", abbreviation: "fi", alphabet: "Latn", macrofamily: "Uralic", family: "Finnic", subfamily: "", area1: "Europe", area2: "Uralia", area3: "North Europe", notes: "", alive: true })
-Language.create({ name: "Estonian", abbreviation: "es", alphabet: "Latn", macrofamily: "Uralic", family: "Finnic", subfamily: "", area1: "Europe", area2: "Uralia", area3: "North Europe", notes: "", alive: true })
+Language.create({ name: "Estonian", abbreviation: "et", alphabet: "Latn", macrofamily: "Uralic", family: "Finnic", subfamily: "", area1: "Europe", area2: "Uralia", area3: "North Europe", notes: "", alive: true })
 Language.create({ name: "Karelian", abbreviation: "krl", alphabet: "Latn", macrofamily: "Uralic", family: "Finnic", subfamily: "", area1: "Europe", area2: "Uralia", area3: "North Europe", notes: "", alive: true })
 Language.create({ name: "Hungarian", abbreviation: "hu", alphabet: "Latn", macrofamily: "Uralic", family: "Ugric", subfamily: "", area1: "Europe", area2: "Uralia", area3: "Central Europe", notes: "", alive: true })
 Language.create({ name: "Northern Sami", abbreviation: "sa", alphabet: "Latn", macrofamily: "Uralic", family: "Sami", subfamily: "", area1: "Europe", area2: "Uralia", area3: "North Europe", notes: "", alive: true })
@@ -217,7 +217,7 @@ Language.create({ name: "Ainu", abbreviation: "ain", alphabet: "Latn", macrofami
 # Extinct, but famous
 Language.create({ name: "Latin", abbreviation: "la", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "", area1: "Europe", area2: "Western Europe", area3: "Italy", notes: "", alive: false })
 
-Language.create({ name: "Ancient Greek", abbreviation: "la", alphabet: "Latn", macrofamily: "Indo-European", subfamily: "", family: "Hellenic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: false })
+Language.create({ name: "Ancient Greek", abbreviation: "grc", alphabet: "Latn", macrofamily: "Indo-European", subfamily: "", family: "Hellenic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: false })
 
 Language.create({ name: "Sanskrit", abbreviation: "at", alphabet: "Latn", macrofamily: "Indo-European", family: "Indo-Iranian", subfamily: "Indo-Aryan", area1: "South Asia", area2: "", area3: "", notes: "", alive: false })
 

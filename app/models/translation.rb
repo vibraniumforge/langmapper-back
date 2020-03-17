@@ -244,4 +244,54 @@ class Translation < ApplicationRecord
     word_id = Word.find_by(name: word.downcase).id
     Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
   end
+
+  # find all the translations that inclue the location in area1, area2, area3 AND render the picture.
+  def self.find_all_translations_by_area_text(location, word)
+    result_array = []
+    etymology_array = []
+    translation_array = []
+    ety_hash = Hash.new { |k, v| }
+
+    word_id = Word.find_by("name = ?", word.downcase).id
+    search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
+
+    # example nl water green
+    search_results.each do |result|
+      # if !result.etymology.nil?
+      etymology = result.etymology&.strip || nil
+      if etymology_array.any? { |ety| ety && ety.include?(etymology.to_s) }
+        # puts "in if"
+        # byebug
+        index = etymology_array.index(etymology)
+        result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i + 1]
+      else
+        # puts "in else"
+        # byebug
+        etymology_array << etymology
+        result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
+      end
+    end
+    # end
+    result_array
+  end
+
+  # def self.render_svg(result_array)
+  #   filename = File.open("public/europe_template.svg", "r")
+  #   file_source = filename.read()
+
+  #   counter = 0
+  #   for language in result_array
+  #     puts "#{language}, #{counter}"
+  #     # byebug
+  #     file_source = file_source.sub("$" + language[0], result_array[counter][1])
+  #   end
+
+  #   FileUtils.copy_entry("public/europe_template.svg", "public/europe_copy_template.svg", preserve = false, dereference = false, remove_destination = false)
+
+  #   the_new_map = open("public/europe_copy_template.svg", "w")
+  #   the_new_map.write(file_source)
+  #   the_new_map.close()
+
+  #   send_file the_new_map, disposition: :inline
+  # end
 end
