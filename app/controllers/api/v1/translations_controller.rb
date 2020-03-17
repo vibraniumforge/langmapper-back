@@ -104,8 +104,36 @@ module Api::V1
     end
 
     def find_all_translations_by_area_text
-      @translations = Translation.find_all_translations_by_area_text(params[:location], params[:word])
-      render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
+      # @translations = Translation.result_array = find_all_translations_by_area_text(params[:location], params[:word])
+      # render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
+
+      result_array = Translation.find_all_translations_by_area_text(params[:location], params[:word])
+
+      # you'll need to use send_file instead of render
+      # if you want the image to show inline, use disposition: :inline
+      filename = File.open("public/europe_template.svg", "r")
+      file_source = filename.read()
+
+      color_array = ["red", "orange", "yellow", "green", "blue", "purple"]
+
+      counter = 0
+      for language in result_array
+        puts "#{language}, #{counter}"
+        file_source = file_source.sub("$" + language[0], result_array[counter][1])
+        color_index = counter % color_array.length
+        result_color = color_array[result_array[color_index][2]]
+        color = result_array[counter][2]
+        # file_source = file_source.sub("#" + color, result_color)
+        counter += 1
+      end
+      # FileUtils.copy_entry(src, dest, preserve = false, dereference = false)
+      FileUtils.copy_entry("public/europe_template.svg", "public/europe__copy_template.svg", preserve = false, dereference = false, remove_destination = true)
+
+      the_new_map = open("public/europe__copy_template.svg", "w")
+      the_new_map.write(file_source)
+      # the_new_map.close()
+
+      send_file the_new_map, disposition: :inline
     end
 
     private
