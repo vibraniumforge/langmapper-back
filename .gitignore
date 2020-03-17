@@ -21,3 +21,5 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 .DS_Store
+europe_copy_template.svg
+x.py
