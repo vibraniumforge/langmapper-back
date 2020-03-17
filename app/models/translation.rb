@@ -289,7 +289,7 @@ class Translation < ApplicationRecord
       file_source = file_source.sub("$" + language[0], result_array[counter][1])
     end
     # FileUtils.copy_entry(src, dest, preserve = false, dereference = false)
-    FileUtils.copy_entry("public/europe_template.svg", "public/europe__copy_template.svg", preserve = false, dereference = false, remove_destination = false)
+    FileUtils.copy_entry("public/europe_template.svg", "public/europe_copy_template.svg", preserve = false, dereference = false, remove_destination = false)
 
     byebug
     the_new_map = open("public/europe__copy_template.svg", "w")
