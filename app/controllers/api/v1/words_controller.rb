@@ -14,7 +14,7 @@ module Api::V1
     end
 
     def create
-      if find_word_by_name
+      if !find_word_by_name.nil?
         puts "=> Word already exists."
         render json: { message: "Word already exists.", success: true, data: @word_by_name }, status: 200
         return
@@ -23,7 +23,7 @@ module Api::V1
       if @word.save
         puts "=> Word saved"
         render json: { message: "Word successfully saved.", success: true, data: @word }, status: 200
-        Translation.find_info(@word.name)
+        Translation.find_info(@word.word_name)
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
@@ -80,11 +80,11 @@ module Api::V1
     end
 
     def find_word_by_name
-      @word_by_name = Word.find_by(name: params[:name])
+      @word_by_name = Word.find_by(word_name: params[:word][:word_name])
     end
 
     def word_params
-      params.require(:word).permit(:name)
+      params.require(:word).permit(:word_name)
     end
   end
 end
