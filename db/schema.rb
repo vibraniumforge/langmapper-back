@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 3) do
     t.string "macrofamily"
     t.string "family"
     t.string "subfamily"
-    t.string "area"
+    t.string "area1"
     t.string "area2"
     t.string "area3"
     t.text "notes"
@@ -34,17 +34,18 @@ ActiveRecord::Schema.define(version: 3) do
   create_table "translations", force: :cascade do |t|
     t.integer "language_id", null: false
     t.integer "word_id", null: false
-    t.string "translation"
-    t.string "romanization"
-    t.string "link"
-    t.string "gender"
     t.text "etymology"
+    t.string "gender"
+    t.string "link"
+    t.string "romanization"
+    t.string "translation"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "words", force: :cascade do |t|
-    t.string "name"
+    t.string "word_name"
+    t.string "definition"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
