@@ -69,14 +69,13 @@ module Api::V1
     end
 
     def find_all_languages_by_area
-      @languages = Language.where("area = ?", params[:location]).or(Language.where("area2 = ?", params[:location])).or(Language.where("area3 = ?", params[:location]))
+      @languages = Language.where("area1 = ?", params[:location]).or(Language.where("area2 = ?", params[:location])).or(Language.where("area3 = ?", params[:location]))
       render json: { message: "Languages successfully returned.", success: true, data: @languages }, status: 200
     end
 
     def find_all_areas
       @areas_ar = []
-      @areas_ar << Language.select(:area).distinct.pluck(:area)
-      # needs to be area1 in the futute
+      @areas_ar << Language.select(:area1).distinct.pluck(:area1)
       @areas_ar << Language.select(:area2).distinct.pluck(:area2)
       @areas_ar << Language.select(:area3).distinct.pluck(:area3)
       @areas = @areas_ar.flatten.compact.uniq.sort
@@ -95,7 +94,7 @@ module Api::V1
     end
 
     def language_params
-      params.require(:language).permit(:name, :abbreviation, :alphabet, :macrofamily, :family, :subfamily, :area, :area2, :notes, :alive)
+      params.require(:language).permit(:name, :abbreviation, :alphabet, :macrofamily, :family, :subfamily, :area1, :area2, :notes, :alive)
     end
   end
 end
