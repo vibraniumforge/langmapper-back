@@ -14,9 +14,9 @@ class Translation < ApplicationRecord
     query_page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
 
     etymology_english = query_page.css("[id^='Etymology']")[0].parent.next_element.text
-    word_id = Word.find_or_create_by(name: chosen_word).id
+    # word_id = Word.find_or_create_by(word_name: chosen_word).id
 
-    Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
+    # Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
 
     # layout2 = page.find("#{chosen_word}/translations § Noun")
     path1 = query_page.xpath('//a[contains(text(), "/translations § Noun")]')
@@ -55,6 +55,10 @@ class Translation < ApplicationRecord
     end
 
     definition = page.css("table.translations")[0].attributes["data-gloss"].value
+    word_id = Word.find_by(word_name: chosen_word ).id
+    @word = Word.find(word_id)
+    @word.update(definition: definition)
+    Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
 
     puts "=================================================================="
     puts "Word: #{chosen_word}"
@@ -165,23 +169,21 @@ class Translation < ApplicationRecord
     puts "\nDONE with <<< #{chosen_word}, #{definition} >>> \n"
     puts "Count: #{all_li_array.count} entries"
     puts "in #{time.round(2)} seconds"
-    p errors_ar
+    puts "Errors: #{errors_ar}"
   end
 
   # # # # # # # # # # # # # # # # # # # #
 
   # Find all translations of a word in All languages
   def self.find_all_translations(query)
-    word_id = Word.find_by("name = ?", query.downcase).id
-    # Translation.where(word_id: word_id).order(:language_name)
+    word_id = Word.find_by("word_name = ?", query.downcase).id
     Translation.joins(:language).where(word_id: word_id).order(:name)
   end
 
   # all translations of a WORD in a MACROFAMILY.
-  def self.find_all_genders(word, macrofamily = "Indo-European")
-    word_id = Word.find_by(name: word.downcase).id
-
-    Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family, :name)
+  def self.find_all_genders(word_name, macrofamily = "Indo-European")
+    word_id = Word.find_by(word_name: word_name.downcase).id
+    Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family, :word_name)
   end
 
   # etymologies that contain the query word inside.
@@ -193,7 +195,7 @@ class Translation < ApplicationRecord
   def self.find_grouped_etymologies(query, macrofamily = "Indo-European")
     array = []
     ety_hash = Hash.new { |k, v| }
-    word_id = Word.find_by("name = ?", query.downcase).id
+    word_id = Word.find_by("word_name = ?", query.downcase).id
     translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
       .joins(:translations)
       .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
@@ -208,9 +210,9 @@ class Translation < ApplicationRecord
         # short_etymology = translation.etymology.slice(0,60).strip
       end
       if ety_hash[short_etymology]
-        ety_hash[short_etymology] << translation.name
+        ety_hash[short_etymology] << translation.word_name
       else
-        ety_hash[short_etymology] = [translation.name]
+        ety_hash[short_etymology] = [translation.word_name]
       end
     end
     ety_hash.each do |h|
@@ -224,7 +226,7 @@ class Translation < ApplicationRecord
 
   # all the translations of EVERY WORD in a macrofamily
   def self.find_all_translations_by_macrofamily(macrofamily)
-    Translation.joins(:word, :language).select("translations.*, languages.*, words.name as word_name").where("macrofamily = ?", macrofamily).order(:family, :name)
+    Translation.joins(:word, :language).select("translations.*, languages.*, words.word_name").where("macrofamily = ?", macrofamily).order(:family, :word_name)
   end
 
   # all the translations in a specified language
@@ -236,24 +238,24 @@ class Translation < ApplicationRecord
     # end
     # result
     language_id = Language.find_by(name: language.titleize).id
-    Translation.joins(:word).select("translations.*, words.name").where("language_id = ?", language_id).order(:romanization)
+    Translation.joins(:word).select("translations.*, words.word_name").where("language_id = ?", language_id).order(:romanization)
   end
 
   # find all the translations that inclue the location in area1, area2, area3.
-  def self.find_all_translations_by_area(location, word)
-    word_id = Word.find_by(name: word.downcase).id
-    Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.name as word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+  def self.find_all_translations_by_area(location, word_name)
+    word_id = Word.find_by(word_name: word_name.downcase).id
+    Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
   end
 
   # find all the translations that inclue the location in area1, area2, area3 AND render the picture.
-  def self.find_all_translations_by_area_text(location, word)
+  def self.find_all_translations_by_area_img(location, word_name)
     result_array = []
     etymology_array = []
     translation_array = []
     ety_hash = Hash.new { |k, v| }
 
-    word_id = Word.find_by("name = ?", word.downcase).id
-    search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
+    word_id = Word.find_by("word_name = ?", word_name.downcase).id
+    search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
 
     # example nl water green
     search_results.each do |result|
@@ -275,23 +277,5 @@ class Translation < ApplicationRecord
     result_array
   end
 
-  # def self.render_svg(result_array)
-  #   filename = File.open("public/europe_template.svg", "r")
-  #   file_source = filename.read()
 
-  #   counter = 0
-  #   for language in result_array
-  #     puts "#{language}, #{counter}"
-  #     # byebug
-  #     file_source = file_source.sub("$" + language[0], result_array[counter][1])
-  #   end
-
-  #   FileUtils.copy_entry("public/europe_template.svg", "public/europe_copy_template.svg", preserve = false, dereference = false, remove_destination = false)
-
-  #   the_new_map = open("public/europe_copy_template.svg", "w")
-  #   the_new_map.write(file_source)
-  #   the_new_map.close()
-
-  #   send_file the_new_map, disposition: :inline
-  # end
 end
