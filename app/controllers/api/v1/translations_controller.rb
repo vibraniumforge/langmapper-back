@@ -61,12 +61,13 @@ module Api::V1
     def find_all_translations
       @translations = Translation.find_all_translations(params[:word])
       render json: @translations
+      # render json: { message: "Translations of #{params[:word]} successfully returned.", success: true, data: @translations}, status: 200
     end
 
     def find_all_genders
-      byebug
       @genders = Translation.find_all_genders(params[:word])
       render json: @genders
+      # render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @genders}, status: 200
     end
 
     def find_etymology_containing
@@ -110,7 +111,6 @@ module Api::V1
       # @translations = Translation.find_all_translations_by_area_img(params[:location], params[:word])
       # render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
 
-      
       combo = [
         ['ab', '168d4f'],
         ['ar', 'ffffb1'],
@@ -188,12 +188,11 @@ module Api::V1
       filename = File.open("public/europe_template.svg", "r")
       file_source = filename.read()
 
-      color_array = ["red", "orange", "yellow", "green", "blue", "purple"]
-
       counter = 0
       for language in result_array
         puts "#{language}, #{counter}"
         file_source = file_source.sub("$" + language[0], result_array[counter][1])
+
         result_color = ''
         if !result_array[counter][2].nil?
           result_color = color_codes_array[result_array[counter][2]]
