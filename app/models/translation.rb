@@ -159,8 +159,9 @@ class Translation < ApplicationRecord
       else
         puts "Translation not saved for #{language_name}"
         puts "Errors= #{@translation.errors.full_messages.join(", ")}"
-        errors_ar << @translation.errors.full_messages
-        errors_ar << language_name
+        error_hash = {}
+        error_hash[language_name] = @translation.errors.full_messages
+        errors_ar << error_hash
       end
     end
     t2 = Time.now
@@ -183,11 +184,11 @@ class Translation < ApplicationRecord
   # all translations of a WORD in a MACROFAMILY.
   def self.find_all_genders(word_name, macrofamily = "Indo-European")
     word_id = Word.find_by(word_name: word_name.downcase).id
-    Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family, :word_name)
+    Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family)
   end
 
   # etymologies that contain the query word inside.
-  def self.ety_query(query)
+  def self.find_etymology_containing(query)
     Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
   end
 
@@ -210,17 +211,15 @@ class Translation < ApplicationRecord
         # short_etymology = translation.etymology.slice(0,60).strip
       end
       if ety_hash[short_etymology]
-        ety_hash[short_etymology] << translation.word_name
+        ety_hash[short_etymology] << translation.name
       else
-        ety_hash[short_etymology] = [translation.word_name]
+        ety_hash[short_etymology] = [translation.name]
       end
     end
     ety_hash.each do |h|
       array << h
     end
     pp ety_hash
-    # pp array
-    # pp array
     array
   end
 
@@ -231,12 +230,6 @@ class Translation < ApplicationRecord
 
   # all the translations in a specified language
   def self.find_all_translations_by_language(language)
-    # language_id = Language.find_by(name: language).id
-    # arr = Translation.where(language_id: language_id).pluck(:word_id, :romanization, :etymology)
-    # result = arr.map do |translation|
-    #   [{word: Word.find(translation[0]).name}, {romanization: translation[1]}, {etymology: translation[2]}]
-    # end
-    # result
     language_id = Language.find_by(name: language.titleize).id
     Translation.joins(:word).select("translations.*, words.word_name").where("language_id = ?", language_id).order(:romanization)
   end
@@ -251,29 +244,30 @@ class Translation < ApplicationRecord
   def self.find_all_translations_by_area_img(location, word_name)
     result_array = []
     etymology_array = []
-    translation_array = []
-    ety_hash = Hash.new { |k, v| }
 
     word_id = Word.find_by("word_name = ?", word_name.downcase).id
     search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
 
     # example nl water green
     search_results.each do |result|
-      # if !result.etymology.nil?
-      etymology = result.etymology&.strip || nil
-      if etymology_array.any? { |ety| ety && ety.include?(etymology.to_s) }
-        # puts "in if"
-        # byebug
-        index = etymology_array.index(etymology)
-        result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i + 1]
+      if !result.etymology.nil? || !result.etymology == "Null"
+        etymology = result.etymology&.strip 
+        if etymology_array.any? { |ety| ety && ety.include?(etymology.to_s) }
+          # puts "in if"
+          # byebug
+          index = etymology_array.find_index{ |ety| ety && ety.include?(etymology.to_s) }
+          result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i]
+        else
+          # puts "in else"
+          # byebug
+          etymology_array << etymology
+          result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
+        end
       else
-        # puts "in else"
-        # byebug
-        etymology_array << etymology
-        result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
+        result_array << ["#{result.abbreviation}", "#{result.translation}", nil]
       end
+      # byebug
     end
-    # end
     result_array
   end
 

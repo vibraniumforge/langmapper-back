@@ -64,18 +64,21 @@ module Api::V1
     end
 
     def find_all_genders
+      byebug
       @genders = Translation.find_all_genders(params[:word])
       render json: @genders
     end
 
     def find_etymology_containing
-      @etymologies = Translation.ety_query(params[:word])
+      @etymologies = Translation.find_etymology_containing(params[:word])
       render json: @etymologies
+      # render json: { message: "Etymology containing #{params[:word]} successfully returned.", success: true, data: @etymologies}, status: 200
     end
 
     def find_grouped_etymologies
       @etymologies = Translation.find_grouped_etymologies(params[:word], params[:macrofamily])
-      render json: @etymologies
+      # render json: @etymologies
+      render json: { message: "Grouped etymologies successfully returned.", success: true, data: @etymologies}, status: 200
     end
 
     def find_all_translations_by_macrofamily
@@ -107,6 +110,80 @@ module Api::V1
       # @translations = Translation.find_all_translations_by_area_img(params[:location], params[:word])
       # render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
 
+      
+      combo = [
+        ['ab', '168d4f'],
+        ['ar', 'ffffb1'],
+        ['az', 'd45500'],
+        ['be', 'b5ff64'],
+        ['bos', 'abc837'],
+        ['br', '178df0'],
+        ['bg', '36ae22'],
+        ['ca', '00ffff'],
+        ['cau', 'd38d5f'],
+        ['cs', '00cb60'],
+        ['co', 'c0003c'],
+        ['cy', 'ff7f29'],
+        ['da', 'ff5555'],
+        ['de', 'd09999'],
+        ['el', 'ffff00'],
+        ['en', 'ffaaaa'],
+        ['et', 'b7c8be'],
+        ['eu', 'ffd42a'],
+        ['fo', 'ff0000'],
+        ['fi', '6f997a'],
+        ['fr', '53bbb5'],
+        ['fy', 'd66c74'],
+        ['gd', 'c837ab'],
+        ['ga', 'ff7f2a'],
+        ['gl', 'fd6d3c'],
+        ['gl', '00d4aa'],
+        ['hr', 'abc837'],
+        ['hu', 'ac9d93'],
+        ['hy', '008080'],
+        ['is', 'f19076'],
+        ['it', '7bafe0'],
+        ['ka', 'f4e3d7'],
+        ['kk', 'deaa87'],
+        ['krl', '93ac93'],
+        ['lv', 'de87cd'],
+        ['lt', 'e9afdd'],
+        ['lij', 'f2003c'],
+        ['lb', '55ddff'],
+        ['mk', '71c837'],
+        ['mt', 'a0892c'],
+        ['nap', 'f5003c'],
+        ['nl', 'f4d7d7'],
+        ['no', 'ff8080'],
+        ['oc', '168d5f'],
+        ['os', '985fd3'],
+        ['pms', 'f2d53c'],
+        ['pl', '7ecb60'],
+        ['pt', '00d4d4'],
+        ['rm', '008079'],
+        ['ro', 'aaccff'],
+        ['ru', '72ff00'],
+        ['sc', 'c0ee3c'],
+        ['sco', '168df0'],
+        ['scn', 'cc003c'],
+        ['sk', '42f460'],
+        ['sl', '81c98d'],
+        ['se', 'cccccc'],
+        ['es', 'acd8ed'],
+        ['sq', 'a0856c'],
+        ['srp', 'abc837'],
+        ['sv', 'ffb380'],
+        ['tt', 'c7a25f'],
+        ['tk', 'cc9e4c'],
+        ['uk', 'c1ff00'],
+        ['ven', 'f28d3c'],
+        ['xal', 'd34d5f']]
+
+
+      languages_array = combo.map{|item| item[0]}
+      color_codes_array = combo.map{|item| item[1]}
+
+
       result_array = Translation.find_all_translations_by_area_img(params[:location], params[:word])
       filename = File.open("public/europe_template.svg", "r")
       file_source = filename.read()
@@ -117,10 +194,20 @@ module Api::V1
       for language in result_array
         puts "#{language}, #{counter}"
         file_source = file_source.sub("$" + language[0], result_array[counter][1])
-        color_index = counter % color_array.length
-        result_color = color_array[result_array[color_index][2]]
-        color = result_array[counter][2]
-        # file_source = file_source.sub("#" + color, result_color)
+        result_color = ''
+        if !result_array[counter][2].nil?
+          result_color = color_codes_array[result_array[counter][2]]
+        else
+          result_color = 'd9d9d9'
+        end
+        col = nil
+        if languages_array.include?(language[0])
+          col = color_codes_array[languages_array.find_index(language[0])]
+        end
+        # byebug
+        if !col.nil?
+          file_source = file_source.gsub("#" + col, "#" + result_color)
+        end
         counter += 1
       end
       
@@ -143,5 +230,6 @@ module Api::V1
     def translation_params
       params.require(:translation).permit(:translation, :romanization, :link, :gender, :etymology)
     end
+
   end
 end
