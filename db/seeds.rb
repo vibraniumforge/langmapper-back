@@ -245,7 +245,7 @@ Language.create({ name: "Proto-Indo-European", abbreviation: "pie", alphabet: "L
 
 Language.create({ name: "Proto-Uralic", abbreviation: "", alphabet: "Latn", macrofamily: "Uralic", family: "", subfamily: "", area1: "", area2: "", area3: "", notes: "", alive: false })
 
-Language.create({ name: "Proto-Basque", abbreviation: "", alphabet: "Latn", macrofamily: "Basque", family: "", subfamily: "", area1: "", area2: "", area3: "", notes: "", alive: false })
+Language.create({ name: "Proto-Basque", abbreviation: "", alphabet: "Latn", macrofamily: "Isloate", family: "Basque", subfamily: "", area1: "", area2: "", area3: "", notes: "", alive: false })
 
 Language.create({ name: "Proto-Afro-Asiatic", abbreviation: "", alphabet: "Latn", macrofamily: "Afro-Asiatic", family: "", subfamily: "", area1: "", area2: "", area3: "", notes: "", alive: false })
 
