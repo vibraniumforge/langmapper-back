@@ -78,8 +78,11 @@ module Api::V1
       @areas_ar << Language.select(:area1).distinct.pluck(:area1)
       @areas_ar << Language.select(:area2).distinct.pluck(:area2)
       @areas_ar << Language.select(:area3).distinct.pluck(:area3)
+      puts @areas_ar
       @areas = @areas_ar.flatten.compact.uniq.sort
-      render json: { message: "Language areas successfully returned.", success: true, data: @areas }, status: 200
+      puts "============="
+      puts @areas
+      render json: { message: "All language areas successfully returned.", success: true, data: @areas }, status: 200
     end
 
     def language_count
