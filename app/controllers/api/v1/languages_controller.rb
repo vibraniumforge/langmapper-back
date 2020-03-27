@@ -1,7 +1,7 @@
 module Api::V1
   class LanguagesController < ApplicationController
     def index
-      @languages = Language.all
+      @languages = Language.all.order(:id)
       render json: @languages
     end
 
@@ -38,7 +38,7 @@ module Api::V1
       end
       if @language.update(language_params)
         puts "=> language updated"
-        render json: { message: "Language successfully saved.", success: true, data: @language }, status: 200
+        render json: { message: "Language successfully updated.", success: true, data: @language }, status: 200
       else
         puts "Language not saved"
         puts "Errors= #{@language.errors.full_messages.join(", ")}"
@@ -97,7 +97,7 @@ module Api::V1
     end
 
     def language_params
-      params.require(:language).permit(:name, :abbreviation, :alphabet, :macrofamily, :family, :subfamily, :area1, :area2, :notes, :alive)
+      params.require(:language).permit(:name, :abbreviation, :alphabet, :macrofamily, :family, :subfamily, :area1, :area2, :area3, :notes, :alive)
     end
   end
 end
