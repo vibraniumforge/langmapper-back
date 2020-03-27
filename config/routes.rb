@@ -4,7 +4,8 @@ Rails.application.routes.draw do
       resources :languages
       resources :words, only: [:index, :show, :new, :create, :destroy]
       # no ability to update a word. This leads to bad data.
-      resources :translations, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+      resources :translations, only: [:index, :show, :edit, :update, :destroy]
+      # no ability to create a translation. Only wiktionary info. Can update
 
       get "/search/translation/:word", to: "translations#find_all_translations"
       get "/search/gender/:word", to: "translations#find_all_genders"
@@ -13,9 +14,9 @@ Rails.application.routes.draw do
 
       get "/search/all_translations_by_macrofamily/:macrofamily", to: "translations#find_all_translations_by_macrofamily"
       get "/search/all_translations_by_language/:language", to: "translations#find_all_translations_by_language"
-      get "/search/all_languages_by_area/:location", to: "languages#find_all_languages_by_area"
       get "/search/all_translations_by_area/:location/:word", to: "translations#find_all_translations_by_area"
       get "/search/all_translations_by_area_img/:location/:word", to: "translations#find_all_translations_by_area_img"
+      get "/search/all_languages_by_area/:location", to: "languages#find_all_languages_by_area"
 
       # helpers
       get "/search/all_macrofamily_names", to: "languages#find_all_macrofamily_names"
