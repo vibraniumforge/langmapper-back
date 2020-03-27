@@ -17,12 +17,12 @@ module Api::V1
     def create
       @language = Language.new(language_params)
       if @language.save
-        puts "=> language saved"
-        render json: { message: "Language successfully saved.", success: true, data: @language }, status: 200
+        puts "=> language created"
+        render json: { message: "Language successfully created.", success: true, data: @language }, status: 200
       else
-        puts "Language not saved"
+        puts "Language not created"
         puts "Errors= #{@language.errors.full_messages.join(", ")}"
-        render json: { message: "Language NOT saved because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
+        render json: { message: "Language NOT created because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
       end
     end
 
@@ -40,7 +40,7 @@ module Api::V1
         puts "=> language updated"
         render json: { message: "Language successfully updated.", success: true, data: @language }, status: 200
       else
-        puts "Language not saved"
+        puts "Language not updated"
         puts "Errors= #{@language.errors.full_messages.join(", ")}"
         render json: { message: "Language NOT updated because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
       end

@@ -17,12 +17,12 @@ module Api::V1
     def create
       @translation = Translation.new(translation_params)
       if @translation.save
-        puts "=> translation saved"
-        render json: { message: "Translation successfully saved.", success: true, data: @translation }, status: 200
+        puts "=> translation created"
+        render json: { message: "Translation successfully created.", success: true, data: @translation }, status: 200
       else
-        puts "Translation not saved"
+        puts "Translation not created"
         puts "Errors= #{@translation.errors.full_messages.join(", ")}"
-        render json: { message: "Translation NOT saved because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
+        render json: { message: "Translation NOT created because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
       end
     end
 
@@ -38,11 +38,11 @@ module Api::V1
       end
       if @translation.update(translation_params)
         puts "Translation updated"
-        render json: { message: "Translation successfully saved.", success: true, data: @translation }, status: 200
+        render json: { message: "Translation successfully updated.", success: true, data: @translation }, status: 200
       else
         puts "Translation not saved"
         puts "Errors= #{@translation.errors.full_messages.join(", ")}"
-        render json: { message: "Language NOT updated because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
+        render json: { message: "Translation NOT updated because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
       end
     end
 

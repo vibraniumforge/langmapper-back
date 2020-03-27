@@ -22,12 +22,12 @@ module Api::V1
       @word = Word.new(word_params)
       if @word.save
         puts "=> Word saved"
-        render json: { message: "Word successfully saved.", success: true, data: @word }, status: 200
+        render json: { message: "Word successfully created.", success: true, data: @word }, status: 200
         Translation.find_info(@word.word_name)
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
-        render json: { message: "Word NOT saved because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
+        render json: { message: "Word NOT created because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
       end
     end
 
@@ -35,21 +35,21 @@ module Api::V1
       find_word
     end
 
-    def update
-      find_word
-      if @translation.nil?
-        puts "Word not found"
-        render json: { message: "Word not found", success: false }, status: 406
-      end
-      if @translation.update(translation_params)
-        puts "Word updated"
-        render json: { message: "Word successfully saved.", success: true, data: @word }, status: 200
-      else
-        puts "Word not saved"
-        puts "Errors= #{@word.errors.full_messages.join(", ")}"
-        render json: { message: "Word NOT updated because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
-      end
-    end
+    # def update
+    #   find_word
+    #   if @translation.nil?
+    #     puts "Word not found"
+    #     render json: { message: "Word not found", success: false }, status: 406
+    #   end
+    #   if @translation.update(translation_params)
+    #     puts "Word updated"
+    #     render json: { message: "Word successfully updated.", success: true, data: @word }, status: 200
+    #   else
+    #     puts "Word not saved"
+    #     puts "Errors= #{@word.errors.full_messages.join(", ")}"
+    #     render json: { message: "Word NOT updated because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
+    #   end
+    # end
 
     def destroy
       find_word
