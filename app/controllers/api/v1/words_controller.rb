@@ -31,9 +31,9 @@ module Api::V1
       end
     end
 
-    def edit
-      find_word
-    end
+    # def edit
+    #   find_word
+    # end
 
     # def update
     #   find_word
