@@ -14,8 +14,13 @@ Rails.application.routes.draw do
 
       get "/search/all_translations_by_macrofamily/:macrofamily", to: "translations#find_all_translations_by_macrofamily"
       get "/search/all_translations_by_language/:language", to: "translations#find_all_translations_by_language"
+
       get "/search/all_translations_by_area/:location/:word", to: "translations#find_all_translations_by_area"
       get "/search/all_translations_by_area_img/:location/:word", to: "translations#find_all_translations_by_area_img"
+      get "/search/all_etymologies_by_area/:location/:word", to: "translations#find_all_translations_by_area"
+      get "/search/all_etymologies_by_area_img/:location/:word", to: "translations#find_all_etymologies_by_area_img"
+      get "/search/all_genders_by_area/:location/:word", to: "translations#find_all_translations_by_area"
+      get "/search/all_genders_by_area_img/:location/:word", to: "translations#find_all_genders_by_area_img"
       
       get "/search/all_languages_by_area/:location", to: "languages#find_all_languages_by_area"
 
