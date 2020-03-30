@@ -78,7 +78,6 @@ module Api::V1
 
     def find_grouped_etymologies
       @etymologies = Translation.find_grouped_etymologies(params[:word], params[:macrofamily])
-      # render json: @etymologies
       render json: { message: "Grouped etymologies successfully returned.", success: true, data: @etymologies}, status: 200
     end
 
@@ -301,7 +300,7 @@ module Api::V1
 
       counter = 0
       for language in result_array
-        puts "#{language}, #{counter}"
+        # puts "#{language}, #{counter}"
         file_source = file_source.sub("$" + language[0], result_array[counter][1])
 
         result_color = ''
@@ -416,11 +415,10 @@ module Api::V1
 
       counter = 0
       for language in result_array
-        puts "#{language}, #{counter}"
+        # puts "#{language}, #{counter}"
         file_source = file_source.sub("$" + language[:abbreviation], result_array[counter][:translation])
 
         result_color = ''
-        puts counter
         case language[:gender]
         when nil
           result_color = 'D3D3D3'
