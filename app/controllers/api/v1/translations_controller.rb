@@ -414,7 +414,7 @@ module Api::V1
       result_array = Translation.find_all_genders_by_area_img(params[:location], params[:word])
       
       # filename = File.open("public/my_europe_template.svg", "r")
-      filename = open("public/my_europe_template.svg", "r")
+      filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
       file_source = filename.read()
 
       counter = 0
