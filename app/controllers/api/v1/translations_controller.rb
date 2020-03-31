@@ -198,7 +198,8 @@ module Api::V1
       color_codes_array = combo.map{|item| item[1]}
 
       result_array = Translation.find_all_translations_by_area_img(params[:location], params[:word])
-      filename = File.open("public/my_europe_template.svg", "r")
+      # filename = File.open("public/my_europe_template.svg", "r")
+      filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
       file_source = filename.read()
 
       counter = 0
@@ -297,7 +298,8 @@ module Api::V1
 
 
       result_array = Translation.find_all_translations_by_area_img(params[:location], params[:word])
-      filename = File.open("public/my_europe_template.svg", "r")
+      # filename = File.open("public/my_europe_template.svg", "r")
+      filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
       file_source = filename.read()
 
       counter = 0
