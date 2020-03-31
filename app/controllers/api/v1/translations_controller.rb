@@ -320,14 +320,14 @@ module Api::V1
         counter += 1
       end
       
-      # FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
+      FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
 
-      # the_new_map = open("public/my_europe_copy_template.svg", "w")
+      the_new_map = open("public/my_europe_copy_template.svg", "w")
 
-      # the_new_map.write(file_source)
-      # # the_new_map.close()
+      the_new_map.write(file_source)
+      # the_new_map.close()
 
-      # send_file the_new_map, disposition: :inline
+      send_file the_new_map, disposition: :inline
     end
 
 
