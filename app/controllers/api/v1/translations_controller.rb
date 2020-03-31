@@ -1,5 +1,7 @@
 module Api::V1
   class TranslationsController < ApplicationController
+    require "open-uri"
+
     def index
       @translations = Translation.all
       render json: @translations
@@ -411,7 +413,8 @@ module Api::V1
 
       result_array = Translation.find_all_genders_by_area_img(params[:location], params[:word])
       
-      filename = File.open("public/my_europe_template.svg", "r")
+      # filename = File.open("public/my_europe_template.svg", "r")
+      filename = open("public/my_europe_template.svg", "r")
       file_source = filename.read()
 
       counter = 0
