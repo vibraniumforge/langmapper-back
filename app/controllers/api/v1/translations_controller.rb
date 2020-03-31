@@ -449,12 +449,15 @@ module Api::V1
 
       the_new_map.write(file_source)
       # the_new_map.close()
-      @map = the_new_map
-      if !the_new_map.nil?
-        send_file the_new_map, disposition: :inline
-      else
-        render json: { message: "Image error.", success: false, data: @map.errors.full_messages }, status: 200
-      end
+
+      send_file the_new_map, disposition: :inline
+
+      # @map = the_new_map
+      # if !the_new_map.nil?
+      #   send_file the_new_map, disposition: :inline
+      # else
+      #   render json: { message: "Image error.", success: false, data: @map.errors.full_messages }, status: 200
+      # end
     end
 
     private
