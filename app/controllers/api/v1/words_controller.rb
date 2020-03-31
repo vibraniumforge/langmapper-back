@@ -64,7 +64,7 @@ module Api::V1
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     def find_all_words
-      @words = Word.all
+      @words = Word.all.order(:word_name)
       render json: { message: "Words successfully returned.", success: true, data: @words }, status: 200
     end
 
