@@ -332,8 +332,7 @@ module Api::V1
 
 
     def find_all_genders_by_area_img
-      @translations = Translation.find_all_translations_by_area_img(params[:location], params[:word])
-      render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
+  
 
       combo = [
         ['ab', '168d4f'],
