@@ -22,7 +22,7 @@
 /config/master.key
 .DS_Store
 
-my_europe_template.svg
+# my_europe_template.svg
 my_europe_copy_template.svg
 my_language_codes_dictionary.txt
 x.py
