@@ -333,6 +333,8 @@ module Api::V1
 
     def find_all_genders_by_area_img
   
+  #  @translations = Translation.find_all_translations_by_area_img(params[:location], params[:word])
+  #   render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
 
       combo = [
         ['ab', '168d4f'],
@@ -450,7 +452,8 @@ module Api::V1
       the_new_map.write(file_source)
       # the_new_map.close()
 
-      send_file the_new_map, disposition: :inline
+      # send_file the_new_map, disposition: :inline
+      send_file the_new_map, disposition: :attachment
 
       # @map = the_new_map
       # if !the_new_map.nil?
