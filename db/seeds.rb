@@ -55,7 +55,7 @@ Language.create({ name: "Lombard", abbreviation: "lmo", alphabet: "Latn", macrof
 Language.create({ name: "Emilian", abbreviation: "egl", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Gallo-Italic", area1: "Europe", area2: "Central Europe", area3: "Italy", notes: "", alive: true })
 Language.create({ name: "Venetian", abbreviation: "vnc", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Gallo-Italic", area1: "Europe", area2: "Central Europe", area3: "Italy", notes: "", alive: true })
 
-Language.create({ name: "Italian", abbreviation: "it", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Italo-Dalmatian", area1: "Europe", area2: "Western Europe", area3: "Italy", notes: "", alive: true })
+Language.create({ name: "Italian", abbreviation: "it", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Italo-Dalmatian", area1: "Europe", area2: "Western Europe", area3: "Italy", notes: "", alive: false })
 # Language.create({ name: "Tuscan", abbreviation: "", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Italo-Dalmatian", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
 Language.create({ name: "Corsican", abbreviation: "co", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Italo-Dalmatian", area1: "Europe", area2: "Western Europe", area3: "Italy", notes: "", alive: true })
 Language.create({ name: "Sassarese", abbreviation: "sdc", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Italo-Dalmatian", area1: "Europe", area2: "Western Europe", area3: "Italy", notes: "", alive: true })
