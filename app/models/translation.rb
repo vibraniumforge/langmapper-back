@@ -55,7 +55,7 @@ class Translation < ApplicationRecord
     end
 
     definition = page.css("table.translations")[0].attributes["data-gloss"].value
-    word_id = Word.find_by(word_name: chosen_word ).id
+    word_id = Word.find_by(word_name: chosen_word).id
     @word = Word.find(word_id)
     @word.update(definition: definition)
     Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
@@ -145,7 +145,7 @@ class Translation < ApplicationRecord
         etymology = nil
       end
 
-      language_id = Language.find_or_create_by!(name: language_name).id
+      language_id = Language.find_by(name: language_name).id
 
       @translation = Translation.new({ language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
 
@@ -230,46 +230,83 @@ class Translation < ApplicationRecord
 
   # all the translations in a specified language
   def self.find_all_translations_by_language(language)
-    language_id = Language.find_by(name: language.titleize).id
+    language_id = Language.find_by(name: language).id || Language.find_by(name: language.titleize).id
     Translation.joins(:word).select("translations.*, words.word_name").where("language_id = ?", language_id).order(:romanization)
   end
 
   # find all the translations of the word_name && are in location in area1, area2, area3.
   def self.find_all_translations_by_area(location, word_name)
     word_id = Word.find_by(word_name: word_name.downcase).id
+
     # below gives wrong translation id. It gives the language id instead
+    Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+
+    # Works
     Translation.joins(:language, :word).select("translations.*, translations.id as t_id, languages.*, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, translations.id as t_id, languages.*, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, translations.id as t_id, languages.*, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+
     # The one below only gives all of the translations table
     # Translation.joins(:language, :word).where("area1 = ?", location).or(Translation.joins(:language, :word).where("area2 = ?", location)).or(Translation.joins(:language, :word).where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
   end
 
   # find all the translations that inclue the location in area1, area2, area3.
+  # etymology can be blank
   def self.find_all_translations_by_area_img(location, word_name)
+    result_array = []
+
+    word_id = Word.find_by("word_name = ?", word_name.downcase).id
+    # search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
+
+    search_results = Translation.joins(:language).select("languages.abbreviation, translations.*").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
+
+    # example nl water green
+    search_results.each do |result|
+      if result.translation == result.romanization
+        result_array << ["#{result.abbreviation}", "#{result.translation}"]
+      else
+        combo = "#{result.translation} - #{result.romanization}"
+        result_array << ["#{result.abbreviation}", "#{combo}"]
+      end
+    end
+    result_array
+  end
+
+  # find all the etymologies that inclue the location in area1, area2, area3.
+  def self.find_all_etymologies_by_area_img(location, word_name)
     result_array = []
     etymology_array = []
 
     word_id = Word.find_by("word_name = ?", word_name.downcase).id
-    search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.etymology").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
+    search_results = Translation.joins(:language).select("languages.abbreviation, translations.*").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
 
     # example nl water green
     search_results.each do |result|
       if !result.etymology.nil? || !result.etymology == "Null"
-        etymology = result.etymology&.strip 
+        etymology = result.etymology&.strip
         if etymology_array.any? { |ety| ety && ety.include?(etymology.to_s) }
-          # puts "in if"
-          # byebug
-          index = etymology_array.find_index{ |ety| ety && ety.include?(etymology.to_s) }
-          result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i]
+          index = etymology_array.find_index { |ety| ety && ety.include?(etymology.to_s) }
+          if result.translation == result.romanization
+            result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i]
+          else
+            combo = "#{result.translation} - #{result.romanization}"
+            result_array << ["#{result.abbreviation}", "#{combo}", index.to_i]
+          end
         else
-          # puts "in else"
-          # byebug
           etymology_array << etymology
-          result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
+          if result.translation == result.romanization
+            result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
+          else
+            combo = "#{result.translation} - #{result.romanization}"
+            result_array << ["#{result.abbreviation}", "#{combo}", etymology_array.length.to_i]
+          end
         end
       else
-        result_array << ["#{result.abbreviation}", "#{result.translation}", nil]
+        if result.translation == result.romanization
+          result_array << ["#{result.abbreviation}", "#{result.translation}", nil]
+        else
+          combo = "#{result.translation} - #{result.romanization}"
+          result_array << ["#{combo}", "#{result.translation}", nil]
+        end
       end
-      # byebug
     end
     result_array
   end
@@ -279,13 +316,17 @@ class Translation < ApplicationRecord
     result_array = []
 
     word_id = Word.find_by("word_name = ?", word_name.downcase).id
-    search_results = Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.gender").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.gender").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.translation, translations.gender").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
+    search_results = Translation.joins(:language).select("languages.abbreviation, translations.*").where("area1 = ?", location).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area2 = ?", location)).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area3 = ?", location)).where("word_id = ?", word_id).order(:abbreviation)
 
     # example nl water m
     search_results.each do |result|
-      result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", gender: "#{result.gender}"}
+      if result.translation == result.romanization
+        result_array << { abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", gender: "#{result.gender}" }
+      else
+        combo = "#{result.translation} - #{result.romanization}"
+        result_array << { abbreviation: "#{result.abbreviation}", translation: "#{combo}", gender: "#{result.gender}" }
+      end
     end
     result_array
   end
-
 end
