@@ -18,11 +18,14 @@ Rails.application.routes.draw do
 
       get "/search/all_languages_by_area/:location", to: "languages#find_all_languages_by_area"
 
+      # create maps
       get "/search/all_translations_by_area/:location/:word", to: "translations#find_all_translations_by_area"
       get "/search/all_translations_by_area_img/:location/:word", to: "translations#find_all_translations_by_area_img"  
       get "/search/all_etymologies_by_area_img/:location/:word", to: "translations#find_all_etymologies_by_area_img"
       get "/search/all_genders_by_area_img/:location/:word", to: "translations#find_all_genders_by_area_img"
 
+      get "/search/word_definition/:word", to: "words#find_a_definition"
+ 
       # helpers
       get "/search/all_macrofamily_names", to: "languages#find_all_macrofamily_names"
       get "/search/all_word_names", to: "words#find_all_words"
