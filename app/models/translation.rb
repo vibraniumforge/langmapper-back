@@ -14,11 +14,7 @@ class Translation < ApplicationRecord
     query_page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
 
     etymology_english = query_page.css("[id^='Etymology']")[0].parent.next_element.text
-    # word_id = Word.find_or_create_by(word_name: chosen_word).id
 
-    # Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
-
-    # layout2 = page.find("#{chosen_word}/translations § Noun")
     path1 = query_page.xpath('//a[contains(text(), "/translations § Noun")]')
     path2 = query_page.xpath('//a[contains(text(), "/translations#Noun")]')
 
@@ -30,11 +26,8 @@ class Translation < ApplicationRecord
     end
 
     if !layout_path.nil?
-      puts "if fires"
-      # layout_alt = query_page.xpath('//a[contains(text(), "/translations § Noun")]')[0]["href"]
       page = Nokogiri::HTML(open("https://en.wiktionary.org#{layout_path}"))
     else
-      puts " => else fires"
       page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
     end
 
@@ -58,21 +51,17 @@ class Translation < ApplicationRecord
     word_id = Word.find_by(word_name: chosen_word).id
     @word = Word.find(word_id)
     @word.update(definition: definition)
+
+    # create English first. Can't scrape this the same as other langs.
     Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
 
     puts "=================================================================="
     puts "Word: #{chosen_word}"
     puts "Definition: #{definition}"
     puts "Li Count: #{all_li_array.count}"
-    # word_id = Word.find_or_create_by(name: chosen_word).id
     puts "Word ID: #{word_id}"
 
     errors_ar = []
-
-    # English moved to above
-    # etymology_eng = page.css("span#Etymology")[0].parent.next_element.text
-    # etymology_english = page.css("[id^='Etymology']")[0].parent.next_element.text
-    #  Translation.create({language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
 
     # NEED: language_id, word_id, translation, romanization, full_link_eng, etymology, gender
 
@@ -81,15 +70,17 @@ class Translation < ApplicationRecord
 
       language_name = li.text.split(":")[0]
 
-      # if ['Azerbaijani', 'Chinese'].include?(language_name)
+      # byebug
+      language_id = Language.find_by(name: language_name)&.id
+      if language_id.nil?
+        next
+      end
 
       if li.css("span.gender")[0]&.text
         gender = li.css("span.gender")[0].text
       else
         gender = nil
       end
-
-      # fix serbo-croat here
 
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
         translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "").gsub(/\(please verify\)/, "").strip
@@ -103,7 +94,6 @@ class Translation < ApplicationRecord
         romanization = translation
       end
 
-      # if li.children[1].children[0].attributes["href"]&.value
       if !li.css("a")[0].nil? && li.css("a")[0]&.attributes["href"]&.value
         short_link_eng = li.css("a")[0]&.attributes["href"].value
       else
@@ -145,7 +135,7 @@ class Translation < ApplicationRecord
         etymology = nil
       end
 
-      language_id = Language.find_by(name: language_name).id
+      # language_id = Language.find_by(name: language_name).id
 
       @translation = Translation.new({ language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
 
