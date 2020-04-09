@@ -16,7 +16,7 @@ module Api::V1
     def create
       if !find_word_by_name.nil?
         puts "=> Word already exists."
-        render json: { message: "Word already exists.", success: true, data: @word_by_name }, status: 200
+        render json: { message: "Word already exists.", success: false, data: @word_by_name }, status: 200
         return
       end
       @word = Word.new(word_params)
