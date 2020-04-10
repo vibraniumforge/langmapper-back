@@ -74,7 +74,7 @@ module Api::V1
     end
 
     def find_a_definition
-      @word_definition = find_word_by_name.definition
+      @word_definition = find_existing_word_definition.definition
       render json: { message: "Word definition returned.", success: true, data: @word_definition }, status: 200
     end
 
@@ -85,7 +85,11 @@ module Api::V1
     end
 
     def find_word_by_name
-      @word_by_name = Word.find_by(word_name: params[:word])
+      @word_by_name = Word.find_by(word_name: params[:word][:word_name])
+    end
+
+    def find_existing_word_definition
+      Word.find_by(word_name: params[:word])
     end
 
     def word_params
