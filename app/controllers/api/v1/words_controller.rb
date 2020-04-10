@@ -37,11 +37,11 @@ module Api::V1
 
     # def update
     #   find_word
-    #   if @translation.nil?
+    #   if @word.nil?
     #     puts "Word not found"
     #     render json: { message: "Word not found", success: false }, status: 406
     #   end
-    #   if @translation.update(translation_params)
+    #   if @word.update(translation_params)
     #     puts "Word updated"
     #     render json: { message: "Word successfully updated.", success: true, data: @word }, status: 200
     #   else
