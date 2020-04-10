@@ -19,7 +19,6 @@ Good Words
 - [ ] Wolf
 - [ ] Mouse
 - [ ] Fox
-- [ ] Duck
 - [ ] Bear
 
 - [ ] Honey
@@ -30,7 +29,6 @@ Good Words
 
 - [ ] Snow
 - [ ] Rain
-- [ ] Wind
 - [ ] Ice
 - [ ] Frost
 
@@ -64,3 +62,4 @@ Good Words
 
 
 
+heroku restart; heroku pg:reset DATABASE --confirm secure-refuge-32252; heroku run rake db:migrate
