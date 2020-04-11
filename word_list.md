@@ -57,6 +57,10 @@ Good Words
 - [ ] Water
 - [ ] Sea
 
+- [ ] Red
+- [ ] Yellow
+- [ ] Green
+- [ ] Blue
 
 
 
