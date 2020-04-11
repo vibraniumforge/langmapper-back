@@ -12,21 +12,21 @@ module Api::V1
       render json: @translation
     end
 
-    def new
-      @language = Translation.new
-    end
+    # def new
+    #   @language = Translation.new
+    # end
 
-    def create
-      @translation = Translation.new(translation_params)
-      if @translation.save
-        puts "=> translation created"
-        render json: { message: "Translation successfully created.", success: true, data: @translation }, status: 200
-      else
-        puts "Translation not created"
-        puts "Errors= #{@translation.errors.full_messages.join(", ")}"
-        render json: { message: "Translation NOT created because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
-      end
-    end
+    # def create
+    #   @translation = Translation.new(translation_params)
+    #   if @translation.save
+    #     puts "=> translation created"
+    #     render json: { message: "Translation successfully created.", success: true, data: @translation }, status: 200
+    #   else
+    #     puts "Translation not created"
+    #     puts "Errors= #{@translation.errors.full_messages.join(", ")}"
+    #     render json: { message: "Translation NOT created because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
+    #   end
+    # end
 
     def edit
       find_translation
@@ -109,6 +109,8 @@ module Api::V1
       @translations = Translation.find_all_translations_by_area(params[:location], params[:word])
       render json: { message: "Translations by area successfully returned.", success: true, data: @translations }, status: 200
     end
+
+    # dont need these 2 below yet.
 
     # def find_all_etymologies_by_area
     #   @translations = Translation.find_all_etymologies_by_area(params[:location], params[:word])
