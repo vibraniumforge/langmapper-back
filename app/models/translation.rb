@@ -63,7 +63,9 @@ class Translation < ApplicationRecord
 
     errors_ar = []
 
-    # NEED: language_id, word_id, translation, romanization, full_link_eng, etymology, gender
+    # NEED TO FIND: language_id, word_id, translation, romanization, full_link_eng, etymology, gender
+
+    all_langs = Language.current_langauges_hash
 
     all_li_array.each_with_index do |li, index|
       etymology = nil
@@ -72,7 +74,11 @@ class Translation < ApplicationRecord
 
       language_name = li.text.split(":")[0]
 
-      language_id = Language.find_by(name: language_name)&.id
+      # old way below with many queries
+      # language_id = Language.find_by(name: language_name)&.id
+
+      language_id = all_langs.select{ |lang| lang[:name] == language_name}.map{|x|x[:id]}[0]
+
       if language_id.nil?
         next
       end
@@ -89,6 +95,7 @@ class Translation < ApplicationRecord
 
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
         translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "").gsub(/\(please verify\)/, "")
+        # if the translation is '(', then the setup is different. To get the first definition, use li.css("span.Latn")[0].text 
         if translation == "("
           # translation = li.css("span").text.gsub(/\((♂♀)\)/, "").gsub(/\(((Föhr-Amrum))\)/, "").split("(")[0].gsub(/\W/,"")
           translation = li.css("span.Latn")[0].text
@@ -108,7 +115,7 @@ class Translation < ApplicationRecord
       end
 
       # full_link_eng
-      
+
       if !li.css("a")[0].nil? && li.css("a")[0]&.attributes["href"]&.value
         short_link_eng = li.css("a")[0]&.attributes["href"].value
       else
