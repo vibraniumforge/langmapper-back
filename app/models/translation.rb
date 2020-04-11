@@ -57,9 +57,9 @@ class Translation < ApplicationRecord
 
     puts "=================================================================="
     puts "Word: #{chosen_word}"
+    puts "Word ID: #{word_id}"
     puts "Definition: #{definition}"
     puts "Li Count: #{all_li_array.count}"
-    puts "Word ID: #{word_id}"
 
     errors_ar = []
 
@@ -68,13 +68,16 @@ class Translation < ApplicationRecord
     all_li_array.each_with_index do |li, index|
       etymology = nil
 
+      # language_id
+
       language_name = li.text.split(":")[0]
 
-      # byebug
       language_id = Language.find_by(name: language_name)&.id
       if language_id.nil?
         next
       end
+
+      #  gender
 
       if li.css("span.gender")[0]&.text
         gender = li.css("span.gender")[0].text
@@ -82,11 +85,21 @@ class Translation < ApplicationRecord
         gender = nil
       end
 
+      # translation
+
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
-        translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "").gsub(/\(please verify\)/, "").strip
+        translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "").gsub(/\(please verify\)/, "")
+        if translation == "("
+          # translation = li.css("span").text.gsub(/\((♂♀)\)/, "").gsub(/\(((Föhr-Amrum))\)/, "").split("(")[0].gsub(/\W/,"")
+          translation = li.css("span.Latn")[0].text
+        end
+        # li.css("span").text.gsub(/\((♂♀)\)/, "").split("(")[0].strip
+        # li.css("span").text.gsub(/\((♂♀)\)/, "").split("(")[0].gsub(/\W/,"")
       else
         translation = nil
       end
+
+      # romanization
 
       if !li.css("span.tr.Latn")[0].nil?
         romanization = li.css("span.Latn")[0].text
@@ -94,6 +107,8 @@ class Translation < ApplicationRecord
         romanization = translation
       end
 
+      # full_link_eng
+      
       if !li.css("a")[0].nil? && li.css("a")[0]&.attributes["href"]&.value
         short_link_eng = li.css("a")[0]&.attributes["href"].value
       else
@@ -113,13 +128,18 @@ class Translation < ApplicationRecord
       end
       # "https://en.wiktionary.org/wiki/goud#Afrikaans" || nil
 
+
+      # etymology
+
       language_name_span_id = language_name.split(" ").join("_")
       # format the name to the wiktionary style
 
       if !etymology_page.nil? && etymology_page.css("[id=#{language_name_span_id}]").length > 0 && etymology_page.css("[id^='Etymology']").length > 0
         # if the page exists, and the page has the language on it, and there is an etymology element
         current_element = etymology_page.css("[id=#{language_name_span_id}]")[0]&.parent.next_element
-        # get the element with the id of the language_name, which is a SPAN under h2 with the lang_name. then, get the parent, the h2 tag, and then the next element. I need the current element to not be a h2, because that is my stop sign. Some pages have another h2 beneath with an ety from another lang. This is not right. This way, NULL goes in the DB, which is right, and not a wrong value.
+        # get the element with the id of the language_name, which is a SPAN under h2 with the language_name_span_id. Then, get the parent, the h2 tag, and then the next element. 
+        
+        # I need the current element to not be a h2, because that is my stop sign. Some pages have another h2 beneath with an etymology from another lang. This is not right. This way, NULL goes in the DB, which is right, and not an incorrect value.
         while !current_element.nil? && current_element.name != "h2"
           if current_element.name == "h3" && current_element.text.include?("Etymology") && !current_element.next_element.text.include?("(This etymology is missing or incomplete.")
             # usually it is a h3 with etymology, then the next p tag that has the etymology. But not always. This gets the h3 tag, and loops until it finds the p tag, THEN takes the value.
