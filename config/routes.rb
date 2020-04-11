@@ -2,11 +2,13 @@ Rails.application.routes.draw do
   root "welcome#index"
   namespace :api do
     namespace :v1 do
-      resources :languages
+      resources :languages, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+      # everything here
       resources :words, only: [:index, :show, :new, :create, :destroy]
-      # no ability to update a word. This leads to bad data.
+      # no ability to update a word. This leads to bad data. Can create.
       resources :translations, only: [:index, :show, :edit, :update, :destroy]
-      # no ability to create a translation. Only wiktionary info. Can update
+      # no ability to create a translation. Only info from wiktionary. Can update.
+
 
       get "/search/translation/:word", to: "translations#find_all_translations"
       get "/search/gender/:word", to: "translations#find_all_genders"
@@ -20,6 +22,9 @@ Rails.application.routes.draw do
 
       # create maps
       get "/search/all_translations_by_area/:location/:word", to: "translations#find_all_translations_by_area"
+      # only the above for now. This one route is good enough for the three maps. Displays all info in the table.
+
+      # create images
       get "/search/all_translations_by_area_img/:location/:word", to: "translations#find_all_translations_by_area_img"  
       get "/search/all_etymologies_by_area_img/:location/:word", to: "translations#find_all_etymologies_by_area_img"
       get "/search/all_genders_by_area_img/:location/:word", to: "translations#find_all_genders_by_area_img"
