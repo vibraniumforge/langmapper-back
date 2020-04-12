@@ -100,6 +100,9 @@ class Translation < ApplicationRecord
           # translation = li.css("span").text.gsub(/\((♂♀)\)/, "").gsub(/\(((Föhr-Amrum))\)/, "").split("(")[0].gsub(/\W/,"")
           translation = li.css("span.Latn")[0].text
         end
+        if language_name == "Serbo-Croatian"
+          translation = li.css("span.Cyrl")[0].text
+        end
         # li.css("span").text.gsub(/\((♂♀)\)/, "").split("(")[0].strip
         # li.css("span").text.gsub(/\((♂♀)\)/, "").split("(")[0].gsub(/\W/,"")
       else
@@ -108,7 +111,8 @@ class Translation < ApplicationRecord
 
       # romanization
 
-      if !li.css("span.tr.Latn")[0].nil?
+      # if !li.css("span.tr.Latn")[0].nil?
+      if !li.css("span.Latn")[0]&.text.nil?
         romanization = li.css("span.Latn")[0].text
       else
         romanization = translation
@@ -247,7 +251,7 @@ class Translation < ApplicationRecord
 
   # all the translations in a specified language
   def self.find_all_translations_by_language(language)
-    language_id = Language.find_by(name: language).id || Language.find_by(name: language.titleize).id
+    language_id = Language.find_by(name: language).id 
     Translation.joins(:word).select("translations.*, words.word_name").where("language_id = ?", language_id).order(:romanization)
   end
 
