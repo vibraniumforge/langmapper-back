@@ -94,7 +94,7 @@ module Api::V1
     end
 
     def find_all_translations_by_language
-      @translations = Translation.find_all_translations_by_language(params[:language].titleize)
+      @translations = Translation.find_all_translations_by_language(params[:language].split("-").map(&:titleize).join("-"))
       render json: { message: "Translations by language successfully returned.", success: true, data: @translations }, status: 200
     end
 
