@@ -16,10 +16,13 @@ Good Words
 
 - [ ] Swan
 - [ ] Goose
+- [ ] Owl
+- [ ] Falcon
+
 - [ ] Wolf
-- [ ] Mouse
 - [ ] Fox
 - [ ] Bear
+- [ ] Mouse
 
 - [ ] Honey
 - [ ] Apple
@@ -29,6 +32,7 @@ Good Words
 
 - [ ] Snow
 - [ ] Rain
+- [ ] Cloud
 - [ ] Ice
 - [ ] Frost
 
@@ -57,13 +61,7 @@ Good Words
 - [ ] Water
 - [ ] Sea
 
-- [ ] Red
-- [ ] Yellow
-- [ ] Green
-- [ ] Blue
-
-
-
 
 
 heroku restart; heroku pg:reset DATABASE --confirm secure-refuge-32252; heroku run rake db:migrate
+heroku run rake db:seed
