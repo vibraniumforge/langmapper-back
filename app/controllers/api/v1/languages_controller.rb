@@ -74,15 +74,22 @@ module Api::V1
     end
 
     def find_all_areas
-      @areas_ar = []
-      @areas_ar << Language.select(:area1).distinct.pluck(:area1)
-      @areas_ar << Language.select(:area2).distinct.pluck(:area2)
-      @areas_ar << Language.select(:area3).distinct.pluck(:area3)
+      # t1 = Time.now
+      # @areas_ar = []
+      # @areas_ar << Language.select(:area1).distinct.pluck(:area1)
+      # @areas_ar << Language.select(:area2).distinct.pluck(:area2)
+      # @areas_ar << Language.select(:area3).distinct.pluck(:area3)
       # puts @areas_ar
-      @areas = @areas_ar.flatten.compact.uniq.sort
+
+      # @areas = @areas_ar.flatten.compact.uniq.sort
       # puts "============="
       # puts @areas
+      @areas = Language.select(:area1, :area2, :area3).distinct.pluck(:area1, :area2, :area3).flatten.uniq.reject{|x|x.empty?}.sort
       render json: { message: "All language areas successfully returned.", success: true, data: @areas }, status: 200
+      # t2 = Time.now
+      # time = t2 - t1
+      # puts "+++++++++++++++++++++"
+      # puts "find_all_areas: Done in #{time.round(4)} seconds"
     end
 
     def language_count
