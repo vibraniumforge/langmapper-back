@@ -215,9 +215,10 @@ class Translation < ApplicationRecord
 
   # make a hash group by etymology
   def self.find_grouped_etymologies(query, macrofamily = "Indo-European")
+    word_id = Word.find_by("word_name = ?", query.downcase).id
+    protos_array = ["Proto-Indo-European", "Proto-Anatolian", "Proto-Tocharian", "Proto-Italic", "Vulgar Latin", "Latin",  "Proto-Celtic", "Proto-Brythonic", "Proto-Germanic", "Proto-Balto-Slavic", "Proto-Baltic", "Proto-Slavic", "Proto-Indo-Iranian", "Proto-Indic", "Proto-Iranian", "Proto-Armenian", "Old Armenian", "Proto-Greek", "Ancient Greek", "Proto-Albanian", "Old Dutch", "Old English", "Old Norse", "Old High German", "Old Frisian", "Old French", "Proto-Basque", "Proto-Kartvelian", "Old Georgian", "Old Turkic", "Proto-Turkic", "Proto-Uralic", "Proto-Finnic", "Proto-Samic"]
     array = []
     ety_hash = Hash.new { |k, v| }
-    word_id = Word.find_by("word_name = ?", query.downcase).id
     translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
       .joins(:translations)
       .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
@@ -293,6 +294,7 @@ class Translation < ApplicationRecord
 
   # find all the etymologies that inclue the location in area1, area2, area3.
   def self.find_all_etymologies_by_area_img(location, word_name)
+    puts "\n IN METHOD \n"
     result_array = []
     etymology_array = []
 
@@ -329,6 +331,7 @@ class Translation < ApplicationRecord
         end
       end
     end
+    pp result_array
     result_array
   end
 
