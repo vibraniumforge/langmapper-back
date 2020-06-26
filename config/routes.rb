@@ -3,8 +3,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :languages, only: [:index, :show, :new, :create, :edit, :update, :destroy]
-      # everything here
-      resources :words, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+      # all routes here
+      resources :words, only: [:index, :show, :new, :create, :destroy]
       # no ability to update a word. This leads to bad data. Can create.
       resources :translations, only: [:index, :show, :edit, :update, :destroy]
       # no ability to create a translation. Only info from wiktionary. Can update.
@@ -38,9 +38,9 @@ Rails.application.routes.draw do
       get "/search/all_areas", to: "languages#find_all_areas"
 
       # counters
-      get "/search/language_count", to: "languages#language_count"
-      get "/search/word_count", to: "words#word_count"
-      get "/search/translation_count", to: "translations#translation_count"
+      get "/search/languages_count", to: "languages#languages_count"
+      get "/search/words_count", to: "words#words_count"
+      get "/search/translations_count", to: "translations#translations_count"
     end
   end
 end
