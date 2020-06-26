@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :languages, only: [:index, :show, :new, :create, :edit, :update, :destroy]
       # everything here
-      resources :words, only: [:index, :show, :new, :create, :destroy]
+      resources :words, only: [:index, :show, :new, :create, :edit, :update, :destroy]
       # no ability to update a word. This leads to bad data. Can create.
       resources :translations, only: [:index, :show, :edit, :update, :destroy]
       # no ability to create a translation. Only info from wiktionary. Can update.
