@@ -98,7 +98,7 @@ module Api::V1
       render json: { message: "Translations by language successfully returned.", success: true, data: @translations }, status: 200
     end
 
-    def translation_count
+    def translations_count
       @translations = Translation.count
       render json: { message: "Translations count successfully returned.", success: true, data: @translations }, status: 200
     end

@@ -92,7 +92,7 @@ module Api::V1
       # puts "find_all_areas: Done in #{time.round(4)} seconds"
     end
 
-    def language_count
+    def languages_count
       @languages = Language.count
       render json: { message: "Languages count successfully returned.", success: true, data: @languages }, status: 200
     end
