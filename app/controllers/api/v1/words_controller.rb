@@ -1,7 +1,7 @@
 module Api::V1
   class WordsController < ApplicationController
     def index
-      @words = Word.all
+      @words = Word.all.order(:id)
       render json: @words
     end
 
@@ -68,7 +68,7 @@ module Api::V1
       render json: { message: "Words successfully returned.", success: true, data: @words }, status: 200
     end
 
-    def word_count
+    def words_count
       @count = Word.count
       render json: { message: "Word count returned.", success: true, data: @count }, status: 200
     end
