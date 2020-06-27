@@ -11,7 +11,6 @@ Rails.application.routes.draw do
       # no user ability to create a translation. Only info from wiktionary. 
       # Can update.
 
-
       get "/search/translation/:word", to: "translations#find_all_translations"
       get "/search/gender/:word", to: "translations#find_all_genders"
       get "/search/etymology/:word", to: "translations#find_etymology_containing"
