@@ -31,25 +31,25 @@ module Api::V1
       end
     end
 
-    # def edit
-    #   find_word
-    # end
+    def edit
+      find_word
+    end
 
-    # def update
-    #   find_word
-    #   if @word.nil?
-    #     puts "Word not found"
-    #     render json: { message: "Word not found", success: false }, status: 406
-    #   end
-    #   if @word.update(translation_params)
-    #     puts "Word updated"
-    #     render json: { message: "Word successfully updated.", success: true, data: @word }, status: 200
-    #   else
-    #     puts "Word not saved"
-    #     puts "Errors= #{@word.errors.full_messages.join(", ")}"
-    #     render json: { message: "Word NOT updated because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
-    #   end
-    # end
+    def update
+      find_word
+      if @word.nil?
+        puts "Word not found"
+        render json: { message: "Word not found", success: false }, status: 406
+      end
+      if @word.update(translation_params)
+        puts "Word updated"
+        render json: { message: "Word successfully updated.", success: true, data: @word }, status: 200
+      else
+        puts "Word not saved"
+        puts "Errors= #{@word.errors.full_messages.join(", ")}"
+        render json: { message: "Word NOT updated because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
+      end
+    end
 
     def destroy
       find_word
