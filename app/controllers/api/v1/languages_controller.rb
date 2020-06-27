@@ -64,7 +64,7 @@ module Api::V1
     end
 
     def find_all_alphabets
-      @alphabets = Language.select(:alphabet).order(:alphabet).distinct.pluck(:alphabet)
+      @alphabets = Language.select(:alphabet).distinct.order(:alphabet).pluck(:alphabet)
       render json: { message: "Alphabets successfully returned.", success: true, data: @alphabets }, status: 200
     end
 
