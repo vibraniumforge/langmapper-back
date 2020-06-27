@@ -41,7 +41,7 @@ module Api::V1
         puts "Word not found"
         render json: { message: "Word not found", success: false }, status: 406
       end
-      if @word.update(translation_params)
+      if @word.update(word_params)
         puts "Word updated"
         render json: { message: "Word successfully updated.", success: true, data: @word }, status: 200
       else
@@ -93,7 +93,7 @@ module Api::V1
     end
 
     def word_params
-      params.require(:word).permit(:word_name)
+      params.require(:word).permit(:word_name, :definition)
     end
   end
 end
