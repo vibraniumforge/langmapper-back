@@ -197,7 +197,7 @@ class Translation < ApplicationRecord
   # # # # # # # # # # # # # # # # # # # #
 
   # Find all translations of a word in All languages
-  def self.find_all_translations(query)
+  def self.find_all_translations_by_word(query)
     word_id = Word.find_by("word_name = ?", query.downcase).id
     Translation.joins(:language).where(word_id: word_id).order(:name)
   end
