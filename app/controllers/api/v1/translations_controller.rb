@@ -60,8 +60,8 @@ module Api::V1
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    def find_all_translations_by_word
-      @translations = Translation.find_all_translations(params[:word])
+    def search_all_translations_by_word
+      @translations = Translation.search_all_translations_by_word(params[:word])
       render json: 
       { message: "Translations by word successfully returned.", success: true, data: @translations }, status: 200
       # render json: { message: "Translations of #{params[:word]} successfully returned.", success: true, data: @translations}, status: 200
