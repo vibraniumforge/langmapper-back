@@ -75,8 +75,8 @@ module Api::V1
 
     def find_etymology_containing
       @etymologies = Translation.find_etymology_containing(params[:word])
-      render json: @etymologies
-      # render json: { message: "Etymology containing #{params[:word]} successfully returned.", success: true, data: @etymologies}, status: 200
+      # render json: @etymologies
+      render json: { message: "Etymology containing #{params[:word]} successfully returned.", success: true, data: @etymologies}, status: 200
     end
 
     def find_grouped_etymologies
