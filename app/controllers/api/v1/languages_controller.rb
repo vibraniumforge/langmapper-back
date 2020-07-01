@@ -84,7 +84,7 @@ module Api::V1
       # @areas = @areas_ar.flatten.compact.uniq.sort
       # puts "============="
       # puts @areas
-      @areas = Language.select(:area1, :area2, :area3).distinct.pluck(:area1, :area2, :area3).flatten.uniq.reject{|x|x.empty?}.sort
+      @areas = Language.select(:area1, :area2, :area3).distinct.pluck(:area1, :area2, :area3).flatten.uniq.reject{|x|x.blank?}.sort
       render json: { message: "All language areas successfully returned.", success: true, data: @areas }, status: 200
       # t2 = Time.now
       # time = t2 - t1
