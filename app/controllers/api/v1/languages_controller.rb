@@ -64,34 +64,19 @@ module Api::V1
     end
 
     def find_all_alphabet_names
-      @alphabets = Language.find_all_alphabets
+      @alphabets = Language.find_all_alphabet_names
       render json: { message: "All Alphabet names successfully returned.", success: true, data: @alphabets }, status: 200
     end
 
     def find_all_area_names
-      # t1 = Time.now
-      # @areas_ar = []
-      # @areas_ar << Language.select(:area1).distinct.pluck(:area1)
-      # @areas_ar << Language.select(:area2).distinct.pluck(:area2)
-      # @areas_ar << Language.select(:area3).distinct.pluck(:area3)
-      # puts @areas_ar
-
-      # @areas = @areas_ar.flatten.compact.uniq.sort
-      # puts "============="
-      # puts @areas
       @areas = Language.find_all_area_names
       render json: { message: "All Language area names successfully returned.", success: true, data: @areas }, status: 200
-      # t2 = Time.now
-      # time = t2 - t1
-      # puts "+++++++++++++++++++++"
-      # puts "find_all_areas: Done in #{time.round(4)} seconds"
     end
 
     def find_all_languages_by_area
       @languages = Language.find_all_languages_by_area(params[:area])
       render json: { message: "All Languages successfully returned.", success: true, data: @languages }, status: 200
     end
-
 
     def languages_count
       @languages = Language.languages_count
