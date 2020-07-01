@@ -69,8 +69,8 @@ module Api::V1
 
     def find_all_genders
       @genders = Translation.find_all_genders(params[:word])
-      render json: @genders
-      # render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @genders}, status: 200
+      # render json: @genders
+      render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @genders}, status: 200
     end
 
     def find_etymology_containing
