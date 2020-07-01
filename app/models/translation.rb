@@ -207,12 +207,12 @@ class Translation < ApplicationRecord
   # all translations of a WORD in a MACROFAMILY.
   def self.find_all_genders(word_name, macrofamily = "Indo-European")
     word_id = Word.find_by(word_name: word_name.downcase).id
-    Translation.left_joins(:language).select("translations.*, languages.*").where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family)
+    Translation.joins(:language).select("translations.*, languages.*").where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family)
   end
 
   # etymologies that contain the query word inside.
   def self.find_etymology_containing(query)
-    Translation.where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
+    Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name ").where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
   end
 
   # make a hash group by etymology
@@ -263,10 +263,12 @@ class Translation < ApplicationRecord
     word_id = Word.find_by(word_name: word_name.downcase).id
 
     # below gives wrong translation id. It gives the language id instead
-    Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+    # Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
 
     # Works
-    Translation.joins(:language, :word).select("translations.*, translations.id as t_id, languages.*, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, translations.id as t_id, languages.*, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, translations.id as t_id, languages.*, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+    Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
+
+    # Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area1 = ?", location).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area2 = ?", location)).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
 
     # The one below only gives all of the translations table
     # Translation.joins(:language, :word).where("area1 = ?", location).or(Translation.joins(:language, :word).where("area2 = ?", location)).or(Translation.joins(:language, :word).where("area3 = ?", location)).where("word_id = ?", word_id).order(:macrofamily, :family)
