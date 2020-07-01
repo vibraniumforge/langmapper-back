@@ -74,7 +74,7 @@ module Api::V1
     end
 
     def find_word_definition
-      @word_definition = find_word_definition(params[:word])
+      @word_definition = Word.find_word_definition(params[:word])
       render json: { message: "Word definition returned.", success: true, data: @word_definition }, status: 200
     end
 
