@@ -77,7 +77,7 @@ class Translation < ApplicationRecord
       # old way below with many queries
       # language_id = Language.find_by(name: language_name)&.id
 
-      language_id = all_langs.select{ |lang| lang[:name] == language_name}.map{|x|x[:id]}[0]
+      language_id = all_langs.select { |lang| lang[:name] == language_name }.map { |x| x[:id] }[0]
 
       if language_id.nil?
         next
@@ -95,7 +95,7 @@ class Translation < ApplicationRecord
 
       if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
         translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "").gsub(/\(please verify\)/, "")
-        # if the translation is '(', then the setup is different. To get the first definition, use li.css("span.Latn")[0].text 
+        # if the translation is '(', then the setup is different. To get the first definition, use li.css("span.Latn")[0].text
         if translation == "("
           # translation = li.css("span").text.gsub(/\((♂♀)\)/, "").gsub(/\(((Föhr-Amrum))\)/, "").split("(")[0].gsub(/\W/,"")
           translation = li.css("span.Latn")[0].text
@@ -139,7 +139,6 @@ class Translation < ApplicationRecord
       end
       # "https://en.wiktionary.org/wiki/goud#Afrikaans" || nil
 
-
       # etymology
 
       language_name_span_id = language_name.split(" ").join("_")
@@ -148,8 +147,8 @@ class Translation < ApplicationRecord
       if !etymology_page.nil? && etymology_page.css("[id=#{language_name_span_id}]").length > 0 && etymology_page.css("[id^='Etymology']").length > 0
         # if the page exists, and the page has the language on it, and there is an etymology element
         current_element = etymology_page.css("[id=#{language_name_span_id}]")[0]&.parent.next_element
-        # get the element with the id of the language_name, which is a SPAN under h2 with the language_name_span_id. Then, get the parent, the h2 tag, and then the next element. 
-        
+        # get the element with the id of the language_name, which is a SPAN under h2 with the language_name_span_id. Then, get the parent, the h2 tag, and then the next element.
+
         # I need the current element to not be a h2, because that is my stop sign. Some pages have another h2 beneath with an etymology from another lang. This is not right. This way, NULL goes in the DB, which is right, and not an incorrect value.
         while !current_element.nil? && current_element.name != "h2"
           if current_element.name == "h3" && current_element.text.include?("Etymology") && !current_element.next_element.text.include?("(This etymology is missing or incomplete.")
@@ -199,7 +198,8 @@ class Translation < ApplicationRecord
   # Find all translations of a word in All languages
   def self.search_all_translations_by_word(query)
     word_id = Word.find_by("word_name = ?", query.downcase).id
-    Translation.joins(:language).select("translations.*, languages.*").where(word_id: word_id).order(:name)
+    # Translation.joins(:language).select("translations.*, languages.*, translations.id as translation_id, languages.id as language_id").where(word_id: word_id).order(:name)
+    Translation.joins(:language).select("translations.*, languages.name").where(word_id: word_id).order(:name)
   end
 
   # Translation.joins(:word, :language).select("translations.*, languages.*, words.word_name").where("macrofamily = ?", macrofamily).order(:family, :word_name)
@@ -212,13 +212,13 @@ class Translation < ApplicationRecord
 
   # etymologies that contain the query word inside.
   def self.find_etymology_containing(query)
-    Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name ").where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
+    Translation.joins(:language, :word).select("translations.*, languages.name, words.word_name ").where("etymology LIKE :query", query: "%#{sanitize_sql_like(query)}%")
   end
 
   # make a hash group by etymology
   def self.find_grouped_etymologies(query, macrofamily = "Indo-European")
     word_id = Word.find_by("word_name = ?", query.downcase).id
-    protos_array = ["Proto-Indo-European", "Proto-Anatolian", "Proto-Tocharian", "Proto-Italic", "Vulgar Latin", "Latin",  "Proto-Celtic", "Proto-Brythonic", "Proto-Germanic", "Proto-Balto-Slavic", "Proto-Baltic", "Proto-Slavic", "Proto-Indo-Iranian", "Proto-Indic", "Proto-Iranian", "Proto-Armenian", "Old Armenian", "Proto-Greek", "Ancient Greek", "Proto-Albanian", "Old Dutch", "Old English", "Old Norse", "Old High German", "Old Frisian", "Old French", "Proto-Basque", "Proto-Kartvelian", "Old Georgian", "Old Turkic", "Proto-Turkic", "Proto-Uralic", "Proto-Finnic", "Proto-Samic"]
+    protos_array = ["Proto-Indo-European", "Proto-Anatolian", "Proto-Tocharian", "Proto-Italic", "Vulgar Latin", "Latin", "Proto-Celtic", "Proto-Brythonic", "Proto-Germanic", "Proto-Balto-Slavic", "Proto-Baltic", "Proto-Slavic", "Proto-Indo-Iranian", "Proto-Indic", "Proto-Iranian", "Proto-Armenian", "Old Armenian", "Proto-Greek", "Ancient Greek", "Proto-Albanian", "Old Dutch", "Old English", "Old Norse", "Old High German", "Old Frisian", "Old French", "Proto-Basque", "Proto-Kartvelian", "Old Georgian", "Old Turkic", "Proto-Turkic", "Proto-Uralic", "Proto-Finnic", "Proto-Samic"]
     array = []
     ety_hash = Hash.new { |k, v| }
     translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
@@ -254,7 +254,7 @@ class Translation < ApplicationRecord
 
   # all the translations in a specified language
   def self.find_all_translations_by_language(language)
-    language_id = Language.find_by(name: language).id 
+    language_id = Language.find_by(name: language).id
     Translation.joins(:word).select("translations.*, words.word_name").where("language_id = ?", language_id).order(:romanization)
   end
 
