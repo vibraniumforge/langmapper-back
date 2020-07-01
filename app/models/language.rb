@@ -34,7 +34,7 @@ class Language < ApplicationRecord
 
   # counter
   def self.languages_count
-    Languages.count
+    Language.count
   end
 
 end
