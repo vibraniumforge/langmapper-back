@@ -199,7 +199,7 @@ class Translation < ApplicationRecord
   # Find all translations of a word in All languages
   def self.search_all_translations_by_word(query)
     word_id = Word.find_by("word_name = ?", query.downcase).id
-    Translation.joins(:language).select("translations.*, languages.name").where(word_id: word_id).order(:translations)
+    Translation.joins(:language).select("translations.*, languages.*").where(word_id: word_id).order(:name)
   end
 
   # Translation.joins(:word, :language).select("translations.*, languages.*, words.word_name").where("macrofamily = ?", macrofamily).order(:family, :word_name)
@@ -207,7 +207,7 @@ class Translation < ApplicationRecord
   # all translations of a WORD in a MACROFAMILY.
   def self.find_all_genders(word_name, macrofamily = "Indo-European")
     word_id = Word.find_by(word_name: word_name.downcase).id
-    Translation.joins(:language).where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family)
+    Translation.left_joins(:language).select("translations.*, languages.*").where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family)
   end
 
   # etymologies that contain the query word inside.
