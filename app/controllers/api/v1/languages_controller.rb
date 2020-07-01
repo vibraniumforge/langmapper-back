@@ -59,21 +59,16 @@ module Api::V1
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     def find_all_macrofamily_names
-      @macrofamilies = Language.select(:macrofamily).distinct.order(:macrofamily).pluck(:macrofamily)
-      render json: { message: "Macrofamilies successfully returned.", success: true, data: @macrofamilies }, status: 200
+      @macrofamilies = Language.find_all_macrofamily_names
+      render json: { message: "All Macrofamiliy names successfully returned.", success: true, data: @macrofamilies }, status: 200
     end
 
-    def find_all_alphabets
-      @alphabets = Language.select(:alphabet).distinct.order(:alphabet).pluck(:alphabet)
-      render json: { message: "Alphabets successfully returned.", success: true, data: @alphabets }, status: 200
+    def find_all_alphabet_names
+      @alphabets = Language.find_all_alphabets
+      render json: { message: "All Alphabet names successfully returned.", success: true, data: @alphabets }, status: 200
     end
 
-    def find_all_languages_by_area
-      @languages = Language.where("area1 = ?", params[:location]).or(Language.where("area2 = ?", params[:location])).or(Language.where("area3 = ?", params[:location]))
-      render json: { message: "Languages successfully returned.", success: true, data: @languages }, status: 200
-    end
-
-    def find_all_areas
+    def find_all_area_names
       # t1 = Time.now
       # @areas_ar = []
       # @areas_ar << Language.select(:area1).distinct.pluck(:area1)
@@ -84,16 +79,22 @@ module Api::V1
       # @areas = @areas_ar.flatten.compact.uniq.sort
       # puts "============="
       # puts @areas
-      @areas = Language.select(:area1, :area2, :area3).distinct.pluck(:area1, :area2, :area3).flatten.uniq.reject{|x|x.blank?}.sort
-      render json: { message: "All language areas successfully returned.", success: true, data: @areas }, status: 200
+      @areas = Language.find_all_area_names
+      render json: { message: "All Language area names successfully returned.", success: true, data: @areas }, status: 200
       # t2 = Time.now
       # time = t2 - t1
       # puts "+++++++++++++++++++++"
       # puts "find_all_areas: Done in #{time.round(4)} seconds"
     end
 
+    def find_all_languages_by_area
+      @languages = Language.find_all_languages_by_area(params[:area])
+      render json: { message: "All Languages successfully returned.", success: true, data: @languages }, status: 200
+    end
+
+
     def languages_count
-      @languages = Language.count
+      @languages = Language.languages_count
       render json: { message: "Languages count successfully returned.", success: true, data: @languages }, status: 200
     end
 

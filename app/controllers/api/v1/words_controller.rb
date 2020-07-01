@@ -63,18 +63,18 @@ module Api::V1
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    def find_all_words
-      @words = Word.all.order(:word_name)
-      render json: { message: "Words successfully returned.", success: true, data: @words }, status: 200
+    def find_all_word_names
+      @words = Word.find_all_word_names
+      render json: { message: "All Word names successfully returned.", success: true, data: @words }, status: 200
     end
 
     def words_count
-      @count = Word.count
+      @count = Word.words_count
       render json: { message: "Word count returned.", success: true, data: @count }, status: 200
     end
 
-    def find_a_definition
-      @word_definition = find_existing_word_definition.definition
+    def find_word_definition
+      @word_definition = find_word_definition(params[:word])
       render json: { message: "Word definition returned.", success: true, data: @word_definition }, status: 200
     end
 
