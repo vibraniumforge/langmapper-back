@@ -62,21 +62,20 @@ module Api::V1
 
     def search_all_translations_by_word
       @translations = Translation.search_all_translations_by_word(params[:word])
-      render json: 
-      { message: "Translations by word successfully returned.", success: true, data: @translations }, status: 200
-      # render json: { message: "Translations of #{params[:word]} successfully returned.", success: true, data: @translations}, status: 200
+      # render json: { message: "Translations by word successfully returned.", success: true, data: @translations }, status: 200
+      render json: { message: "Translations of #{params[:word]} successfully returned.", success: true, data: @translations }, status: 200
     end
 
     def find_all_genders
       @genders = Translation.find_all_genders(params[:word])
       # render json: @genders
-      render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @genders}, status: 200
+      render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @genders }, status: 200
     end
 
     def find_etymology_containing
       @etymologies = Translation.find_etymology_containing(params[:word])
       # render json: @etymologies
-      render json: { message: "Etymology containing #{params[:word]} successfully returned.", success: true, data: @etymologies}, status: 200
+      render json: { message: "Etymology containing #{params[:word]} successfully returned.", success: true, data: @etymologies }, status: 200
     end
 
     def find_grouped_etymologies
