@@ -165,7 +165,7 @@ Language.create({ name: "Kalmyk", abbreviation: "xal", alphabet: "Cyrl", macrofa
 Language.create({ name: "Xibe", abbreviation: "sjo", alphabet: "Mong", macrofamily: "Tungusic", family: "", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
 
 # Japonic
-# Language.create({ name: "Japanese", abbreviation: "ja", alphabet: "Jpan", macrofamily: "Isolate", family: "Japonic", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
+# Language.create({ name: "Japanese", abbreviation: "ja", alphabet: "Jpan", macrofamily: "Isolate", family: "Japonic", subfamily: "Altaic", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
 
 # Koreanic
 Language.create({ name: "Korean", abbreviation: "ko", alphabet: "Kore", macrofamily: "Isolate", family: "Koreanic", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
