@@ -5,7 +5,7 @@ class Word < ApplicationRecord
   validates :word_name, presence: true
 
   def self.find_all_word_names
-    Word.all.pluck(:id, :word_name)
+    Word.select("words.word_name, words.id")
   end
 
   def self.words_count
@@ -13,7 +13,6 @@ class Word < ApplicationRecord
   end
 
   def self.find_word_definition(word)
-    Word.where(word_name: word).pluck(:id, :definition)
+    Word.where(word_name: word).pluck(:definition)
   end
-
 end
