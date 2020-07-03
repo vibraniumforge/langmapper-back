@@ -63,8 +63,8 @@ module Api::V1
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    def find_all_word_names
-      @words = Word.find_all_word_names
+    def all_word_names
+      @words = Word.all_word_names
       render json: { message: "All Word names successfully returned.", success: true, data: @words }, status: 200
     end
 
