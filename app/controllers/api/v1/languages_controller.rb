@@ -58,18 +58,18 @@ module Api::V1
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    def find_all_macrofamily_names
-      @macrofamilies = Language.find_all_macrofamily_names
+    def all_macrofamily_names
+      @macrofamilies = Language.all_macrofamily_names
       render json: { message: "All Macrofamiliy names successfully returned.", success: true, data: @macrofamilies }, status: 200
     end
 
-    def find_all_alphabet_names
-      @alphabets = Language.find_all_alphabet_names
+    def all_alphabet_names
+      @alphabets = Language.all_alphabet_names
       render json: { message: "All Alphabet names successfully returned.", success: true, data: @alphabets }, status: 200
     end
 
-    def find_all_area_names
-      @areas = Language.find_all_area_names
+    def all_area_names
+      @areas = Language.all_area_names
       render json: { message: "All Language area names successfully returned.", success: true, data: @areas }, status: 200
     end
 
