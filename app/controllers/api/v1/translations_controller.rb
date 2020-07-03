@@ -60,14 +60,13 @@ module Api::V1
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-    def search_all_translations_by_word
-      @translations = Translation.search_all_translations_by_word(params[:word])
-      # render json: { message: "Translations by word successfully returned.", success: true, data: @translations }, status: 200
+    def find_all_translations_by_word
+      @translations = Translation.find_all_translations_by_word(params[:word])
       render json: { message: "Translations of #{params[:word]} successfully returned.", success: true, data: @translations }, status: 200
     end
 
-    def find_all_genders
-      @genders = Translation.find_all_genders(params[:word])
+    def find_all_translations_by_gender
+      @genders = Translation.find_all_translations_by_gender(params[:word])
       # render json: @genders
       render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @genders }, status: 200
     end
@@ -78,24 +77,24 @@ module Api::V1
       render json: { message: "Etymology containing #{params[:word]} successfully returned.", success: true, data: @etymologies }, status: 200
     end
 
-    def find_grouped_etymologies
-      @etymologies = Translation.find_grouped_etymologies(params[:word], params[:macrofamily])
-      render json: { message: "Grouped etymologies successfully returned.", success: true, data: @etymologies }, status: 200
-    end
+    # def find_grouped_etymologies
+    #   @etymologies = Translation.find_grouped_etymologies(params[:word], params[:macrofamily])
+    #   render json: { message: "Grouped etymologies successfully returned.", success: true, data: @etymologies }, status: 200
+    # end
 
-    def find_all_translations_by_macrofamily
-      @translations = Translation.find_all_translations_by_macrofamily(params[:macrofamily])
-      render json: { message: "Translations by macrofamily successfully returned.", success: true, data: @translations }, status: 200
-    end
+    # def find_all_translations_by_macrofamily
+    #   @translations = Translation.find_all_translations_by_macrofamily(params[:macrofamily])
+    #   render json: { message: "Translations by macrofamily successfully returned.", success: true, data: @translations }, status: 200
+    # end
 
-    def all_languages_by_macrofamily
-      @macrofamilies = Translation.find_all_translations_by_macrofamily(macrofamily: params[:macrofamily])
-      render json: { message: "All macrofamilies successfully returned.", success: true, data: @macrofamilies }, status: 200
-    end
+    # def all_languages_by_macrofamily
+    #   @macrofamilies = Translation.find_all_translations_by_macrofamily(macrofamily: params[:macrofamily])
+    #   render json: { message: "All macrofamilies successfully returned.", success: true, data: @macrofamilies }, status: 200
+    # end
 
     def find_all_translations_by_language
       @translations = Translation.find_all_translations_by_language(params[:language].split("-").map(&:titleize).join("-"))
-      render json: { message: "Translations by language successfully returned.", success: true, data: @translations }, status: 200
+      render json: { message: "Translations by #{params[:language]} successfully returned.", success: true, data: @translations }, status: 200
     end
 
     def translations_count
@@ -106,21 +105,9 @@ module Api::V1
     # Map Makers 6
 
     def find_all_translations_by_area
-      @translations = Translation.find_all_translations_by_area(params[:location], params[:word])
-      render json: { message: "Translations by area successfully returned.", success: true, data: @translations }, status: 200
+      @translations = Translation.find_all_translations_by_area(params[:area], params[:word])
+      render json: { message: "Translations of #{params[:word]} in #{params[:area]} successfully returned.", success: true, data: @translations }, status: 200
     end
-
-    # dont need these 2 below yet.
-
-    # def find_all_etymologies_by_area
-    #   @translations = Translation.find_all_etymologies_by_area(params[:location], params[:word])
-    #   render json: { message: "Translations by area successfully returned.", success: true, data: @translations }, status: 200
-    # end
-
-    # def find_all_genders_by_area
-    #   @translations = Translation.find_all_genders_by_area(params[:location], params[:word])
-    #   render json: { message: "Translations by area successfully returned.", success: true, data: @translations }, status: 200
-    # end
 
     def find_all_translations_by_area_img
       # @translations = Translation.find_all_translations_by_area_img(params[:location], params[:word])
