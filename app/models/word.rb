@@ -4,7 +4,7 @@ class Word < ApplicationRecord
 
   validates :word_name, presence: true
 
-  def self.find_all_word_names
+  def self.all_word_names
     Word.select("words.word_name, words.id")
   end
 
