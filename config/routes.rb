@@ -34,17 +34,18 @@ Rails.application.routes.draw do
       # /get returns all.
       # /get || /search /controller/method to
 
-      # DONE BELOW HERE
+      # REFACTORED BELOW HERE
 
       # Not used in program
 
-      # get "/search/words/definition/:word", to: "words#find_word_definition"
       # get "/search/translations/translations_by_macrofamily/:macrofamily", to: "translations#find_all_translations_by_macrofamily"
       # get "/search/grouped_etymology/:word/:macrofamily", to: "translations#find_grouped_etymologies"
 
       # Used
 
       # searchers
+      get "/search/words/definition/:word", to: "words#find_word_definition"
+
       get "/search/languages/languages_by_area/:area", to: "languages#find_all_languages_by_area"
 
       get "/search/translations/language/:language", to: "translations#find_all_translations_by_language"
