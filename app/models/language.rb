@@ -15,15 +15,15 @@ class Language < ApplicationRecord
 
   # helpers
 
-  def self.find_all_macrofamily_names
+  def self.all_macrofamily_names
     Language.select(:macrofamily).distinct.order(:macrofamily).pluck(:macrofamily)
   end
 
-  def self.find_all_alphabet_names
+  def self.all_alphabet_names
     Language.select(:alphabet).distinct.order(:alphabet).pluck(:alphabet)
   end
 
-  def self.find_all_area_names
+  def self.all_area_names
     Language.select(:area1, :area2, :area3).distinct.pluck(:area1, :area2, :area3).flatten.uniq.reject{|x|x.blank?}.sort
   end
 
