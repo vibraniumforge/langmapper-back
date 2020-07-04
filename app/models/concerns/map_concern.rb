@@ -75,10 +75,10 @@ module MapConcern
       def self.find_all_translations_by_area_img(area, word)
         search_results = Translation.find_all_translations_by_area(area, word)
         languages_array = Combo.map { |item| item[0] }
-        color_codes_array = Combo.map { |item| item[1] }
         result_array = []
 
-        # example [nl, water]
+        # Append romanization if not the same as translation
+        # example [nl, water], ["uk", "мідь - midʹ"]
         search_results.each do |result|
           if result.translation == result.romanization
             result_array << ["#{result.abbreviation}", "#{result.translation}"]
@@ -88,8 +88,6 @@ module MapConcern
           end
         end
         pp result_array[0]
-
-      
 
         filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
         file_source = filename.read()
@@ -103,100 +101,34 @@ module MapConcern
 
         the_new_map.write(file_source)
         # the_new_map.close()
-        # the_new_map
+        the_new_map
         # send_file the_new_map, disposition: :inline
       end
 
-      def self.find_all_etymologies_by_area_img
+      def self.find_all_genders_by_area_img(area, word)
+        search_results = Translation.find_all_translations_by_area(area, word)
         languages_array = Combo.map { |item| item[0] }
         color_codes_array = Combo.map { |item| item[1] }
-        search_results = Translation.find_all_etymologies_by_area_img(params[:area], params[:word])
-
         result_array = []
-          # example [nl water green]
-        # search_results.each do |result|
-        #   # byebug
-        #   if !result.etymology.nil? || !result.etymology == "Null"
-        #     etymology = result.etymology&.strip
-        #     if etymology_array.any? { |ety| ety && ety.include?(etymology.to_s) }
-        #       index = etymology_array.find_index { |ety| ety && ety.include?(etymology.to_s) }
-        #       if result.translation == result.romanization
-        #         result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i]
-        #       else
-        #         combo = "#{result.translation} - #{result.romanization}"
-        #         result_array << ["#{result.abbreviation}", "#{combo}", index.to_i]
-        #       end
-        #     else
-        #       etymology_array << etymology
-        #       if result.translation == result.romanization
-        #         result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
-        #       else
-        #         combo = "#{result.translation} - #{result.romanization}"
-        #         result_array << ["#{result.abbreviation}", "#{combo}", etymology_array.length.to_i]
-        #       end
-        #     end
-        #   else
-        #     if result.translation == result.romanization
-        #       result_array << ["#{result.abbreviation}", "#{result.translation}", nil]
-        #     else
-        #       combo = "#{result.translation} - #{result.romanization}"
-        #       result_array << ["#{combo}", "#{result.translation}", nil]
-        #     end
-        #   end
-        # end
-        # byebug
-        # pp result_array[0]
 
-        
-        filename = File.open("public/my_europe_template.svg", "r")
-        # filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
-        file_source = filename.read()
-
-        counter = 0
-        for language in result_array
-          # puts "#{language}, #{counter}"
-          file_source = file_source.sub("$" + language[0], result_array[counter][1])
-
-          result_color = ""
-          if !result_array[counter][2].nil?
-            result_color = color_codes_array[result_array[counter][2]]
+        # Append romanization if not the same as translation
+        # example [nl, water, n], ["uk", "мідь - midʹ, n"]
+        search_results.each do |result|
+          if result.translation == result.romanization
+            result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", gender: "#{result.gender}"}
           else
-            result_color = "d9d9d9"
+            combo = "#{result.translation} - #{result.romanization}"
+            result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", gender: "#{result.gender}"}
           end
-          col = nil
-          if languages_array.include?(language[0])
-            col = color_codes_array[languages_array.find_index(language[0])]
-          end
-          if !col.nil?
-            file_source = file_source.gsub("#" + col, "#" + result_color)
-          end
-          counter += 1
         end
-
-        FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
-
-        the_new_map = open("public/my_europe_copy_template.svg", "w")
-
-        the_new_map.write(file_source)
-        # the_new_map.close()
-
-        # send_file the_new_map, disposition: :inline
-      end
-
-      def self.find_all_genders_by_area_img
-        languages_array = combo.map { |item| item[0] }
-        color_codes_array = combo.map { |item| item[1] }
-
-        result_array = Translation.find_all_genders_by_area_img(params[:location], params[:word])
+        # pp result_array
 
         # filename = File.open("public/my_europe_template.svg", "r")
         filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
         file_source = filename.read()
 
-        counter = 0
         for language in result_array
-          # puts "#{language}, #{counter}"
-          file_source = file_source.sub("$" + language[:abbreviation], result_array[counter][:translation])
+          file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
 
           result_color = ""
           case language[:gender]
@@ -210,6 +142,8 @@ module MapConcern
             result_color = "FF1493"
           when "n"
             result_color = "778899"
+          when "n inan"
+            result_color = "778899"
           else
             result_color = "D3D3D3"
           end
@@ -221,7 +155,6 @@ module MapConcern
           if !existing_color.nil?
             file_source = file_source.gsub("#" + existing_color, "#" + result_color)
           end
-          counter += 1
         end
 
         FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
@@ -230,10 +163,69 @@ module MapConcern
 
         the_new_map.write(file_source)
         # the_new_map.close()
-
-        send_file the_new_map, disposition: :attachment
+        the_new_map
+        
         # send_file the_new_map, disposition: :inline
       end
+
+      def self.find_all_etymologies_by_area_img
+        search_results = Translation.find_all_translations_by_area(area, word)
+        languages_array = Combo.map { |item| item[0] }
+        color_codes_array = Combo.map { |item| item[1] }
+        result_array = []
+
+        # Append romanization if not the same as translation
+        # example [nl, water, shared_ety_number], ["uk", "мідь - midʹ", shared_ety_number]
+        search_results.each do |result|
+          # byebug
+          if !result.etymology.nil? || !result.etymology == "Null"
+            etymology = result.etymology&.strip
+            if etymology_array.any? { |ety| ety && ety.include?(etymology.to_s) }
+              index = etymology_array.find_index { |ety| ety && ety.include?(etymology.to_s) }
+              if result.translation == result.romanization
+                result_array << ["#{result.abbreviation}", "#{result.translation}", index.to_i]
+              else
+                combo = "#{result.translation} - #{result.romanization}"
+                result_array << ["#{result.abbreviation}", "#{combo}", index.to_i]
+              end
+            else
+              etymology_array << etymology
+              if result.translation == result.romanization
+                result_array << ["#{result.abbreviation}", "#{result.translation}", etymology_array.length.to_i]
+              else
+                combo = "#{result.translation} - #{result.romanization}"
+                result_array << ["#{result.abbreviation}", "#{combo}", etymology_array.length.to_i]
+              end
+            end
+          else
+            if result.translation == result.romanization
+              result_array << ["#{result.abbreviation}", "#{result.translation}", nil]
+            else
+              combo = "#{result.translation} - #{result.romanization}"
+              result_array << ["#{combo}", "#{result.translation}", nil]
+            end
+          end
+        end
+        byebug
+        pp result_array[0]
+
+        filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
+        file_source = filename.read()
+        for language in result_array
+          file_source = file_source.sub("$" + language[0], language[1])
+        end
+
+        FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
+
+        the_new_map = open("public/my_europe_copy_template.svg", "w")
+
+        the_new_map.write(file_source)
+        # the_new_map.close()
+        the_new_map
+        # send_file the_new_map, disposition: :inline
     end
   end
 end
+
+
+ 
