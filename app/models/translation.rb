@@ -76,21 +76,4 @@ class Translation < ApplicationRecord
     Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area1 = ?", area).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area2 = ?", area)).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, words.word_name").where("area3 = ?", area)).where("word_id = ?", word_id).order(:macrofamily, :family)
   end
 
-  # All genders in an area
-  def self.find_all_genders_by_area_img(area, word_name)
-    result_array = []
-    word_id = Word.find_by("word_name = ?", word_name.downcase).id
-    search_results = Translation.joins(:language).select("languages.abbreviation, translations.*").where("area1 = ?", area).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area2 = ?", area)).or(Translation.joins(:language).select("languages.abbreviation, translations.*").where("area3 = ?", area)).where("word_id = ?", word_id).order(:abbreviation)
-
-    # example nl water m
-    search_results.each do |result|
-      if result.translation == result.romanization
-        result_array << { abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", gender: "#{result.gender}" }
-      else
-        combo = "#{result.translation} - #{result.romanization}"
-        result_array << { abbreviation: "#{result.abbreviation}", translation: "#{combo}", gender: "#{result.gender}" }
-      end
-    end
-    result_array
-  end
 end
