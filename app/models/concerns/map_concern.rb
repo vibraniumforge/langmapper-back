@@ -168,11 +168,12 @@ module MapConcern
         # send_file the_new_map, disposition: :inline
       end
 
-      def self.find_all_etymologies_by_area_img
+      def self.find_all_etymologies_by_area_img(area, word)
         search_results = Translation.find_all_translations_by_area(area, word)
         languages_array = Combo.map { |item| item[0] }
         color_codes_array = Combo.map { |item| item[1] }
         result_array = []
+        etymology_array = []
 
         # Append romanization if not the same as translation
         # example [nl, water, shared_ety_number], ["uk", "мідь - midʹ", shared_ety_number]
