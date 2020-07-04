@@ -223,6 +223,7 @@ module MapConcern
         # the_new_map.close()
         the_new_map
         # send_file the_new_map, disposition: :inline
+      end
     end
   end
 end
