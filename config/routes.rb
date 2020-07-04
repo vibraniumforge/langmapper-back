@@ -3,22 +3,22 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :languages, only: [:index, :show, :new, :create, :edit, :update, :destroy]
-      # USER: index show
+      # USER: index, show
       # no user ability to create or edit a language.
       # ADMIN: :index, :show, :new, :create, :edit, :update, :destroy
       # Admin do all
 
       resources :words, only: [:index, :show, :new, :create, :edit, :update, :destroy]
-      # USER: index show
+      # USER: index, show
       # no user ability to create or edit a word.
       # ADMIN: :index, :show, :new, :create, :edit, :update, :destroy
       # Admin do all
 
       resources :translations, only: [:index, :show, :edit, :update, :destroy]
-      # USER: index show
+      # USER: index, show
       # no user ability to create or edit a translation.
       # ADMIN: :index, :show, :edit, :update, :destroy
-      # Admin can't create. Only info from wiktionary.
+      # Admin can't create translations. Only info from wiktionary.
 
       # Custom routes
 
@@ -27,19 +27,17 @@ Rails.application.routes.draw do
       # /get returns all.
       # /get || /search /controller/method to
 
-      # create images
-      get "/search/all_translations_by_area_img/:area/:word", to: "translations#find_all_translations_by_area_img"
-      get "/search/all_etymologies_by_area_img/:area/:word", to: "translations#find_all_etymologies_by_area_img"
-      get "/search/all_genders_by_area_img/:area/:word", to: "translations#find_all_genders_by_area_img"
-
-      # REFACTORED BELOW HERE
-
       # Not used in program
 
       # get "/search/translations/translations_by_macrofamily/:macrofamily", to: "translations#find_all_translations_by_macrofamily"
       # get "/search/grouped_etymology/:word/:macrofamily", to: "translations#find_grouped_etymologies"
 
       # Used
+
+      # create images
+      get "/search/all_translations_by_area_img/:area/:word", to: "translations#find_all_translations_by_area_img"
+      get "/search/all_etymologies_by_area_img/:area/:word", to: "translations#find_all_etymologies_by_area_img"
+      get "/search/all_genders_by_area_img/:area/:word", to: "translations#find_all_genders_by_area_img"
 
       # searchers
       get "/search/words/definition/:word", to: "words#find_word_definition"
@@ -51,8 +49,8 @@ Rails.application.routes.draw do
       get "/search/translations/gender/:word", to: "translations#find_all_translations_by_gender"
       get "/search/translations/etymology/:word", to: "translations#find_etymology_containing"
       get "/search/translations/area/:area/:word", to: "translations#find_all_translations_by_area"
-      # This route does the "Search Translations by Area" route.
-      # It also gets the data for all 3 maps's tables
+      # This above route does the "Search Translations by Area" page route.
+      # It also gets the data for all 3 maps' tables
 
       # helpers
       get "/get/languages/macrofamily_names", to: "languages#all_macrofamily_names"
