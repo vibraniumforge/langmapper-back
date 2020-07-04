@@ -94,7 +94,6 @@ module Api::V1
     end
 
     def find_all_translations_by_area
-      puts "find_all_translations_by_area fires in controller"
       @translations = Translation.find_all_translations_by_area(params[:area], params[:word])
       render json: { message: "Translations of #{params[:word]} in #{params[:area]} successfully returned.", success: true, data: @translations }, status: 200
     end
@@ -109,20 +108,20 @@ module Api::V1
     def find_all_translations_by_area_img
       puts "find_all_translations_by_area_img fires in controller"
       @translations = Translation.find_all_translations_by_area_img(params[:area], params[:word])
-      puts @translations
       send_file @translations, disposition: :inline
       # byebug
       # render json: { message: "Translations by area image successfully returned.", success: true, data: @translations, disposition: :inline }, status: 200
     end
 
+    def find_all_genders_by_area_img
+      @translations = Translation.find_all_genders_by_area_img(params[:area], params[:word])
+      send_file @translations, disposition: :attachment
+      # render json: { message: "Translations by gender image successfully returned.", success: true, data: @translations }, status: 200
+    end
+
     def find_all_etymologies_by_area_img
       @translations = Translation.find_all_etymologies_by_area_img(params[:area], params[:word])
       render json: { message: "Translations by etymology image successfully returned.", success: true, data: @translations }, status: 200
-    end
-
-    def find_all_genders_by_area_img
-      @translations = Translation.find_all_genders_by_area_img(params[:area], params[:word])
-      render json: { message: "Translations by gender image successfully returned.", success: true, data: @translations }, status: 200
     end
 
     private
