@@ -28,9 +28,9 @@ Rails.application.routes.draw do
       # /get || /search /controller/method to
 
       # create images
-      get "/search/all_translations_by_area_img/:location/:word", to: "translations#find_all_translations_by_area_img"
-      get "/search/all_etymologies_by_area_img/:location/:word", to: "translations#find_all_etymologies_by_area_img"
-      get "/search/all_genders_by_area_img/:location/:word", to: "translations#find_all_genders_by_area_img"
+      get "/search/all_translations_by_area_img/:area/:word", to: "translations#find_all_translations_by_area_img"
+      get "/search/all_etymologies_by_area_img/:area/:word", to: "translations#find_all_etymologies_by_area_img"
+      get "/search/all_genders_by_area_img/:area/:word", to: "translations#find_all_genders_by_area_img"
 
       # REFACTORED BELOW HERE
 
