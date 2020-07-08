@@ -8,6 +8,7 @@ module Api::V1
     def show
       find_word
       render json: @word
+      # render json: { message: "Word already exists.", success: false, data:  @word }, status: 200
     end
 
     def new
@@ -15,19 +16,19 @@ module Api::V1
 
     def create
       if !find_word_by_name.nil?
-        puts "=> Word already exists."
+        puts "=> Word #{params[:word][:word_name.downcase]} already exists."
         render json: { message: "Word already exists.", success: false, data: @word_by_name }, status: 200
         return
       end
       @word = Word.new(word_params)
       if @word.save
         puts "=> Word saved"
-        render json: { message: "Word successfully created.", success: true, data: @word }, status: 200
-        Translation.find_info(@word.word_name)
+        render json: { message: "Word #{@word} successfully created.", success: true, data: @word }, status: 200
+        Translation.find_info(@word.word_name.downcase)
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
-        render json: { message: "Word NOT created because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
+        render json: { message: "Word #{@word} NOT created because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
       end
     end
 
@@ -39,11 +40,11 @@ module Api::V1
       find_word
       if @word.nil?
         puts "Word not found"
-        render json: { message: "Word not found", success: false }, status: 406
+        render json: { message: "Word #{@word} not found", success: false }, status: 406
       end
       if @word.update(word_params)
         puts "Word updated"
-        render json: { message: "Word successfully updated.", success: true, data: @word }, status: 200
+        render json: { message: "Word #{@word} successfully updated.", success: true, data: @word }, status: 200
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
