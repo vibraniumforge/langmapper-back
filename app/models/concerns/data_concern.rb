@@ -1,6 +1,7 @@
 module DataConcern
   module ClassMethods
     extend ActiveSupport::Concern
+    require 'open-uri'
     included do
       def self.find_info(chosen_word)
         t1 = Time.now
