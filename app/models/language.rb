@@ -7,10 +7,11 @@ class Language < ApplicationRecord
   validates :alive, inclusion: { in: [true, false] }, allow_blank: true
 
   def self.current_langauges_hash
-    all_langs = Language.all.pluck(:id, :name)
-    all_langs.map do |lang|
-      Hash[id: lang[0], name: lang[1]]
-    end
+    Language.select(:id, :name).order(:id)
+    # all_langs = Language.all.pluck(:id, :name)
+    # all_langs.map do |lang|
+    #   Hash[id: lang[0], name: lang[1]]
+    # end
   end
 
   # helpers
