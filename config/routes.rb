@@ -22,6 +22,8 @@ Rails.application.routes.draw do
 
       resources :users, only: [:index, :show, :new, :edit]
 
+      post "/auth/login/", to: "auth#login"
+
       
       # Custom routes
 
