@@ -34,8 +34,8 @@ Rails.application.routes.draw do
 
       # Not used in program
 
-      # get "/search/translations/translations_by_macrofamily/:macrofamily", to: "translations#find_all_translations_by_macrofamily"
-      # get "/search/grouped_etymology/:word/:macrofamily", to: "translations#find_grouped_etymologies"
+      
+    
 
       # Used
 
@@ -45,6 +45,9 @@ Rails.application.routes.draw do
       get "/search/all_genders_by_area_img/:area/:word", to: "translations#find_all_genders_by_area_img"
 
       # searchers
+      get "/search/grouped_etymology/:word/:macrofamily", to: "translations#find_grouped_etymologies"
+      get "/search/translations/macrofamily/:macrofamily", to: "translations#find_all_translations_by_macrofamily"
+
       get "/search/words/definition/:word", to: "words#find_word_definition"
 
       get "/search/languages/area/:area", to: "languages#find_all_languages_by_area"
