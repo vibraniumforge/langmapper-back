@@ -23,13 +23,13 @@ module Api::V1
       else
         puts "User not saved"
         puts "Errors= #{@user.errors.full_messages.join(", ")}"
-        render json: { message: "User #{@user} NOT created because #{@user.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
+        render json: { message: "User #{@user} NOT created because #{@user.errors.full_messages.join(", ")}", success: false, data: @user.errors.full_messages }, status: 406
       end
     end
 
     private
-    def word_params
-      params.require(:word).permit(:name, :password)
+    def user_params
+      params.require(:user).permit(:name, :password)
     end
   end
 end
