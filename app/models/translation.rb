@@ -60,7 +60,7 @@ class Translation < ApplicationRecord
 
   # all the translations of EVERY WORD in a macrofamily
   def self.find_all_translations_by_macrofamily(macrofamily)
-    Translation.joins(:word, :language).select("translations.*, languages.*, words.word_name").where("macrofamily = ?", macrofamily).order(:family, :word_name)
+    Translation.joins(:language).select("translations.*, languages.*").where("macrofamily = ?", macrofamily).order(:family)
   end
 
   # all the translations from a specified language
