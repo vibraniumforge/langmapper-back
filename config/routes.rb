@@ -20,6 +20,9 @@ Rails.application.routes.draw do
       # ADMIN: :index, :show, :edit, :update, :destroy
       # Admin can't create translations. Only info from wiktionary.
 
+      resources :users, only: [:index, :show, :new, :edit]
+
+      
       # Custom routes
 
       # NAMING
