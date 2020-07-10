@@ -3,12 +3,18 @@ module Api::V1
     def index
       @words = Word.all.order(:id)
       render json: @words
+      # functions, but still returns extra info
+      # render json: { message: "Words successfully returned.", success: true, data: @words, each_serialize: WordSerializer }, status: 200
+
+      # render json: { message: "Words successfully returned.", success: true, data: @words }, status: 200
+      # render json: { message: "Words successfully returned.", success: true, data: @words, each_serializer: WordSerializer.new(@words) }, status: 200
+
+      # render json: { message: "Words successfully returned.", success: true, data: WordSerializer.new(@words), each_serializer: WordSerializer }, status: 200
     end
 
     def show
       find_word
-      render json: @word
-      # render json: { message: "Word already exists.", success: false, data:  @word }, status: 200
+      render json: { message: "Word successfully returned.", success: true, data: WordSerializer.new(@word) }, status: 200
     end
 
     def new
