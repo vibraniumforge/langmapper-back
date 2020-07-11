@@ -12,7 +12,7 @@ Good Words
 - [ ] Cow
 - [ ] Sheep
 - [ ] Pig
-- [ ] Dog 
+- [ ] Dog
 
 - [ ] Swan
 - [ ] Goose
@@ -51,7 +51,8 @@ Good Words
 - [ ] Night
 
 - [ ] Winter
-- [ ] Spring
+- [ ] Summer
+- [ ] Autumn
 
 - [ ] Sun
 - [ ] Moon
@@ -60,8 +61,6 @@ Good Words
 
 - [ ] Water
 - [ ] Sea
-
-
 
 heroku restart; heroku pg:reset DATABASE --confirm secure-refuge-32252; heroku run rake db:migrate
 heroku run rake db:seed
