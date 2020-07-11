@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       # Admin can't create translations. Only info from wiktionary.
 
       resources :users, only: [:index, :show]
+      # ADMIN can only see and show a user. User is admin. Should only be one.
 
       post "/auth/login/", to: "auth#login"
 
@@ -30,12 +31,7 @@ Rails.application.routes.draw do
       # NAMING
       # /search searches for something and takes 1 or more params
       # /get returns all.
-      # /get || /search /controller/method to
-
-      # Not used in program
-
-      
-    
+      # /get || /search /controller/method/arguments
 
       # Used
 
@@ -45,13 +41,13 @@ Rails.application.routes.draw do
       get "/search/all_genders_by_area_img/:area/:word", to: "translations#find_all_genders_by_area_img"
 
       # searchers
+      
+      get "/search/words/definition/:word", to: "words#find_word_definition"
+      
+      get "/search/languages/area/:area", to: "languages#find_all_languages_by_area"
+      
       get "/search/grouped_etymology/:word/:macrofamily", to: "translations#find_grouped_etymologies"
       get "/search/translations/macrofamily/:macrofamily", to: "translations#find_all_translations_by_macrofamily"
-
-      get "/search/words/definition/:word", to: "words#find_word_definition"
-
-      get "/search/languages/area/:area", to: "languages#find_all_languages_by_area"
-
       get "/search/translations/language/:language", to: "translations#find_all_translations_by_language"
       get "/search/translations/word/:word", to: "translations#find_all_translations_by_word"
       get "/search/translations/gender/:word", to: "translations#find_all_translations_by_gender"
