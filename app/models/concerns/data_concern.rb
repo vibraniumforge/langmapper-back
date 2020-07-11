@@ -3,13 +3,19 @@ module DataConcern
     extend ActiveSupport::Concern
     require 'open-uri'
     included do
+
+
       def self.find_info(chosen_word)
         t1 = Time.now
     
         query_page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
     
+         # The english language page links to all the other languages. 
+         # It needs a separate case to grab its info.
         etymology_english = query_page.css("[id^='Etymology']")[0].parent.next_element.text
     
+        # There are two different formats of the link that is needed.
+        # see which of the two link styles is used on this page
         path1 = query_page.xpath('//a[contains(text(), "/translations § Noun")]')
         path2 = query_page.xpath('//a[contains(text(), "/translations#Noun")]')
     
@@ -25,7 +31,8 @@ module DataConcern
         else
           page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/#{chosen_word}#Translations"))
         end
-    
+
+        # there are two tables full of the links we need. grab them accordingly in the all_li_array
         first_table1 = page.css("td.translations-cell")[0].children.children
         second_table1 = page.css("td.translations-cell")[1].children.children
     
@@ -41,13 +48,18 @@ module DataConcern
             all_li_array << item
           end
         end
+
+        # NEED TO FIND: word_id, language_id, gender,  translation, romanization, full_link_eng, etymology, 
+
+        # grab the definition from the english language page.
+        # Update the Word with that info
     
         definition = page.css("table.translations")[0].attributes["data-gloss"].value
-        word_id = Word.find_by(word_name: chosen_word).id
+        word_id = Word.find_by({ word_name: chosen_word }).id
         @word = Word.find(word_id)
-        @word.update(definition: definition)
+        @word.update({ definition: definition })
     
-        # create English first. Can't scrape this the same as other langs.
+        # create the English entry first. Can't scrape this the same as other langs.
         Translation.create({ language_id: 1, word_id: word_id, translation: chosen_word, romanization: chosen_word, link: "https://en.wiktionary.org/wiki/#{chosen_word}#Translations", etymology: etymology_english, gender: nil })
     
         puts "=================================================================="
@@ -58,27 +70,24 @@ module DataConcern
     
         errors_ar = []
     
-        # NEED TO FIND: language_id, word_id, translation, romanization, full_link_eng, etymology, gender
+        
     
+        # This is all my current languages. Source is seeds. 
+        # This exists to save a check to see if there is a matching language every time. More performant
         all_langs = Language.current_langauges_hash
     
         all_li_array.each_with_index do |li, index|
           etymology = nil
     
-          # language_id
+          # find language_id
     
           language_name = li.text.split(":")[0]
-    
-          # old way below with many queries
-          # language_id = Language.find_by(name: language_name)&.id
-    
           language_id = all_langs.select { |lang| lang[:name] == language_name }.map { |x| x[:id] }[0]
-    
           if language_id.nil?
             next
           end
     
-          #  gender
+          #  find gender
     
           if li.css("span.gender")[0]&.text
             gender = li.css("span.gender")[0].text
@@ -86,7 +95,7 @@ module DataConcern
             gender = nil
           end
     
-          # translation
+          # find translation
     
           if li.css("span")[0]&.text && li.css("span")[0]&.text != "please add this translation if you can"
             translation = li.css("span")[0]&.text.gsub(/\(compound\)/, "").gsub(/\(please verify\)/, "")
@@ -104,7 +113,7 @@ module DataConcern
             translation = nil
           end
     
-          # romanization
+          # find romanization
     
           # if !li.css("span.tr.Latn")[0].nil?
           if !li.css("span.Latn")[0]&.text.nil?
@@ -113,7 +122,7 @@ module DataConcern
             romanization = translation
           end
     
-          # full_link_eng
+          # find full_link_eng
     
           if !li.css("a")[0].nil? && li.css("a")[0]&.attributes["href"]&.value
             short_link_eng = li.css("a")[0]&.attributes["href"].value
@@ -134,7 +143,7 @@ module DataConcern
           end
           # "https://en.wiktionary.org/wiki/goud#Afrikaans" || nil
     
-          # etymology
+          # find etymology
     
           language_name_span_id = language_name.split(" ").join("_")
           # format the name to the wiktionary style
@@ -160,10 +169,10 @@ module DataConcern
             etymology = nil
           end
     
-          # language_id = Language.find_by(name: language_name).id
-    
+          # save all 7 things I need
           @translation = Translation.new({ language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
     
+          # output info to the console
           if !full_link_eng.nil? && @translation.save
             puts "\n"
             puts "language_id: #{language_id}"
