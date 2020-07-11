@@ -7,7 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'http://arcane-wave-94268.herokuapp.com/', 'http://localhost:3000'
+    origins 'https://arcane-wave-94268.herokuapp.com', 'http://localhost:3000'
     # origins '*'
 
     resource '*',
