@@ -87,7 +87,6 @@ module MapConcern
             result_array << ["#{result.abbreviation}", "#{combo}"]
           end
         end
-        pp result_array[0]
 
         filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
         file_source = filename.read()
@@ -121,9 +120,7 @@ module MapConcern
             result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", gender: "#{result.gender}"}
           end
         end
-        # pp result_array
 
-        # filename = File.open("public/my_europe_template.svg", "r")
         filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
         file_source = filename.read()
 
@@ -178,7 +175,6 @@ module MapConcern
         # Append romanization if not the same as translation
         # example [nl, water, shared_ety_number], ["uk", "мідь - midʹ", shared_ety_number]
         search_results.each do |result|
-          # byebug
           if !result.etymology.nil? || !result.etymology == "Null"
             etymology = result.etymology&.strip
             if etymology_array.any? { |ety| ety && ety.include?(etymology.to_s) }
