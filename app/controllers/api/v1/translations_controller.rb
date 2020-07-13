@@ -74,7 +74,6 @@ module Api::V1
     end
 
     def find_grouped_etymologies
-      puts "find_grouped_etymologies fires!!!!"
       @etymologies = Translation.find_grouped_etymologies(params[:word], params[:macrofamily])
       render json: { message: "Grouped etymologies successfully returned.", success: true, data: @etymologies }, status: 200
     end
