@@ -76,8 +76,8 @@ module Api::V1
     end
 
     def words_count
-      @count = Word.words_count
-      render json: { message: "Word count returned.", success: true, data: @count }, status: 200
+      @word_count = Word.words_count
+      render json: { message: "Word count returned.", success: true, data: @word_count }, status: 200
     end
 
     def find_word_definition
