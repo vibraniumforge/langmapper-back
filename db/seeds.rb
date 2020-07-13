@@ -9,13 +9,13 @@ Translation.destroy_all
 
 # Germanic
 Language.create({ name: "English", abbreviation: "en", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "", alive: true })
-Language.create({ name: "Scots", abbreviation: "sco", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "Lowland Scots (Germanic)", alive: true })
+Language.create({ name: "Scots", abbreviation: "sco", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Western Europe", area3: "British Isles", notes: "a.k.a. Lowland Scots", alive: true })
 
 Language.create({ name: "Dutch", abbreviation: "nl", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "", notes: "", alive: true })
 Language.create({ name: "Afrikaans", abbreviation: "af", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Western Europe", area3: "", notes: "", alive: true })
-Language.create({ name: "West Frisian", abbreviation: "fy", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "", notes: "Netherlands", alive: true })
-Language.create({ name: "North Frisian", abbreviation: "frr", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
-Language.create({ name: "Saterland Frisian", abbreviation: "stq", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
+Language.create({ name: "West Frisian", abbreviation: "fy", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "", notes: "Friesland, NL", alive: true })
+Language.create({ name: "North Frisian", abbreviation: "frr", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "Nordfriesland, DE", alive: true })
+Language.create({ name: "Saterland Frisian", abbreviation: "stq", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "Saxony, DE", alive: true })
 
 Language.create({ name: "Low Saxon", abbreviation: "nds", alphabet: "Latn", macrofamily: "Indo-European", family: "Germanic", subfamily: "West Germanic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
 
