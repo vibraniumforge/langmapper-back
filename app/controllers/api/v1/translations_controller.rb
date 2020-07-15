@@ -106,10 +106,8 @@ module Api::V1
     # Mappers
 
     def find_all_translations_by_area_img
-      puts "find_all_translations_by_area_img fires in controller"
       @translations = Translation.find_all_translations_by_area_img(params[:area], params[:word])
       send_file @translations, disposition: :inline
-      # byebug
       # render json: { message: "Translations by area image successfully returned.", success: true, data: @translations, disposition: :inline }, status: 200
     end
 
