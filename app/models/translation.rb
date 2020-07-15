@@ -12,7 +12,7 @@ class Translation < ApplicationRecord
   # Find all translations of a WORD in ALL LANGUAGES
   def self.find_all_translations_by_word(query)
     word_id = Word.find_by("word_name = ?", query.downcase).id
-    Translation.joins(:language).select("translations.*, languages.name").where(word_id: word_id).order(:name)
+    Translation.joins(:language, :word).select("translations.*, languages.name, words.definition").where(word_id: word_id).order(:name)
   end
 
   # all translations of a WORD in a MACROFAMILY. Gender is inside
