@@ -6,7 +6,8 @@ class Word < ApplicationRecord
   validates :word_name, presence: true
 
   def self.all_word_names
-    Word.select("words.word_name, words.id").order("word_name ASC")
+    # Word.select("words.word_name, words.id").order("word_name ASC")
+    Word.select("words.word_name, words.id").order(word_name: :asc)
   end
 
   def self.words_count
