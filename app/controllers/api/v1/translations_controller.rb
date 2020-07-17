@@ -119,7 +119,8 @@ module Api::V1
 
     def find_all_etymologies_by_area_img
       @translations = Translation.find_all_etymologies_by_area_img(params[:area], params[:word])
-      render json: { message: "Translations by etymology image successfully returned.", success: true, data: @translations }, status: 200
+      send_file @translations, disposition: :attachment
+      # render json: { message: "Translations by etymology image successfully returned.", success: true, data: @translations }, status: 200
     end
 
     private
