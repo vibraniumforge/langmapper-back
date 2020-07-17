@@ -3687,7 +3687,7 @@
 
 
 
-<text
+<!-- <text
    xml:space="preserve"
    style="font-size:24.37975121px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
    x="654.28607"
@@ -3697,7 +3697,7 @@
      sodipodi:role="line"
      id="tspan4302"
      x="654.28607"
-     y="802.36841">$sh</tspan></text>
+     y="802.36841">$1sh</tspan></text> -->
 
 
 
@@ -3707,7 +3707,7 @@
 
 
 
-<text
+<!-- <text
    xml:space="preserve"
    style="font-size:22.34810829px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
    x="-363.9386"
@@ -3720,7 +3720,7 @@
      sodipodi:role="line"
      id="tspan4306"
      x="-363.9386"
-     y="1114.5366">$sh</tspan></text>
+     y="1114.5366">$2sh</tspan></text> -->
 
 
 
@@ -3974,7 +3974,7 @@
      sodipodi:role="line"
      x="1248.1619"
      y="807.45258"
-     id="tspan4138-7-7">$abq</tspan></text>
+     id="tspan4138-7-7">$ab</tspan></text>
 
 
 
