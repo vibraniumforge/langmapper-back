@@ -94,7 +94,7 @@ Language.create({ name: "Upper Sorbian", abbreviation: "hsb", alphabet: "Latn", 
 Language.create({ name: "Lower Sorbian", abbreviation: "dsb", alphabet: "Latn", macrofamily: "Indo-European", family: "Balto‑Slavic", subfamily: "West Slavic", area1: "Europe", area2: "Central Europe", area3: "Germany", notes: "", alive: true })
 
 Language.create({ name: "Bulgarian", abbreviation: "bg", alphabet: "Cyrl", macrofamily: "Indo-European", family: "Balto‑Slavic", subfamily: "South Slavic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
-Language.create({ name: "Serbo-Croatian", abbreviation: "sh", alphabet: "Latn", macrofamily: "Indo-European", family: "Slavic", subfamily: "South Slavic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
+Language.create({ name: "Serbo-Croatian", abbreviation: "sh", alphabet: "Latn", macrofamily: "Indo-European", family: "Balto‑Slavic", subfamily: "South Slavic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
 Language.create({ name: "Macedonian", abbreviation: "mk", alphabet: "Cyrl", macrofamily: "Indo-European", family: "Balto‑Slavic", subfamily: "South Slavic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
 Language.create({ name: "Slovene", abbreviation: "sl", alphabet: "Latn", macrofamily: "Indo-European", family: "Balto‑Slavic", subfamily: "South Slavic", area1: "Europe", area2: "South Europe", area3: "", notes: "", alive: true })
 
