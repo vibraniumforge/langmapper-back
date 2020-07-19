@@ -88,10 +88,11 @@ module MapConcern
       def self.find_all_translations_by_area_img(area, word)
         # get the relevant info from the DB
         search_results = Translation.find_all_translations_by_area(area, word)
-        # result after processing
+        # result after processing, this is what gets placed on the map
         result_array = []
         # => result_array = [[nl, water], ["uk", "мідь - midʹ"]... ]
-        # all the current langs. Used to find & delete missing "$__" from the SVG
+
+        # all the current langs. Used to find & delete missing "$__" from the map
         current_languages = []
         # ["ar", "mt", ...]
 
@@ -109,17 +110,17 @@ module MapConcern
         filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
         file_source = filename.read()
 
-        # change the "$__" to "my info"
+        # change the "$__" to result
         for language in result_array
           file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
         end
-
-        # remove languages that ARE in the map, but NOT in the reults
-        unused_map_langs = My_europe_svg-current_languages
-
+        
+        # languages that ARE on the map, but NOT in the reults
+        unused_map_languages = My_europe_svg - current_languages
+        
         # change the "$__" to "" to hide missing info.
-        for language in unused_map_langs
-          file_source = file_source.sub("$" + language, "")
+        for unused_language in unused_map_languages
+          file_source = file_source.sub("$" + unused_language, "")
         end
 
         send_map(file_source)
@@ -130,11 +131,10 @@ module MapConcern
         languages_array = Combo.map { |item| item[0] }
         color_codes_array = Combo.map { |item| item[1] }
         result_array = []
-        # => result_array = [[nl, water, n], ["uk", "мідь - midʹ, n"]... ]
         current_languages = []
-        # =>  ["ar", "mt", "sq", ...]
 
         search_results.each do |result|
+
           # remove results that are not on this map
           if !My_europe_svg.include?(result.abbreviation)
             next
@@ -151,38 +151,39 @@ module MapConcern
         file_source = filename.read()
 
         # remove unused "$__" from map and give gray color
-        unused_map_langs = My_europe_svg-current_languages
-        for language in unused_map_langs
-          if languages_array.include?(language)
-            existing_color = color_codes_array[languages_array.find_index(language)]
+        unused_map_languages = My_europe_svg - current_languages
+        for unused_language in unused_map_languages
+          if languages_array.include?(unused_language)
+            existing_color = color_codes_array[languages_array.find_index(unused_language)]
           end
           if !existing_color.nil?
             file_source = file_source.gsub("#" + existing_color, "#D3D3D3")
-            file_source = file_source.sub("$" + language, "")
+            file_source = file_source.sub("$" + unused_language, "")
           end
         end
 
-        # Change "$__" to something
+        # Change "$__" to result
         for language in result_array
           file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
 
-          result_color = ""
+          gender_color = ""
           case language[:gender]
           # when nil
-          #   result_color = "D3D3D3"
+          #   gender_color = "D3D3D3"
           # when ""
-          #   result_color = "D3D3D3"
+          #   gender_color = "D3D3D3"
           when "m"
-            result_color = "00BFFF"
+            gender_color = "00BFFF"
           when "f"
-            result_color = "FF1493"
+            gender_color = "FF1493"
           when "n"
-            result_color = "778899"
+            gender_color = "778899"
           when "n inan"
-            result_color = "778899"
+            gender_color = "778899"
           else
-            result_color = "D3D3D3"
+            gender_color = "D3D3D3"
           end
+
           existing_color = nil
 
           # if the current language is on the map, find its corresponding color, existing_color
@@ -190,9 +191,9 @@ module MapConcern
             existing_color = color_codes_array[languages_array.find_index(language[:abbreviation])]
           end
 
-          # change the existing_color to the result_color on hte map
+          # change the existing_color to the gender_color on the map
           if !existing_color.nil?
-            file_source = file_source.gsub("#" + existing_color, "#" + result_color)
+            file_source = file_source.gsub("#" + existing_color, "#" + gender_color)
           end
         end
 
@@ -203,12 +204,9 @@ module MapConcern
         search_results = Translation.find_all_translations_by_area(area, word)
         languages_array = Combo.map { |item| item[0] }
         color_codes_array = Combo.map { |item| item[1] }
-
-        # final results after transforming
         result_array = []
-        # => [nl, water], ["uk", "мідь - midʹ"]
 
-        # the array that etymologies are checked against to see if they are shared
+        # the array that etymologies are checked against to see if they are shared or not.
         etymology_array = []
         # =>  {:etymology=>"Borrowed from English copper.",
         #   :languages=>["ga", "gd"],
@@ -218,6 +216,7 @@ module MapConcern
         array_counter = 0
 
         search_results.each do |result|
+
           # ignore search_results that are not on this map
           if !My_europe_svg.include?(result.abbreviation)
             next
@@ -229,14 +228,15 @@ module MapConcern
           # find the index of the current_etymology in etymology_array, if any
           index_in_ety_array = etymology_array.find_index { |item| item && item[:etymology].include?(current_etymology.to_s) }
 
-          # if etymology IS null/nil, append nil as the number and blank as color
+          # if result.etymology IS null/nil, append nil as the number and blank as color
           if result.etymology.nil? || result.etymology == "Null"
             info = romanization_helper(result)[0].to_h
             info[:index] = nil
             info[:color] = "d9d9d9"
             result_array << info
 
-          # if there IS an etymology, but it is NOT in the array, it will have nil as index_in_ety_array
+          # if result.etymology IS an etymology, but it is NOT in the array, it will have nil as index_in_ety_array
+          # push it in array with default color
           elsif index_in_ety_array.nil?
 
             # set default color to missing. If it later is found, use found_color
@@ -248,13 +248,13 @@ module MapConcern
             # push the etymology, language, and color into the etymology_array 
             etymology_array << {etymology: current_etymology, languages: [result.abbreviation], color: found_color }
 
-            # push this into the result_array
+            # push result into the result_array
             info = romanization_helper(result)[0].to_h
             info[:index] = array_counter
             info[:color] = found_color
             result_array << info
 
-            # add it to current_langauges
+            # add result to current_langauges
             current_languages << result.abbreviation
             array_counter += 1
 
@@ -280,16 +280,15 @@ module MapConcern
 
         # remove unused langs $__ from map and color it blank
         unused_map_languages = My_europe_svg - current_languages
+
         for unused_language in unused_map_languages
           file_source = file_source.sub("$" + unused_language, "")
           color_from_map = color_codes_array[languages_array.find_index(unused_language)]
           file_source = file_source.gsub("#" + color_from_map, "#d9d9d9" )
         end
 
-        # Put result text on the map, change the result color on the map
-        counter = 0
+        # Update the map text and color
         for language in result_array
-          # puts "#{language}, #{counter}"
 
           # put the result text  on the map. => [мідь - midʹ - 5]
           # file_source = file_source.sub("$" + language[:abbreviation], "#{language[:translation]} - #{language[:index]}")
@@ -298,16 +297,12 @@ module MapConcern
           file_source = file_source.sub("$" + language[:abbreviation], "#{language[:translation]}")
 
           # change the result color on the map
-          color_from_map = nil
+          color_from_map = "d9d9d9"
           if languages_array.include?(language[:abbreviation])
             color_from_map = color_codes_array[languages_array.find_index(language[:abbreviation])]
-          else
-            color_from_map = "d9d9d9"
           end
-          if !color_from_map.nil?
-            file_source = file_source.gsub("#" + color_from_map, "#" + language[:color] )
-          end
-          counter += 1
+          file_source = file_source.gsub("#" + color_from_map, "#" + language[:color] )
+    
         end
       
         send_map(file_source)
@@ -336,6 +331,3 @@ module MapConcern
   end
 
 end
-
-
- 
