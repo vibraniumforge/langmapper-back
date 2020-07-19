@@ -12,20 +12,20 @@ module Api::V1
       render json: @users
     end
 
-    def new
-    end
+    # def new
+    # end
 
-    def create
-      @user = User.new(user_params)
-      if @user.save
-        puts "=> User saved"
-        render json: { message: "User #{@user} successfully created.", success: true, data: @user }, status: 200
-      else
-        puts "User not saved"
-        puts "Errors= #{@user.errors.full_messages.join(", ")}"
-        render json: { message: "User #{@user} NOT created because #{@user.errors.full_messages.join(", ")}", success: false, data: @user.errors.full_messages }, status: 406
-      end
-    end
+    # def create
+    #   @user = User.new(user_params)
+    #   if @user.save
+    #     puts "=> User saved"
+    #     render json: { message: "User #{@user} successfully created.", success: true, data: @user }, status: 200
+    #   else
+    #     puts "User not saved"
+    #     puts "Errors= #{@user.errors.full_messages.join(", ")}"
+    #     render json: { message: "User #{@user} NOT created because #{@user.errors.full_messages.join(", ")}", success: false, data: @user.errors.full_messages }, status: 406
+    #   end
+    # end
 
     private
     def user_params
