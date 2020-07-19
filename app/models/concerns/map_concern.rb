@@ -83,26 +83,26 @@ module MapConcern
       ]
 
       # The $___ from my_europe_template.svg
-      My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "tk", "tt", "uk", "vnc", "xal"]
+      My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
 
       def self.find_all_translations_by_area_img(area, word)
         # get the relevant info from the DB
         search_results = Translation.find_all_translations_by_area(area, word)
         # result after processing
         result_array = []
+        # => result_array = [[nl, water], ["uk", "мідь - midʹ"]... ]
         # all the current langs. Used to find & delete missing "$__" from the SVG
         current_languages = []
         # ["ar", "mt", ...]
 
-        # Append romanization if not the same as translation
-        # example [nl, water], ["uk", "мідь - midʹ"]
         search_results.each do |result|
-          if result.translation == result.romanization
-            result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}"}
-          else
-            combo = "#{result.translation} - #{result.romanization}"
-            result_array << {abbreviation: "#{result.abbreviation}", translation: combo }
+          # remove languages that ARE in the results, but NOT on this map
+          if !My_europe_svg.include?(result.abbreviation)
+            next
           end
+
+          # handle romanization
+          result_array << romanization_helper(result)[0].to_h
           current_languages << result.abbreviation
         end
 
@@ -114,9 +114,10 @@ module MapConcern
           file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
         end
 
-        # change the "$__" to "" to hide missing info.
-        # finds the languages that are ON the .svg, but not in the results
+        # remove languages that ARE in the map, but NOT in the reults
         unused_map_langs = My_europe_svg-current_languages
+
+        # change the "$__" to "" to hide missing info.
         for language in unused_map_langs
           file_source = file_source.sub("$" + language, "")
         end
@@ -129,19 +130,20 @@ module MapConcern
         languages_array = Combo.map { |item| item[0] }
         color_codes_array = Combo.map { |item| item[1] }
         result_array = []
-         # => result_array = [[nl, water, n], ["uk", "мідь - midʹ, n"]... ]
+        # => result_array = [[nl, water, n], ["uk", "мідь - midʹ, n"]... ]
         current_languages = []
         # =>  ["ar", "mt", "sq", ...]
 
-        # Append romanization if not the same as translation
-        # example [nl, water, n], ["uk", "мідь - midʹ, n"]
         search_results.each do |result|
-          if result.translation == result.romanization
-            result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", gender: "#{result.gender}"}
-          else
-            combo = "#{result.translation} - #{result.romanization}"
-            result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", gender: "#{result.gender}"}
+          # remove results that are not on this map
+          if !My_europe_svg.include?(result.abbreviation)
+            next
           end
+
+          # handle romanization 
+          info = romanization_helper(result)[0].to_h
+          info[:gender] = result.gender
+          result_array << info
           current_languages << result.abbreviation
         end
 
@@ -183,12 +185,12 @@ module MapConcern
           end
           existing_color = nil
 
-          # if the current language is on the map, find its corresponding color
+          # if the current language is on the map, find its corresponding color, existing_color
           if languages_array.include?(language[:abbreviation])
             existing_color = color_codes_array[languages_array.find_index(language[:abbreviation])]
           end
 
-          # change the existing color to the result_color
+          # change the existing_color to the result_color on hte map
           if !existing_color.nil?
             file_source = file_source.gsub("#" + existing_color, "#" + result_color)
           end
@@ -201,65 +203,127 @@ module MapConcern
         search_results = Translation.find_all_translations_by_area(area, word)
         languages_array = Combo.map { |item| item[0] }
         color_codes_array = Combo.map { |item| item[1] }
+        # final results after transforming
         result_array = []
+        # => [nl, water, shared_ety_number], ["uk", "мідь - midʹ", shared_ety_number]
+        # the array that etymologies are checked against to see if they are shared
         etymology_array = []
+        # =>  {:etymology=>"Borrowed from English copper.",
+        #   :languages=>["ga", "gd"],
+        #   :color=>"fd6d3c"},
         current_languages = []
 
-        # Append romanization if not the same as translation
-        # example [nl, water, shared_ety_number], ["uk", "мідь - midʹ", shared_ety_number]
         array_counter = 0
-        search_results.each do |result|
-          # if the result.ety is not nil/null, strip it
-          if !result.etymology.nil? || !result.etymology == "Null"
-            current_etymology = result.etymology&.strip
-            # it the current_etymology IS in the etymology_array, append its index to the result_array
-            if etymology_array.any? { |item| item && item[:etymology].include?(current_etymology.to_s) }
-            # INSERT ety grouper helper method here
-            # look at the above line in the future. Combine with below one.
-              found_index = etymology_array.find_index { |item| item && item[:etymology].include?(current_etymology.to_s) }
-              etymology_array[found_index][:languages] << result.abbreviation
-              # found_color = color_codes_array[languages_array.find_index(result[:abbreviation])]
-              found_color = etymology_array[found_index][:color]
-              # append romanization optionally
-              if result.translation == result.romanization
-                result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", index: found_index.to_i, color: found_color }
-              else
-                combo = "#{result.translation} - #{result.romanization}"
-                result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", index: found_index.to_i, color: found_color }
-              end
-            # if the ety is NOT in the array, push it in. and give the result number the next number in the array
-            # handle romanization
-            else
-              found_color = nil
-              if languages_array.find_index(result[:abbreviation])
-                found_color = color_codes_array[languages_array.find_index(result[:abbreviation])] 
-              else
-                found_color = "d9d9d9"
-              end
-              etymology_array << {etymology: current_etymology, languages: [result.abbreviation], color: found_color }
-              if result.translation == result.romanization
-                result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", index: array_counter, color: found_color }
-              else
-                combo = "#{result.translation} - #{result.romanization}"
-                result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", index: array_counter, color: found_color }
-              end
-              array_counter += 1
-            end
 
-          # if etymology IS null/nil, append nil as the number
-          # account for non latin translations
-          # ["uk", "мідь - midʹ", nil]
-          else
-            if result.translation == result.romanization
-              result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", index: nil, color: "d9d9d9" }
-            else
-              combo = "#{result.translation} - #{result.romanization}"
-              result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", index: nil, color: "d9d9d9" }
+        search_results.each do |result|
+          # remove results that are not on this map
+          if !My_europe_svg.include?(result.abbreviation)
+            next
+          end
+
+          # clean the etymology
+          current_etymology = result.etymology&.strip
+         
+          # find the index of the current_etymology in etymology_array, if any
+          index_in_ety_array = etymology_array.find_index { |item| item && item[:etymology].include?(current_etymology.to_s) }
+          puts "#{result[:abbreviation]}, #{index_in_ety_array}"
+          # if etymology IS null/nil, append nil as the number and blank as color
+          if result.etymology.nil? || result.etymology == "Null"
+            info = romanization_helper(result)[0].to_h
+            info[:index] = nil
+            info[:color] = "d9d9d9"
+            result_array << info
+          # if there is an etymology, but it is not in the array
+          elsif index_in_ety_array.nil?
+
+            # clean the etymology
+            current_etymology = result.etymology&.strip
+
+            # set default color to missing. If it is found, use that color
+            found_color = "d9d9d9"
+            if languages_array.find_index(result[:abbreviation])
+              found_color = color_codes_array[languages_array.find_index(result[:abbreviation])] 
             end
+            # push the etymology, language, and color into the etymology_array 
+            etymology_array << {etymology: current_etymology, languages: [result.abbreviation], color: found_color }
+
+            # push this into the result_array
+            info = romanization_helper(result)[0].to_h
+            info[:index] = array_counter
+            info[:color] = found_color
+            result_array << info
+
+            # add it to current_langauges
+            current_languages << result.abbreviation
+            array_counter += 1
+          # there is an etymology, and it IS in the etymology_array
+          else
+            # add this language to the etymology_array
+            etymology_array[index_in_ety_array][:languages] << result.abbreviation
+
+            # get the corresponding color
+            found_color = etymology_array[index_in_ety_array][:color]
+
+            # put the info into the result_array
+            info = romanization_helper(result)[0].to_h
+            info[:index] = index_in_ety_array
+            info[:color] = found_color
+            result_array << info
           end
           current_languages << result.abbreviation
         end
-        pp etymology_array
+
+          # # if the result.ety is not nil/null, strip it
+          # if !result.etymology.nil? || !result.etymology == "Null"
+          #   current_etymology = result.etymology&.strip
+          #   # if the current_etymology IS in the etymology_array, append its index to the result_array
+          #   if etymology_array.any? { |item| item && item[:etymology].include?(current_etymology.to_s) }
+          #   # INSERT ety grouper helper method here
+          #   # look at the above line in the future. Combine with below one.
+          #     found_index = etymology_array.find_index { |item| item && item[:etymology].include?(current_etymology.to_s) }
+          #     etymology_array[found_index][:languages] << result.abbreviation
+          #     # found_color = color_codes_array[languages_array.find_index(result[:abbreviation])]
+          #     found_color = etymology_array[found_index][:color]
+          #     # append romanization optionally
+          #     if result.translation == result.romanization
+          #       result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", index: found_index.to_i, color: found_color }
+          #     else
+          #       combo = "#{result.translation} - #{result.romanization}"
+          #       result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", index: found_index.to_i, color: found_color }
+          #     end
+          #   # if the ety is NOT in the array, push it in. and give the result number the next number in the array
+          #   # handle romanization
+          #   else
+          #     found_color = nil
+          #     if languages_array.find_index(result[:abbreviation])
+          #       found_color = color_codes_array[languages_array.find_index(result[:abbreviation])] 
+          #     else
+          #       found_color = "d9d9d9"
+          #     end
+          #     etymology_array << {etymology: current_etymology, languages: [result.abbreviation], color: found_color }
+          #     if result.translation == result.romanization
+          #       result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", index: array_counter, color: found_color }
+          #     else
+          #       combo = "#{result.translation} - #{result.romanization}"
+          #       result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", index: array_counter, color: found_color }
+          #     end
+          #     array_counter += 1
+          #   end
+
+        #   # if etymology IS null/nil, append nil as the number
+        #   # account for non latin translations
+        #   # ["uk", "мідь - midʹ", nil]
+        #   else
+        #     if result.translation == result.romanization
+        #       result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}", index: nil, color: "d9d9d9" }
+        #     else
+        #       combo = "#{result.translation} - #{result.romanization}"
+        #       result_array << {abbreviation: "#{result.abbreviation}", translation: "#{combo}", index: nil, color: "d9d9d9" }
+        #     end
+        #   end
+        #   current_languages << result.abbreviation
+        # end
+        # pp etymology_array
         # pp result_array[0]
 
         filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
@@ -318,8 +382,18 @@ module MapConcern
         # send_file the_new_map, disposition: :inline
       end
     
-      # def self.ety_helper
-      # end
+      # Append romanization if not the same as translation
+      # example [nl, water], ["uk", "мідь - midʹ"]
+      def self.romanization_helper(result)
+        if result.translation == result.romanization
+          # result_array << {abbreviation: "#{result.abbreviation}", translation: "#{result.translation}"}
+          return [abbreviation: "#{result.abbreviation}", translation: "#{result.translation}"]
+        else
+        #   combo = "#{result.translation} - #{result.romanization}"
+        #   result_array << {abbreviation: "#{result.abbreviation}", translation: combo }
+          return [abbreviation: "#{result.abbreviation}", translation: "#{result.translation} - #{result.romanization}"]
+        end
+      end
 
     end
   end
