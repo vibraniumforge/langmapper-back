@@ -1,7 +1,7 @@
 module Api::V1
   class WordsController < ApplicationController
     def index
-      @words = Word.all.order(:word_name)
+      @words = Word.all
       render json: @words
       # functions, but still returns extra info
       # render json: { message: "Words successfully returned.", success: true, data: @words, each_serialize: WordSerializer }, status: 200
@@ -22,8 +22,9 @@ module Api::V1
 
     def create
       if !find_word_by_name.nil?
-        puts "=> Word #{params[:word][:word_name.downcase]} already exists."
-        render json: { message: "Word already exists.", success: false, data: @word_by_name }, status: 200
+        message = "Word #{params[:word][:word_name.downcase]} already exists."
+        puts "=> #{message}"
+        render json: { message: message, success: false, data: @word_by_name }, status: 200
         return
       end
       @word = Word.new(word_params)
@@ -31,6 +32,7 @@ module Api::V1
         puts "=> Word saved"
         render json: { message: "Word #{@word} successfully created.", success: true, data: @word }, status: 200
         Translation.find_info(@word.word_name.downcase)
+        # FindInfoService.find_info(@word.word_name.downcase)
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
@@ -71,7 +73,7 @@ module Api::V1
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     def all_word_names
-      @words = Word.all_word_names
+      @words = Word.all_word_names.order(:word_name)
       render json: { message: "All Word names successfully returned.", success: true, data: @words }, status: 200
     end
 
