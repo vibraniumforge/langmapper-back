@@ -84,7 +84,6 @@ class CreateMapService
   My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
 
   def self.find_all_translations_by_area_img(area, word)
-    puts "FIRES"
     # get the relevant info from the DB
     search_results = Translation.find_all_translations_by_area(area, word)
     # result after processing, this is what gets placed on the map
@@ -233,7 +232,7 @@ class CreateMapService
       if result.etymology.nil? || result.etymology == "Null"
         info = romanization_helper(result)[0].to_h
         info[:index] = nil
-        info[:color] = "d9d9d9"
+        info[:color] = "FFFFFF"
         result_array << info
 
       # if result.etymology IS an etymology, but it is NOT in the array, it will have nil as index_in_ety_array
@@ -241,7 +240,7 @@ class CreateMapService
       elsif index_in_ety_array.nil?
 
         # set default color to missing. If it later is found, use found_color
-        found_color = "d9d9d9"
+        found_color = "FFFFFF"
         if languages_array.find_index(result[:abbreviation])
           found_color = color_codes_array[languages_array.find_index(result[:abbreviation])] 
         end
@@ -272,8 +271,9 @@ class CreateMapService
         info[:index] = index_in_ety_array
         info[:color] = found_color
         result_array << info
+        current_languages << result.abbreviation
       end
-      current_languages << result.abbreviation
+      # current_languages << result.abbreviation
     end
 
     filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
@@ -285,7 +285,7 @@ class CreateMapService
     for unused_language in unused_map_languages
       file_source = file_source.sub("$" + unused_language, "")
       color_from_map = color_codes_array[languages_array.find_index(unused_language)]
-      file_source = file_source.gsub("#" + color_from_map, "#d9d9d9" )
+      file_source = file_source.gsub("#" + color_from_map, "#FFFFFF" )
     end
 
     # Update the map text and color
@@ -298,7 +298,8 @@ class CreateMapService
       file_source = file_source.sub("$" + language[:abbreviation], "#{language[:translation]}")
 
       # change the result color on the map
-      color_from_map = "d9d9d9"
+      color_from_map = "ffffff"
+      # color_from_map = "d9d9d9"
       if languages_array.include?(language[:abbreviation])
         color_from_map = color_codes_array[languages_array.find_index(language[:abbreviation])]
       end
