@@ -168,19 +168,21 @@ class CreateMapService
       gender_color = ""
       case language[:gender]
       # when nil
-      #   gender_color = "D3D3D3"
+      #   gender_color = "FFFFFF"
       # when ""
-      #   gender_color = "D3D3D3"
+      #   gender_color = "FFFFFF"
       when "m"
-        gender_color = "00BFFF"
+        gender_color = "87CEFA"
+      when "m inan"
+        gender_color = "87CEFA"
       when "f"
-        gender_color = "FF1493"
+        gender_color = "FFC0CB"
       when "n"
-        gender_color = "778899"
-      when "n inan"
-        gender_color = "778899"
-      else
         gender_color = "D3D3D3"
+      when "n inan"
+        gender_color = "D3D3D3"
+      else
+        gender_color = "FFFFFF"
       end
 
       existing_color = nil
