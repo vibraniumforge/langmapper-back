@@ -31,8 +31,8 @@ module Api::V1
       if @word.save
         puts "=> Word saved"
         render json: { message: "Word #{@word} successfully created.", success: true, data: @word }, status: 200
-        Translation.find_info(@word.word_name.downcase)
-        # FindInfoService.find_info(@word.word_name.downcase)
+        # Translation.find_info(@word.word_name.downcase)
+        FindInfoService.find_info(@word.word_name.downcase)
       else
         puts "Word not saved"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
