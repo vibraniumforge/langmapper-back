@@ -11,17 +11,18 @@ class FindInfoService
     # It needs a separate case to grab its info.
     etymology_english = query_page.css("[id^='Etymology']")[0].parent.next_element.text
 
-    # The page can have the translations table on it, or it can be on a different page.
-    # There are two different formats of the link that is needed.
+    # The translations table that is needed can be in 1 of 3 places.
+    # 1 is on the same page.
+    # 2 is /translations § Noun
+    # 3 is /translations#Noun
+    # If it has either of the 2 links, it is on another page.
+    # There are two different formats of the link that is needed to get to that other page.
     # see which of the two link styles is used on this page
 
-    byebug
-    # cant figure out why this doesnt work for "silver", "iron" etc now.
+    # cant figure out why 1 & 2 dont work for "silver", "iron" etc now.
     path1 = query_page.xpath('//a[contains(text(), "/translations § Noun")]')
     path2 = query_page.xpath('//a[contains(text(), "/translations#Noun")]')
-
-    # path1 = query_page.css("#Translations")[0].parent.next_element.children[1]["href"]
-    # path2 = query_page.css
+    path3 = query_page.css("#Translations")
 
     if path1.length > 0
       layout_path = path1[0]["href"]
@@ -29,16 +30,23 @@ class FindInfoService
     if path2.length > 0
       layout_path = path2[0]["href"]
     end
+    if path3.length > 0
+      layout_path = path3[0].parent.next_element.children[1]["href"]
+    end
 
-    byebug
+    # byebug
     if layout_path.nil?
-      page = Nokogiri::HTML(open(URI.parse("https://en.wiktionary.org/wiki/#{chosen_word}#Translations#Noun")))
+      page = Nokogiri::HTML(open(URI.parse("https://en.wiktionary.org/wiki/#{chosen_word}#Translations")))
+      # page = Nokogiri::HTML(open(URI.parse("https://en.wiktionary.org/wiki/#{chosen_word}#Translations#Noun")))
+      # if page.nil?
+      #   page = Nokogiri::HTML(open(URI.parse("https://en.wiktionary.org/wiki/#{chosen_word}#Translations")))
+      # end
     else
       page = Nokogiri::HTML(open(URI.parse("https://en.wiktionary.org#{layout_path}")))
     end
 
     # there are two tables full of the links we need. grab them accordingly in the all_li_array
-    byebug
+    # byebug
     first_table1 = page.css("td.translations-cell")[0].children.children
     second_table1 = page.css("td.translations-cell")[1].children.children
 
