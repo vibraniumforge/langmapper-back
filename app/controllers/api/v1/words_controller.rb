@@ -29,8 +29,9 @@ module Api::V1
       end
       @word = Word.new(word_params)
       if @word.save
-        puts "=> Word saved"
-        render json: { message: "Word #{@word} successfully created.", success: true, data: @word }, status: 200
+        message = "Word #{@word} successfully created."
+        puts "=> #{message}"
+        render json: { message: message, success: true, data: @word }, status: 200
         # Translation.find_info(@word.word_name.downcase)
         FindInfoService.find_info(@word.word_name.downcase)
       else
@@ -73,8 +74,8 @@ module Api::V1
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     def all_word_names
-      @words = Word.all_word_names.order(:word_name)
-      render json: { message: "All Word names successfully returned.", success: true, data: @words }, status: 200
+      @word_names = Word.all_word_names
+      render json: { message: "All Word names successfully returned.", success: true, data: @word_names }, status: 200
     end
 
     def words_count
