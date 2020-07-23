@@ -78,14 +78,17 @@ class CreateMapService
     # ["ven", "f28d3c"],
     # vnc is my veneitian. ven is other
     ["xal", "d34d5f"],
+    # 63
   ]
 
   # The $___ from my_europe_template.svg
   My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
+  # 65 with 2 dupe "sh" 63
 
   def self.find_all_translations_by_area_img(area, word)
     # get the relevant info from the DB
     search_results = Translation.find_all_translations_by_area(area, word)
+
     # result after processing, this is what gets placed on the map
     result_array = []
     # => result_array = [[nl, water], ["uk", "мідь - midʹ"]... ]
@@ -94,9 +97,14 @@ class CreateMapService
     current_languages = []
     # ["ar", "mt", ...]
 
+    # get the selected blank map, open it, and get the $langs from it. Not hardcoded like before.
+    doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
+    map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+
+    # clean the result data for appending
     search_results.each do |result|
       # remove languages that ARE in the results, but NOT on this map
-      if !My_europe_svg.include?(result.abbreviation)
+      if !map_langugaes.include?(result.abbreviation)
         next
       end
 
@@ -114,7 +122,8 @@ class CreateMapService
     end
     
     # languages that ARE on the map, but NOT in the reults
-    unused_map_languages = My_europe_svg - current_languages
+    # unused_map_languages = My_europe_svg - current_languages
+    unused_map_languages = map_langugaes - current_languages
     
     # change the "$__" to "" to hide missing info.
     for unused_language in unused_map_languages
@@ -130,11 +139,13 @@ class CreateMapService
     color_codes_array = Combo.map { |item| item[1] }
     result_array = []
     current_languages = []
+    doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
+    map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
 
     search_results.each do |result|
 
       # remove results that are not on this map
-      if !My_europe_svg.include?(result.abbreviation)
+      if !map_langugaes.include?(result.abbreviation)
         next
       end
 
@@ -145,7 +156,9 @@ class CreateMapService
       # handle romanization 
       edited_result = romanization_helper(result)[0].to_h
 
-      edited_result[:gender] = !result.gender.nil? ? result.gender.sub(/\302\240/, " ") : nil
+      # edited_result[:gender] = !result.gender.nil? ? result.gender.sub(/\302\240/, " ") : nil
+      # .gsub(160.chr("UTF-8"),32.chr("UTF-8"))
+      edited_result[:gender] = result.gender.sub(/\302\240/, " ") 
       result_array << edited_result
       current_languages << result.abbreviation
     end
@@ -156,7 +169,7 @@ class CreateMapService
     file_source = filename.read()
 
     # remove unused "$__" from map and give gray color
-    unused_map_languages = My_europe_svg - current_languages
+    unused_map_languages = map_langugaes - current_languages
     for unused_language in unused_map_languages
       if languages_array.include?(unused_language)
         existing_color = color_codes_array[languages_array.find_index(unused_language)]
@@ -237,10 +250,13 @@ class CreateMapService
     current_languages = []
     array_counter = 0
 
+    doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
+    map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+
     search_results.each do |result|
 
       # ignore search_results that are not on this map
-      if !My_europe_svg.include?(result.abbreviation)
+      if !map_langugaes.include?(result.abbreviation)
         next
       end
 
@@ -302,7 +318,7 @@ class CreateMapService
     file_source = filename.read()
 
     # remove unused langs $__ from map and color it blank
-    unused_map_languages = My_europe_svg - current_languages
+    unused_map_languages = map_langugaes - current_languages
 
     for unused_language in unused_map_languages
       file_source = file_source.sub("$" + unused_language, "")
@@ -349,6 +365,16 @@ class CreateMapService
     else
       [abbreviation: "#{result.abbreviation}", translation: "#{result.translation} - #{result.romanization}"]
     end
+  end
+
+  def self.map_language_finder(map)
+    ar = []
+    map.split(" ").each do |word|
+      if word.start_with?("$")
+        ar << word
+      end
+    end
+    ar
   end
 
 end
