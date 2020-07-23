@@ -1,7 +1,7 @@
 module Api::V1
   class WordsController < ApplicationController
     def index
-      @words = Word.all
+      @words = Word.all.order(:id)
       render json: @words
       # functions, but still returns extra info
       # render json: { message: "Words successfully returned.", success: true, data: @words, each_serialize: WordSerializer }, status: 200
