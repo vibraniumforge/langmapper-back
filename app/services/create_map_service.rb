@@ -138,12 +138,19 @@ class CreateMapService
         next
       end
 
+      if result.gender.nil?
+        next
+      end
+
       # handle romanization 
-      info = romanization_helper(result)[0].to_h
-      info[:gender] = result.gender
-      result_array << info
+      edited_result = romanization_helper(result)[0].to_h
+
+      edited_result[:gender] = !result.gender.nil? ? result.gender.sub(/\302\240/, " ") : nil
+      result_array << edited_result
       current_languages << result.abbreviation
     end
+
+
 
     filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
     file_source = filename.read()
@@ -155,17 +162,20 @@ class CreateMapService
         existing_color = color_codes_array[languages_array.find_index(unused_language)]
       end
       if !existing_color.nil?
-        file_source = file_source.gsub("#" + existing_color, "#D3D3D3")
+        file_source = file_source.gsub("#" + existing_color, "#FFFFFF")
         file_source = file_source.sub("$" + unused_language, "")
       end
     end
+
+
 
     # Change "$__" to result
     for language in result_array
       file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
 
       gender_color = ""
-      case language[:gender]
+
+      case language[:gender] 
       # when nil
       #   gender_color = "FFFFFF"
       # when ""
@@ -174,16 +184,22 @@ class CreateMapService
         gender_color = "87CEFA"
       when "m inan"
         gender_color = "87CEFA"
+      when "m anim"
+        gender_color = "87CEFA"
       when "f"
+        gender_color = "FFC0CB"
+      when "f pl"
         gender_color = "FFC0CB"
       when "n"
         gender_color = "D3D3D3"
       when "n inan"
         gender_color = "D3D3D3"
+      when "c"
+        gender_color = "D3D3D3"
       else
         gender_color = "FFFFFF"
       end
-
+   
       existing_color = nil
 
       # if the current language is on the map, find its corresponding color, existing_color
@@ -230,10 +246,10 @@ class CreateMapService
 
       # if result.etymology IS null/nil, append nil as the number and blank as color
       if result.etymology.nil? || result.etymology == "Null"
-        info = romanization_helper(result)[0].to_h
-        info[:index] = nil
-        info[:color] = "FFFFFF"
-        result_array << info
+        edited_result = romanization_helper(result)[0].to_h
+        edited_result[:index] = nil
+        edited_result[:color] = "FFFFFF"
+        result_array << edited_result
 
       # if result.etymology IS an etymology, but it is NOT in the array, it will have nil as index_in_ety_array
       # push it in array with default color
@@ -249,10 +265,10 @@ class CreateMapService
         etymology_array << {etymology: current_etymology, languages: [result.abbreviation], color: found_color }
 
         # push result into the result_array
-        info = romanization_helper(result)[0].to_h
-        info[:index] = array_counter
-        info[:color] = found_color
-        result_array << info
+        edited_result = romanization_helper(result)[0].to_h
+        edited_result[:index] = array_counter
+        edited_result[:color] = found_color
+        result_array << edited_result
 
         # add result to current_langauges
         current_languages << result.abbreviation
@@ -267,10 +283,10 @@ class CreateMapService
         found_color = etymology_array[index_in_ety_array][:color]
 
         # put the info into the result_array
-        info = romanization_helper(result)[0].to_h
-        info[:index] = index_in_ety_array
-        info[:color] = found_color
-        result_array << info
+        edited_result = romanization_helper(result)[0].to_h
+        edited_result[:index] = index_in_ety_array
+        edited_result[:color] = found_color
+        result_array << edited_result
         current_languages << result.abbreviation
       end
       # current_languages << result.abbreviation
