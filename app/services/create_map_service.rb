@@ -81,9 +81,12 @@ class CreateMapService
     # 63
   ]
 
-  # The $___ from my_europe_template.svg
-  My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
-  # 65 with 2 dupe "sh" 63
+  Families_list = ["Tartessian", "Kipchak", "Kipchak-Nogai", "Albanian", "Oghuz", "Finnic", "Etruscan", "Hellenic", "Sami", "Celtic", "Yukaghir", "South", "Armenian", "Koreanic", "Anatolian", "Circassian", "Svan", "Yeniseian", "Indo-Iranian", "Zan", "Viet", "Basque", "Egyptian", "Ainu", "Tocharian", "Kipchak-Bulgar", "Nivkh", "Ugric", "Khmeric", "Kusunda", "Burushkaski", "Karluk", "Balto‑Slavic", "Vasconic", "Sumerian", "Chukotko-Kamchatkan ", "Semitic", "Elamite", "South Central", "Iberian", "Proto-Germanic", "Abkhaz-Abaza", "Proto-Slavic", "Latin", "Proto-Turkic", "Proto-Baltic", "Ancient Greek"] 
+  # "Proto-Italic"
+
+  # # The $___ from my_europe_template.svg
+  # My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
+  # # 65 with 2 dupe "sh" 63
 
   def self.find_all_translations_by_area_img(area, word)
     # get the relevant info from the DB
@@ -149,6 +152,7 @@ class CreateMapService
         next
       end
 
+      # remove results with no gender
       if result.gender.nil?
         next
       end
@@ -156,14 +160,12 @@ class CreateMapService
       # handle romanization 
       edited_result = romanization_helper(result)[0].to_h
 
-      # edited_result[:gender] = !result.gender.nil? ? result.gender.sub(/\302\240/, " ") : nil
+      # another way
       # .gsub(160.chr("UTF-8"),32.chr("UTF-8"))
       edited_result[:gender] = result.gender.sub(/\302\240/, " ") 
       result_array << edited_result
       current_languages << result.abbreviation
     end
-
-
 
     filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
     file_source = filename.read()
@@ -171,6 +173,7 @@ class CreateMapService
     # remove unused "$__" from map and give gray color
     unused_map_languages = map_langugaes - current_languages
     for unused_language in unused_map_languages
+      # if the language exists, grab its color
       if languages_array.include?(unused_language)
         existing_color = color_codes_array[languages_array.find_index(unused_language)]
       end
@@ -180,14 +183,11 @@ class CreateMapService
       end
     end
 
-
-
     # Change "$__" to result
     for language in result_array
       file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
 
       gender_color = ""
-
       case language[:gender] 
       # when nil
       #   gender_color = "FFFFFF"
@@ -246,6 +246,7 @@ class CreateMapService
     # =>  {:etymology=>"Borrowed from English copper.",
     #   :languages=>["ga", "gd"],
     #   :color=>"fd6d3c"},
+    #   :family=>"Proto-Celtic"}]
 
     current_languages = []
     array_counter = 0
@@ -260,13 +261,67 @@ class CreateMapService
         next
       end
 
+      # ignore search_results with no etymology
+      if result.etymology.nil?
+        next
+      end
+
+      current_unclean_etymology_array = result.etymology.split(/[,.]\s*/)
       # clean the etymology
-      current_etymology = result.etymology&.strip
+      current_clean_etymology = result.etymology.gsub(/\bborrowed\b/i,"").gsub(/\bfrom\b/i,"").strip().downcase
+      # convert it to an array separated by [,.]
+      current_clean_etymology_array = current_clean_etymology.split(/[,.]\s*/)
+
+      # loop over the proto families. try to match the current_clean_etymology_array info to one in there.
+      matching_family = Families_list.select do |fam|
+        current_clean_etymology.include?(fam.downcase)
+      end.first
+
+      # if none, use the etymology
+      if matching_family.nil?
+        matching_family = result.etymology
+      end
+
+      if ["sq", "lt", "el", "az"].include?(result.abbreviation)
+        byebug
+      end
+
+      # get the index of the current_clean_etymology_array that matches the family
+      matching_clean_ety_ar_index = 0
+      matching_clean_ety_ar_index = current_clean_etymology_array.find_index do |item|
+        item.include?(matching_family.downcase)
+      end
+   
+      # get the etymology
+      current_clean_matching_etymology = ""
+
+      if !matching_clean_ety_ar_index.nil?
+        current_clean_matching_etymology = current_clean_etymology_array[matching_clean_ety_ar_index]
+      else
+        current_clean_matching_etymology = result.etymology
+      end
+
+      puts "langauge= #{result.abbreviation}"
+      puts "etymology= #{result.etymology.slice(0..100)}"
+      puts "current_clean_etymology= #{current_clean_etymology.slice(0..100)}"
+      puts "current_clean_etymology_array= #{current_clean_etymology_array}"
+      puts "matching_family= #{matching_family}"
+      puts "matching_clean_ety_ar_index= #{matching_clean_ety_ar_index}"
+      puts "current_clean_matching_etymology= #{current_clean_matching_etymology}"
+      puts "==============================================================="
+      puts "\n"
       
       # find the index of the current_etymology in etymology_array, if any
-      index_in_ety_array = etymology_array.find_index { |item| item && item[:etymology].include?(current_etymology.to_s) }
+      # index_in_ety_array = etymology_array.find_index { |item| item && item[:etymology].include?(current_clean_matching_etymology) }
+      # index_in_ety_array = etymology_array.find_index { |item| item && item[:etymology].include?(current_etymology.to_s) }
 
-      # if result.etymology IS null/nil, append nil as the number and blank as color
+      # byebug
+      index_in_ety_array = etymology_array.find_index do |item| 
+        item && item[:family].include?(matching_family)
+      end
+
+      # if result.etymology IS null/nil, append nil as the number and blank as color.
+      # nothing goes into the etymology_array
       if result.etymology.nil? || result.etymology == "Null"
         edited_result = romanization_helper(result)[0].to_h
         edited_result[:index] = nil
@@ -274,7 +329,7 @@ class CreateMapService
         result_array << edited_result
 
       # if result.etymology IS an etymology, but it is NOT in the array, it will have nil as index_in_ety_array
-      # push it in array with default color
+      # push it in array with its own default color
       elsif index_in_ety_array.nil?
 
         # set default color to missing. If it later is found, use found_color
@@ -284,12 +339,14 @@ class CreateMapService
         end
 
         # push the etymology, language, and color into the etymology_array 
-        etymology_array << {etymology: current_etymology, languages: [result.abbreviation], color: found_color }
-
+        # byebug
+        etymology_array << {etymology: current_clean_matching_etymology, languages: [result.abbreviation], color: found_color, family: matching_family }
+        
         # push result into the result_array
         edited_result = romanization_helper(result)[0].to_h
         edited_result[:index] = array_counter
         edited_result[:color] = found_color
+        edited_result[:family] = matching_family
         result_array << edited_result
 
         # add result to current_langauges
@@ -300,6 +357,7 @@ class CreateMapService
       else
         # add this language to the etymology_array
         etymology_array[index_in_ety_array][:languages] << result.abbreviation
+        # etymology_array[index_in_ety_array][:family] << matching_family
 
         # get the corresponding color
         found_color = etymology_array[index_in_ety_array][:color]
@@ -308,10 +366,10 @@ class CreateMapService
         edited_result = romanization_helper(result)[0].to_h
         edited_result[:index] = index_in_ety_array
         edited_result[:color] = found_color
+        edited_result[:family] = matching_family
         result_array << edited_result
         current_languages << result.abbreviation
       end
-      # current_languages << result.abbreviation
     end
 
     filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
@@ -329,9 +387,6 @@ class CreateMapService
     # Update the map text and color
     for language in result_array
 
-      # put the result text  on the map. => [мідь - midʹ - 5]
-      # file_source = file_source.sub("$" + language[:abbreviation], "#{language[:translation]} - #{language[:index]}")
-
       # put the result text on the map. => [мідь - midʹ]
       file_source = file_source.sub("$" + language[:abbreviation], "#{language[:translation]}")
 
@@ -344,6 +399,8 @@ class CreateMapService
       file_source = file_source.gsub("#" + color_from_map, "#" + language[:color] )
 
     end
+    pp etymology_array
+    puts etymology_array.length
   
     send_map(file_source)
   end
@@ -365,16 +422,6 @@ class CreateMapService
     else
       [abbreviation: "#{result.abbreviation}", translation: "#{result.translation} - #{result.romanization}"]
     end
-  end
-
-  def self.map_language_finder(map)
-    ar = []
-    map.split(" ").each do |word|
-      if word.start_with?("$")
-        ar << word
-      end
-    end
-    ar
   end
 
 end
