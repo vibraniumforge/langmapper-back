@@ -38,7 +38,7 @@ class Translation < ApplicationRecord
     # find all the translations of the word_name && are in area1 || area2 || area3.
     def self.find_all_translations_by_area(area, word_name)
       word_id = Word.find_by(word_name: word_name.downcase).id
-      Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area1 = ?", area).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area2 = ?", area)).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area3 = ?", area)).where("word_id = ?", word_id).order(:macrofamily, :family)
+      Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area1 = ?", area).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area2 = ?", area)).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area3 = ?", area)).where("word_id = ?", word_id).order(:macrofamily, :family, :subfamily)
     end
 
   # make a hash group by etymology
