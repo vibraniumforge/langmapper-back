@@ -78,19 +78,18 @@ class CreateEtymologyMapService
     # ["ven", "f28d3c"],
     # vnc is my veneitian. ven is other
     ["xal", "d34d5f"],
-    # 63
+    # 63 total
   ]
-
-
 
   Families_list = ["Albanian", "Anatolian", "Armenian", "Ancient Greek", "Hellenic", "Latin", "Proto-Balto‑Slavic", "Proto-Slavic", "Proto-Baltic", "Proto-Celtic", "Proto-Germanic", "Proto-Indo-Iranian", "Proto-Tocharian", "Proto-Finnic", "Proto-Sami", "Proto-Ugric", "Proto-Basque", "Proto-Turkic", "Proto-Afro-Asiatic" ,"Semitic", "Proto-Kartvelian", "Proto-Northwest Caucasian" ] 
   # "Proto-Italic",
 
   # # The $___ from my_europe_template.svg
-  # My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
-  # # 65 with 2 dupe "sh" 63
+  My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
+  # 65 with 2 dupe "sh" 63
 
   def self.find_all_etymologies_by_area_img(area, word)
+
     search_results = Translation.find_all_translations_by_area(area, word)
     languages_array = Combo.map { |item| item[0] }
     color_codes_array = Combo.map { |item| item[1] }
@@ -110,6 +109,7 @@ class CreateEtymologyMapService
 
     doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
     map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+    
     # map_colors = doc.xpath('//*[contains(@style,"fill")]')[0].attributes["style"].children.to_s
     # x = doc.xpath('//*[contains(@style,"fill")]')
     # y = x[0].attributes["style"].children.to_s
@@ -127,6 +127,7 @@ class CreateEtymologyMapService
       # if no matching_etymology, use the result.etymology
       # get the index_in_ety_array of the matching etymology from etymology)_array
       # build the etymology array
+      # build the result array
 
       # ignore search_results that are not on this map
       if !map_langugaes.include?(result.abbreviation)
@@ -217,7 +218,7 @@ class CreateEtymologyMapService
         end
 
         # push the etymology, language, and color into the etymology_array 
-        the_index = index_in_ety_array ? index_in_ety_array : 0
+        # the_index = index_in_ety_array ? index_in_ety_array : 0
 
         etymology_array << {etymology: matching_etymology, languages: [result.abbreviation, ], color: found_color, family: matching_family }
         
@@ -255,7 +256,7 @@ class CreateEtymologyMapService
     file_source = filename.read()
 
     # remove unused langs $__ from map and color it blank
-    # remove unused regional langs and to larger lang if necessary
+    # remove unused regional langs and color to larger lang if necessary
     unused_map_languages = map_langugaes - current_languages
     for unused_language in unused_map_languages
       italian_color = result_array.select{|x| x[:abbreviation] == "it" }[0][:color]
@@ -296,8 +297,13 @@ class CreateEtymologyMapService
     end
 
     pp etymology_array
-    puts etymology_array.length
-    puts "CreateEtymologyMapService"
+    puts "\n"
+    puts "#{map_langugaes.length} languages on the map"
+    puts "#{search_results.length} languages in the DB for this word #{word} in #{area}"
+    puts "#{unused_map_languages.length} unused languages"
+    puts "#{etymology_array.length} etymologies"
+    puts "#{current_languages.length} languages"
+    puts "#{(My_europe_svg - map_langugaes).count} languages missing between the two arrays"
     puts "\n"
   
     send_map(file_source)
