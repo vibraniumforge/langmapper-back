@@ -55,6 +55,8 @@ Rails.application.routes.draw do
       get "/search/translations/area/:area/:word", to: "translations#find_all_translations_by_area"
       # This above route does the "Search Translations by Area" page route.
       # It also gets the data for all 3 maps' tables
+      # below is the way to only show what is on the map
+      get "/search/translations/area_europe_map/:area/:word", to: "translations#find_all_translations_by_area_europe_map"
 
       # helpers
       get "/get/languages/macrofamily_names", to: "languages#all_macrofamily_names"

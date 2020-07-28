@@ -110,6 +110,13 @@ module Api::V1
 
     # Mappers
 
+    def find_all_translations_by_area_europe_map
+      @translations = Translation.find_all_translations_by_area_europe_map(params[:area], params[:word])
+      # @translations = CreateMapService.find_all_translations_by_area_img(params[:area], params[:word])
+      # @translations = Translation.find_all_translations_by_area_img(params[:area], params[:word])
+      render json: { message: "Translations of #{params[:word]} in #{params[:area]} successfully returned.", success: true, data: @translations }, status: 200
+    end
+
     def find_all_translations_by_area_img
       @translations = CreateMapService.find_all_translations_by_area_img(params[:area], params[:word])
       # @translations = Translation.find_all_translations_by_area_img(params[:area], params[:word])
