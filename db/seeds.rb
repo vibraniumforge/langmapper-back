@@ -200,7 +200,7 @@ Language.create({ name: "Burushkaski", abbreviation: "bsk", alphabet: "Latn", ma
 Language.create({ name: "Kusunda", abbreviation: "kgg", alphabet: "Latn", macrofamily: "Isolate", family: "Kusunda", subfamily: "", area1: "South Asia", area2: "", area3: "", notes: "", alive: true })
 
 # Chukotko-Kamchatkan
-Language.create({ name: "Chukchi", abbreviation: "ckt", alphabet: "Cyrl", macrofamily: "Isolate", family: "Chukotko-Kamchatkan ", subfamily: "", area1: "North Asia", area2: "", area3: "", notes: "", alive: true })
+Language.create({ name: "Chukchi", abbreviation: "ckt", alphabet: "Cyrl", macrofamily: "Isolate", family: "Chukotko-Kamchatkan", subfamily: "", area1: "North Asia", area2: "", area3: "", notes: "", alive: true })
 
 # Nivkh
 Language.create({ name: "Nivkh", abbreviation: "niv", alphabet: "Cyrl", macrofamily: "Isolate", family: "Nivkh", subfamily: "", area1: "North Asia", area2: "", area3: "", notes: "", alive: true })
