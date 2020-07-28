@@ -78,7 +78,7 @@ class CreateEtymologyMapService
     # ["ven", "f28d3c"],
     # vnc is my veneitian. ven is other
     ["xal", "d34d5f"],
-    # 63 total
+    # 63 total. No duped sh
   ]
 
   Families_list = ["Albanian", "Anatolian", "Armenian", "Ancient Greek", "Hellenic", "Latin", "Proto-Balto‑Slavic", "Proto-Slavic", "Proto-Baltic", "Proto-Celtic", "Proto-Germanic", "Proto-Indo-Iranian", "Proto-Tocharian", "Proto-Finnic", "Proto-Sami", "Proto-Ugric", "Proto-Basque", "Proto-Turkic", "Proto-Afro-Asiatic" ,"Semitic", "Proto-Kartvelian", "Proto-Northwest Caucasian" ] 
@@ -90,7 +90,8 @@ class CreateEtymologyMapService
 
   def self.find_all_etymologies_by_area_img(area, word)
 
-    search_results = Translation.find_all_translations_by_area(area, word)
+    # search_results = Translation.find_all_translations_by_area(area, word)
+    search_results = Translation.find_all_translations_by_area_europe_map(area, word)
     languages_array = Combo.map { |item| item[0] }
     color_codes_array = Combo.map { |item| item[1] }
     result_array = []
@@ -274,7 +275,7 @@ class CreateEtymologyMapService
         file_source = file_source.gsub("#" + color_from_map, "#" + italian_color )
       elsif unused_language == "sco" && english_color != "ffffff"
         file_source = file_source.gsub("#" + color_from_map, "#" + english_color )
-      elsif unused_language == "co" && french_color != "ffffff"
+      elsif ["oc", "co", "br"].include?(unused_language)  && french_color != "ffffff"
         file_source = file_source.gsub("#" + color_from_map, "#" + french_color )
       else
         file_source = file_source.gsub("#" + color_from_map, "#" + "ffffff" )
