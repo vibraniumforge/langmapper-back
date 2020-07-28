@@ -14,13 +14,13 @@ module Api::V1
     def login
       @user = User.find_by(name: params[:user][:name])
       if @user && @user.authenticate(params[:user][:password])
-        message = "User Authenticated \n "
-        puts message
+        message = "User Authenticated."
+        puts "=> #{message}"
         token = encode_token({ user_id: @user.id})
         render json: {message: message, success: true, data: @user, jwt: token }
       else
         message = "Invalid username or password"
-        puts message
+        puts "=> #{message}"
         render json: {message: message, success: false }
       end
     end

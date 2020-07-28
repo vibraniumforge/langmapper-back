@@ -35,9 +35,10 @@ module Api::V1
         # Translation.find_info(@word.word_name.downcase)
         FindInfoService.find_info(@word.word_name.downcase)
       else
-        puts "Word not saved"
+        message = "Word #{@word} NOT created"
+        puts "=> #{message}"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
-        render json: { message: "Word #{@word} NOT created because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
+        render json: { message: "#{message} because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
       end
     end
 
@@ -48,26 +49,33 @@ module Api::V1
     def update
       find_word
       if @word.nil?
-        puts "Word not found"
-        render json: { message: "Word #{@word} not found", success: false }, status: 406
+        message = "Word #{@word} not found"
+        puts "=> #{message}"
+        render json: { message: message, success: false }, status: 406
       end
       if @word.update(word_params)
-        puts "Word updated"
-        render json: { message: "Word #{@word} successfully updated.", success: true, data: @word }, status: 200
+        message = "Word #{@word} successfully updated."
+        puts "=> #{message}"
+        render json: { message: message, success: true, data: @word }, status: 200
       else
-        puts "Word not saved"
+        message = "Word #{@word} NOT updated"
+        puts "=> #{message}"
         puts "Errors= #{@word.errors.full_messages.join(", ")}"
-        render json: { message: "Word NOT updated because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
+        render json: { message: "#{message} because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages }, status: 406
       end
     end
 
     def destroy
       find_word
       if @word.destroy
-        render json: { message: "Word successfully deleted.", success: true, data: @word }, status: 200
+        message = "Word << #{@word} >> successfully deleted."
+        puts "=> #{message}"
+        render json: { message: message, success: true, data: @word }, status: 200
       else
-        render json: { message: "Word NOT successfully deleted.", success: false, data: @word.errors.full_messages.join(", ") }, status: 406
+        message = "Word << #{@word} >> NOT successfully deleted."
+        puts "=> #{message}"
         puts "Error in delete: #{@word.errors.full_messages.join(", ")}"
+        render json: { message: "#{message} because #{@word.errors.full_messages.join(", ")}", success: false, data: @word.errors.full_messages.join(", ") }, status: 406
       end
     end
 

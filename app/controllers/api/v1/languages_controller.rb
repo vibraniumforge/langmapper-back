@@ -17,12 +17,14 @@ module Api::V1
     def create
       @language = Language.new(language_params)
       if @language.save
-        puts "=> language created"
-        render json: { message: "Language successfully created.", success: true, data: @language }, status: 200
+        message = "Language successfully created"
+        puts "=> #{message}"
+        render json: { message: message, success: true, data: @language }, status: 200
       else
-        puts "Language not created"
+        message = "Language NOT created"
+        puts "=> #{message}"
         puts "Errors= #{@language.errors.full_messages.join(", ")}"
-        render json: { message: "Language NOT created because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
+        render json: { message: "#{message} because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
       end
     end
 
@@ -33,26 +35,33 @@ module Api::V1
     def update
       find_language
       if @language.nil?
-        puts "Language not found"
-        render json: { message: "Language not found", success: false }, status: 406
+        message = "Language NOT found"
+        puts "=> #{message}"
+        render json: { message: message, success: false }, status: 406
       end
       if @language.update(language_params)
-        puts "=> language updated"
-        render json: { message: "Language successfully updated.", success: true, data: @language }, status: 200
+        message = "Language successfully updated"
+        puts "=> #{message}"
+        render json: { message: message, success: true, data: @language }, status: 200
       else
-        puts "Language not updated"
+        message = "Language NOT updated"
+        puts "=> #{message}"
         puts "Errors= #{@language.errors.full_messages.join(", ")}"
-        render json: { message: "Language NOT updated because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
+        render json: { message: "#{message} because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
       end
     end
 
     def destroy
       find_language
       if @language.destroy
-        render json: { message: "Language successfully deleted.", success: true, data: @language }, status: 200
+        message = "Language successfully destroyed"
+        puts "=> #{message}"
+        render json: { message: message, success: true, data: @language }, status: 200
       else
-        render json: { message: "Language NOT successfully deleted.", success: false, data: @language.errors.full_messages.join(", ") }, status: 406
+        message = "Language NOT destroyed"
+        puts "=> #{message}"
         puts "Error in delete: #{@language.errors.full_messages.join(", ")}"
+        render json: { message: "#{message} because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages.join(", ") }, status: 406
       end
     end
 

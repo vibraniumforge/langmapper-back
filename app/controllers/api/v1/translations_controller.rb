@@ -17,12 +17,14 @@ module Api::V1
     # def create
     #   @translation = Translation.new(translation_params)
     #   if @translation.save
-    #     puts "=> translation created"
-    #     render json: { message: "Translation successfully created.", success: true, data: @translation }, status: 200
+    #     message = "Translation successfully created."
+    #     puts "=> #{message}"
+    #     render json: { message: message, success: true, data: @translation }, status: 200
     #   else
-    #     puts "Translation not created"
+    #     message = "Translation NOT created"
+    #     puts "=> #{message}"
     #     puts "Errors= #{@translation.errors.full_messages.join(", ")}"
-    #     render json: { message: "Translation NOT created because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
+    #     render json: { message: "#{message} because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
     #   end
     # end
 
@@ -33,16 +35,19 @@ module Api::V1
     def update
       find_translation
       if @translation.nil?
-        puts "Translation not found"
-        render json: { message: "Translation not found", success: false }, status: 406
+        message = "Translation NOT found"
+        puts "=> #{message}"
+        render json: { message: message, success: false }, status: 406
       end
       if @translation.update(translation_params)
-        puts "Translation updated"
-        render json: { message: "Translation successfully updated.", success: true, data: @translation }, status: 200
+        message = "Translation updated"
+        puts "=> #{message}"
+        render json: { message: message, success: true, data: @translation }, status: 200
       else
-        puts "Translation not saved"
+        message = "Translation NOT updated"
+        puts "=> #{message}"
         puts "Errors= #{@translation.errors.full_messages.join(", ")}"
-        render json: { message: "Translation NOT updated because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
+        render json: { message: "#{message} because #{@translation.errors.full_messages.join(", ")}", success: false, data: @translation.errors.full_messages }, status: 406
       end
     end
 
