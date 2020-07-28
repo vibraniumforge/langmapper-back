@@ -41,37 +41,10 @@ class Translation < ApplicationRecord
       Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area1 = ?", area).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area2 = ?", area)).or(Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where("area3 = ?", area)).where("word_id = ?", word_id).order(:macrofamily, :family, :subfamily)
     end
 
-  # make a hash group by etymology
-
-  # def self.find_grouped_etymologies(query, macrofamily = "Indo-European")
-  #   word_id = Word.find_by("word_name = ?", query.downcase).id
-  #   protos_array = ["Proto-Indo-European", "Proto-Anatolian", "Proto-Tocharian", "Proto-Italic", "Vulgar Latin", "Latin", "Proto-Celtic", "Proto-Brythonic", "Proto-Germanic", "Proto-Balto-Slavic", "Proto-Baltic", "Proto-Slavic", "Proto-Indo-Iranian", "Proto-Indic", "Proto-Iranian", "Proto-Armenian", "Old Armenian", "Proto-Greek", "Ancient Greek", "Proto-Albanian", "Old Dutch", "Old English", "Old Norse", "Old High German", "Old Frisian", "Old French", "Proto-Basque", "Proto-Kartvelian", "Old Georgian", "Old Turkic", "Proto-Turkic", "Proto-Uralic", "Proto-Finnic", "Proto-Samic"]
-  #   array = []
-  #   ety_hash = Hash.new { |k, v| }
-  #   translations_array = Language.select([:id, :family, :name, :romanization, :etymology])
-  #     .joins(:translations)
-  #     .where("word_id = ? AND macrofamily = ?", word_id, macrofamily)
-  #     .order(:etymology)
-  #   # can I make a hash of these server side?
-  #   # why doesnt etymology appear when look at translations_array?
-  #   translations_array.each do |translation|
-  #     if translation.etymology.nil?
-  #       short_etymology = "Null"
-  #     else
-  #       short_etymology = translation.etymology.strip
-  #       # short_etymology = translation.etymology.slice(0,60).strip
-  #     end
-  #     if ety_hash[short_etymology]
-  #       ety_hash[short_etymology] << translation.name
-  #     else
-  #       ety_hash[short_etymology] = [translation.name]
-  #     end
-  #   end
-  #   ety_hash.each do |h|
-  #     array << h
-  #   end
-  #   pp ety_hash
-  #   array
-  # end
+    def self.find_all_translations_by_area_europe_map(area, word_name)
+      my_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
+      word_id = Word.find_by(word_name: word_name.downcase).id
+      Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name").where('languages.abbreviation IN (?)', my_europe_svg ).where("word_id = ?", word_id).order(:macrofamily, :family, :subfamily)
+    end
 
 end
