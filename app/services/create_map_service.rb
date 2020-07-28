@@ -184,7 +184,7 @@ class CreateMapService
 
       if ["pms", "lij", "vnc", "nap", "scn", "sc"].include?(unused_language) && italian_gender != nil
         file_source = file_source.gsub("#" + color_from_map, "#" + gender_color_finder(italian_gender) )
-      elsif unused_language == "co" && french_gender != nil
+      elsif ["oc", "co", "br"].include?(unused_language) && french_gender != nil
         file_source = file_source.gsub("#" + color_from_map, "#" + gender_color_finder(french_gender) )
       else
         file_source = file_source.gsub("#" + color_from_map, "#" + "ffffff" )
