@@ -32,7 +32,7 @@ class Translation < ApplicationRecord
     # all the TRANSLATIONS from a specified LANGUAGE
     def self.find_all_translations_by_language(language)
       language_id = Language.find_by(name: language).id
-      Translation.joins(:language, :word).select("translations.*, languages.macrofamily, words.word_name").where("language_id = ?", language_id).order(:romanization)
+      Translation.joins(:language, :word).select("translations.*, languages.macrofamily, words.word_name").where("language_id = ?", language_id).order(:word_name)
     end
   
     # find all the translations of the word_name && are in area1 || area2 || area3.
