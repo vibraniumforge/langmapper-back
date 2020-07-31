@@ -161,7 +161,7 @@ class CreateEtymologyMapService
             # if ["ru"].include?(result.abbreviation)
             #   byebug
             # end
-            # THIS SHOULD REMOVE EVERYTHING BEFORE "FROM", not just borrowed. There is ultimately too. # ultimately|derived\borrowed|shortened
+            # THIS SHOULD REMOVE EVERYTHING BEFORE "FROM", not just borrowed. There is ultimately too. # ultimately|derived\borrowed|shortened|	By metathesis 
             matching_family = family
             if ["Borrowed", "borrowed"].include?(etymology.split(" ").first) 
               # remove (english gold) etc. Capitalize. Helps with matching later
