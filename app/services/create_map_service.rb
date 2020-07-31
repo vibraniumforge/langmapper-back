@@ -164,7 +164,7 @@ class CreateMapService
       edited_result = romanization_helper(result)[0].to_h
 
       # another way
-      # .gsub(160.chr("UTF-8"),32.chr("UTF-8"))
+      # .gsub(160.chr("UTF-8"), 32.chr("UTF-8"))
       edited_result[:gender] = result.gender.sub(/\302\240/, " ") 
       result_array << edited_result
       current_languages << result.abbreviation
