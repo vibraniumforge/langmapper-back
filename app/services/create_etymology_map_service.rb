@@ -81,7 +81,7 @@ class CreateEtymologyMapService
     # 63 total. No duped sh
   ]
 
-  Families_list = ["Albanian", "Anatolian", "Armenian", "Ancient Greek", "Hellenic", "Latin", "Proto-Balto‑Slavic", "Proto-Slavic", "Proto-Baltic", "Proto-Celtic", "Proto-Germanic", "Proto-Indo-Iranian", "Proto-Tocharian", "Proto-Finnic", "Proto-Sami", "Proto-Ugric", "Proto-Basque", "Proto-Turkic", "Proto-Afro-Asiatic" ,"Semitic", "Proto-Kartvelian", "Proto-Northwest Caucasian", "Proto-Northeast Caucasian" ] 
+  Families_list = ["Albanian", "Anatolian", "Armenian", "Ancient Greek", "Hellenic", "Latin", "Proto-Balto‑Slavic", "Proto-Slavic", "Proto-Baltic", "Proto-Celtic", "Proto-Germanic", "Proto-Indo-Iranian", "Proto-Tocharian", "Proto-Finnic", "Proto-Sami", "Proto-Ugric", "Proto-Basque", "Proto-Turkic", "Proto-Afro-Asiatic" , "Semitic", "Arabic", "Proto-Kartvelian", "Proto-Northwest Caucasian", "Proto-Northeast Caucasian" ] 
   # "Proto-Italic",
 
   # # The $___ from my_europe_template.svg
@@ -117,18 +117,18 @@ class CreateEtymologyMapService
     # x[0]["style"].slice(x[0]["style"].index("#") + 1, 6)
     # x[0]["style"].slice(6, 6)
 
-    search_results.each do |result|
+    # get a result
+    # check if it is on the map
+    # check if it has an etymology
+    # current_etymology_array - split the etymology by sentence
+    # get the families list. Match current_etymology_array and family
+    # if no matching_family, use the result.family
+    # if no matching_etymology, use the result.etymology
+    # get the index_in_ety_array of the matching etymology from etymology_array
+    # build the etymology array
+    # build the result array
 
-      # get a result
-      # check if it is on the map
-      # check if it has an etymology
-      # current_etymology_array - split the etymology by sentence
-      # get the families list. Match current_etymology_array and family
-      # if no matching_family, use the result.family
-      # if no matching_etymology, use the result.etymology
-      # get the index_in_ety_array of the matching etymology from etymology)_array
-      # build the etymology array
-      # build the result array
+    search_results.each do |result|
 
       # ignore search_results that are not on this map
       if !map_langugaes.include?(result.abbreviation)
@@ -140,37 +140,50 @@ class CreateEtymologyMapService
         next
       end
 
+      # (/ *, *(?=[^\)]*?(?:\(|$))/) split on commas
+      # gsub(/\[.*?\]/, "") => remove space + brackets and their contents
+      # gsub(/\s\(.*?\)/, '') => remove space + parenthesis and their contents
       # remove everything after first sentence. Split on commas.
-      current_etymology_array = result.etymology.split(".")[0].split(/ *, *(?=[^\)]*?(?:\(|$))/)
-
+      # current_etymology_array = result.etymology.split(".")[0].split(/ *, *(?=[^\)]*?(?:\(|$))/)
+      # current_etymology_array = result.etymology.gsub(/\(.*?\)/, '').split(".")[0].split(/ *, *(?=[^\)]*?(?:\(|$))/)
+      # if ["hu", "az"].include?(result.abbreviation)
+      #   byebug
+      # end
+      current_etymology_array = result.etymology.gsub(/\s\(.*?\)/, "").gsub(/\s\[.*?\]/, "").split(".")[0].split(/[,\s ;\s] /)
+      
       # loop and find the matching_family from the Families_list
       # loop and find the matching_etymology from the result.etymology
       matching_family = nil
       matching_etymology = nil
       matched = false
-      # if ["gl", "pt"].include?(result.abbreviation)
-      #   byebug
-      # end
+      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced" ,"verner", "alternant", "of", "classical", "with", "change", "of", "ending", "itself"]
       current_etymology_array.each do |etymology|
+        removed_etymology = etymology.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ")
+        # if ["tk"].include?(result.abbreviation)
+        #   byebug
+        # end
         Families_list.each do |family|
-          # if etymology.include?("From #{family}") || etymology.include?("from #{family}") 
-          # if ["gl", "pt"].include?(result.abbreviation)
+          # if ["tk"].include?(result.abbreviation)
           #   byebug
           # end
-          if etymology.include?("From #{family}") || etymology.include?("from #{family}") && !matched
-            # if ["ru"].include?(result.abbreviation)
+          if removed_etymology.strip.include?("From #{family}") || removed_etymology.strip.include?("from #{family}") && !matched
+
+            matching_family = family
+
+            # if ["tk"].include?(result.abbreviation)
             #   byebug
             # end
-            # THIS SHOULD REMOVE EVERYTHING BEFORE "FROM", not just borrowed. There is ultimately too. # ultimately|derived\borrowed|shortened|	By metathesis 
-            matching_family = family
-            if ["Borrowed", "borrowed"].include?(etymology.split(" ").first) 
-              # remove (english gold) etc. Capitalize. Helps with matching later
-              # ultimately|derived\borrowed
-              matching_etymology = etymology.gsub(/\bborrowed\b/i,"").gsub(/\s*\(.+\)$/, '').strip().slice(0,1).capitalize + etymology.gsub(/\bborrowed\b/i,"").gsub(/\s*\(.+\)$/, '').strip().slice(1..-1)
-            else
-              matching_etymology = etymology.gsub(/\s*\(.+\)$/, '').strip().slice(0,1).capitalize + etymology.gsub(/\s*\(.+\)$/, '').strip().slice(1..-1)
-              # matching_etymology = etymology.gsub(/\bborrowed\b/i,"").gsub(/\s*\(.+\)$/, '').strip()
-            end
+
+            removed_etymology = etymology.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ")
+            matching_etymology = removed_etymology.strip().slice(0,1).capitalize + removed_etymology.strip().slice(1..-1)
+            
+            # if ["Borrowed", "borrowed"].include?(etymology.split(" ").first) 
+              
+            #   matching_etymology = etymology.gsub(/\bborrowed\b/i,"").gsub(/\s*\(.+\)$/, '').strip().slice(0,1).capitalize + etymology.gsub(/\bborrowed\b/i,"").gsub(/\s*\(.+\)$/, '').strip().slice(1..-1)
+            # else
+            #   matching_etymology = etymology.gsub(/\s*\(.+\)$/, '').strip().slice(0,1).capitalize + etymology.gsub(/\s*\(.+\)$/, '').strip().slice(1..-1)
+            #   # matching_etymology = etymology.gsub(/\bborrowed\b/i,"").gsub(/\s*\(.+\)$/, '').strip()
+            # end
             matched = true
             # break
           end
@@ -187,13 +200,13 @@ class CreateEtymologyMapService
         matching_etymology = current_etymology_array.first
       end
 
-      puts "langauge= #{result.abbreviation}"
-      puts "etymology= #{result.etymology.slice(0..100)}"
-      puts "current_etymology_array= #{current_etymology_array}"
-      puts "matching_family= #{matching_family}"
-      puts "matching_etymology= #{matching_etymology}"
-      puts "==============================================================="
-      puts "\n"
+      # puts "langauge= #{result.abbreviation}"
+      # puts "etymology= #{result.etymology.slice(0..100)}"
+      # puts "current_etymology_array= #{current_etymology_array}"
+      # puts "matching_family= #{matching_family}"
+      # puts "matching_etymology= #{matching_etymology}"
+      # puts "==============================================================="
+      # puts "\n"
       
       # find the index of the current_etymology in etymology_array, if any
 
@@ -310,8 +323,8 @@ class CreateEtymologyMapService
     puts "#{map_langugaes.length} languages on the map"
     puts "#{search_results.length} matching languages in the DB for this word: #{word} in #{area}"
     puts "#{unused_map_languages.length} unused languages"
-    puts "#{etymology_array.length} unique etymologies"
-    puts "#{current_languages.length} languages displayed"
+    puts "#{current_languages.length} languages displayed"  
+    puts "#{etymology_array.length} <== unique etymologies"
     puts "#{(My_europe_svg - map_langugaes).count} languages missing between the two arrays"
     puts "\n"
   
