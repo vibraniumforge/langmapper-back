@@ -156,7 +156,7 @@ class CreateEtymologyMapService
       matching_family = nil
       matching_etymology = nil
       matched = false
-      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced" ,"verner", "alternant", "of", "classical", "with", "change", "of", "ending", "itself"]
+      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced" ,"verner", "alternant", "of", "classical", "with", "change", "of", "ending", "itself", "probably", "later"]
       current_etymology_array.each do |etymology|
         removed_etymology = etymology.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ")
         # if ["tk"].include?(result.abbreviation)
