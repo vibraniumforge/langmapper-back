@@ -156,21 +156,21 @@ class CreateEtymologyMapService
       matching_family = nil
       matching_etymology = nil
       matched = false
-      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced" ,"verner", "alternant", "of", "classical", "with", "change", "of", "ending", "itself", "probably", "later"]
+      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced" ,"verner", "alternant", "of", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "vulgar"]
       current_etymology_array.each do |etymology|
         removed_etymology = etymology.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ")
         # if ["tk"].include?(result.abbreviation)
         #   byebug
         # end
         Families_list.each do |family|
-          # if ["tk"].include?(result.abbreviation)
+          # if ["pt", "gl"].include?(result.abbreviation) && family == "Latin"
           #   byebug
           # end
           if removed_etymology.strip.include?("From #{family}") || removed_etymology.strip.include?("from #{family}") && !matched
 
             matching_family = family
 
-            # if ["tk"].include?(result.abbreviation)
+            # if ["pt", "gl"].include?(result.abbreviation)
             #   byebug
             # end
 
