@@ -32,7 +32,7 @@ class FindInfoService
       layout_path = path2[0]["href"]
     end
     if path3.length > 0
-      layout_path = path2[0]["href"]
+      layout_path = path3[0]["href"]
     end
 
     if layout_path.nil?
@@ -86,7 +86,7 @@ class FindInfoService
     all_langs_hash = Language.current_langauges_hash
 
     # loop over results and get the info.
-
+    counter = 1
     all_li_array.each_with_index do |li, index|
       etymology = nil
 
@@ -211,7 +211,6 @@ class FindInfoService
 
       # save all 7 things I need
       @translation = Translation.new({ language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
-
       # output this info to the console
       if !full_link_eng.nil? && @translation.save
         puts "\n"
@@ -219,12 +218,13 @@ class FindInfoService
         puts "#{index + 1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
         puts "\n"
         puts "================================================================="
-
+        counter +=1
       else
         puts "Translation NOT saved for #{language_name}"
-        puts "Errors= #{@translation.errors.full_messages.join(", ")}"
+        errors = @translation.errors.full_messages.join(", ")
+        puts "Errors= #{errors}"
         error_hash = {}
-        error_hash[language_name] = @translation.errors.full_messages
+        error_hash[language_name] = errors
         errors_ar << error_hash
       end
     end
@@ -233,9 +233,10 @@ class FindInfoService
     t2 = Time.now
     time = t2 - t1
     puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    puts '\n'
+    puts "\n"
     puts "DONE with <<< #{chosen_word}, #{definition} >>> \n"
     puts "Count: #{all_li_array.count} entries"
+    puts "#{counter} entries saved"
     puts "in #{time.round(2)} seconds"
     puts "Errors: #{errors_ar}"
     puts "path1 = #{path1}"
