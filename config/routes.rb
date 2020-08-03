@@ -44,7 +44,8 @@ Rails.application.routes.draw do
 
       # searchers
       
-      get "/search/words/definition/:word", to: "words#find_word_definition"
+      get "/words/search/definition/:word", to: "words#find_word_definition"
+      # renamed
       
       get "/search/languages/area/:area", to: "languages#find_all_languages_by_area"
       
@@ -67,12 +68,14 @@ Rails.application.routes.draw do
       get "/get/languages/alphabet_names", to: "languages#all_alphabet_names"
       get "/get/languages/area_names", to: "languages#all_area_names"
 
-      get "/get/words/word_names", to: "words#all_word_names"
+      get "words/get/word_names", to: "words#all_word_names"
+      # renamed
 
       # counters
       get "/get/languages/languages_count", to: "languages#languages_count"
       get "/get/translations/translations_count", to: "translations#translations_count"
-      get "/get/words/words_count", to: "words#words_count"
+      get "/words/get/words_count", to: "words#words_count"
+      # renamed
     end
   end
 end
