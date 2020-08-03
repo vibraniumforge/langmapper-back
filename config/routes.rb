@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       # NAMING
       # /search searches for something and takes 1 or more params
       # /get returns all.
-      # /get || /search /controller/method/arguments
+      # /controller/get || /search /method/arguments
 
       # Used
 
@@ -46,7 +46,7 @@ Rails.application.routes.draw do
       
       get "/words/search/definition/:word", to: "words#find_word_definition"
       # renamed
-      
+
       get "/search/languages/area/:area", to: "languages#find_all_languages_by_area"
       
       get "/search/grouped_etymology/:word/:macrofamily", to: "translations#find_grouped_etymologies"
