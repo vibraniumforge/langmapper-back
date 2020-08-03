@@ -4,7 +4,7 @@ module Api::V1
       @words = Word.all.order(:id)
       render json: @words
       # functions, but still returns extra info
-      # render json: { message: "Words successfully returned.", success: true, data: @words, each_serialize: WordSerializer }, status: 200
+      # render json: { message: "Words successfully returned.", success: true, data: @words, each_serializer: WordSerializer }, status: 200
 
       # render json: { message: "Words successfully returned.", success: true, data: @words }, status: 200
       # render json: { message: "Words successfully returned.", success: true, data: @words, each_serializer: WordSerializer.new(@words) }, status: 200
