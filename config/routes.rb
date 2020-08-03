@@ -35,6 +35,8 @@ Rails.application.routes.draw do
 
       # Used
 
+
+
       # create images
       get "/search/all_translations_by_area_img/:area/:word", to: "translations#find_all_translations_by_area_img"
       get "/search/all_etymologies_by_area_img/:area/:word", to: "translations#find_all_etymologies_by_area_img"
@@ -54,9 +56,11 @@ Rails.application.routes.draw do
       get "/search/translations/etymology/:word", to: "translations#find_etymology_containing"
       get "/search/translations/area/:area/:word", to: "translations#find_all_translations_by_area"
       # This above route does the "Search Translations by Area" page route.
-      # It also gets the data for all 3 maps' tables
-      # below is the way to only show what is on the map
+      # It also gets the data for all 3 maps' tables. It gets everything that matches, even if it is not on the map.
+      # below is the way to show ONLY what is on the map
       get "/search/translations/area_europe_map/:area/:word", to: "translations#find_all_translations_by_area_europe_map"
+
+      get "/get/translations/seeds", to: "translations#seeds"
 
       # helpers
       get "/get/languages/macrofamily_names", to: "languages#all_macrofamily_names"
