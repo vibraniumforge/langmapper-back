@@ -7,6 +7,11 @@ class Translation < ApplicationRecord
   validates :translation, presence: true
   validates :link, presence: true
 
+  # return flattened json for seeds
+  def self.seeds
+    Translation.first(100)
+  end
+
   # Find all translations of a WORD in ALL LANGUAGES
   def self.find_all_translations_by_word(query)
     word_id = Word.find_by("word_name = ?", query.downcase).id

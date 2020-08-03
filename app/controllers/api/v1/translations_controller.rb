@@ -63,6 +63,11 @@ module Api::V1
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+    def seeds
+      @translations = Translation.seeds
+      render json: @translations, each_serializer: TranslationSeedSerializer
+    end
+
     def find_all_translations_by_word
       @translations = Translation.find_all_translations_by_word(params[:word])
       render json: { message: "Translations of #{params[:word]} successfully returned.", success: true, data: @translations }, status: 200
