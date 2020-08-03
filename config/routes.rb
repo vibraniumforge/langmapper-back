@@ -45,7 +45,7 @@ Rails.application.routes.draw do
       # searchers
       
       get "/words/search/definition/:word", to: "words#find_word_definition"
-      # renamed
+      # renamed above
 
       get "/search/languages/area/:area", to: "languages#find_all_languages_by_area"
       
@@ -61,21 +61,21 @@ Rails.application.routes.draw do
       # below is the way to show ONLY what is on the map
       get "/search/translations/area_europe_map/:area/:word", to: "translations#find_all_translations_by_area_europe_map"
 
-      get "/get/translations/seeds", to: "translations#seeds"
-
+      get "translations/get/seeds", to: "translations#seeds"
+      # renamed above
       # helpers
       get "/get/languages/macrofamily_names", to: "languages#all_macrofamily_names"
       get "/get/languages/alphabet_names", to: "languages#all_alphabet_names"
       get "/get/languages/area_names", to: "languages#all_area_names"
 
       get "words/get/word_names", to: "words#all_word_names"
-      # renamed
+      # renamed above
 
       # counters
       get "/get/languages/languages_count", to: "languages#languages_count"
       get "/get/translations/translations_count", to: "translations#translations_count"
       get "/words/get/words_count", to: "words#words_count"
-      # renamed
+      # renamed above
     end
   end
 end
