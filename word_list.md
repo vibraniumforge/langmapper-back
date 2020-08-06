@@ -18,6 +18,11 @@ Good Words
 - [ ] Goose
 - [ ] Owl
 - [ ] Falcon
+- [ ] Crow
+- [ ] Dove
+- [ ] Eagle
+- [ ] Gull
+- [ ] Robin
 
 - [ ] Wolf
 - [ ] Fox
@@ -27,6 +32,7 @@ Good Words
 - [ ] Honey
 - [ ] Apple
 - [ ] Milk
+- [ ] Egg
 
 - [ ] Tree
 
