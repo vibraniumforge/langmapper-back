@@ -19,7 +19,7 @@ class Translation < ApplicationRecord
   end
 
   # all translations of a WORD in a MACROFAMILY. Gender is inside
-  def self.find_all_translations_by_gender(word_name, macrofamily = "Indo-European")
+  def self.find_all_translations_by_word_gender(word_name, macrofamily = "Indo-European")
     word_id = Word.find_by(word_name: word_name.downcase).id
     Translation.joins(:language).select("translations.*, languages.*, languages.id as language_id, translations.id as id").where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family)
   end
