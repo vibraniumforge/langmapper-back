@@ -84,7 +84,7 @@ module Api::V1
 
     def find_all_languages_by_area
       @languages = Language.find_all_languages_by_area(params[:area])
-      render json: { message: "All Languages successfully returned.", success: true, data: @languages }, status: 200
+      render json: { message: "All Languages in #{params[:area]} successfully returned.", success: true, data: @languages }, status: 200
     end
 
     def languages_count
