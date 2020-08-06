@@ -2,14 +2,14 @@ module Api::V1
   class AuthController < ApplicationController
     # skip_before_action :authorized, only: [:login]
 
-    def show
-      @user = current_user
-      if logged_in?
-        render json: {message: "Logged in", success: true, data: @user}
-      else
-        render json: {message: "No user found", success: false }
-      end
-    end
+    # def show
+    #   @user = current_user
+    #   if logged_in?
+    #     render json: {message: "Logged in", success: true, data: @user}
+    #   else
+    #     render json: {message: "No user found", success: false }
+    #   end
+    # end
 
     def login
       @user = User.find_by(name: params[:user][:name])
