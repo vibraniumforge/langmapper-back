@@ -63,7 +63,6 @@ Rails.application.routes.draw do
 
       get "translations/get/seeds", to: "translations#seeds"
 
-
       # helpers for selects
       get "/languages/get/macrofamily_names", to: "languages#all_macrofamily_names"
       get "/languages/get/alphabet_names", to: "languages#all_alphabet_names"
