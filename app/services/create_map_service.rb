@@ -173,18 +173,19 @@ class CreateMapService
     filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
     file_source = filename.read()
 
+    italian_gender = result_array.select{|x| x[:abbreviation] == "it" }[0][:gender]
+    french_gender = result_array.select{|x| x[:abbreviation] == "fr" }[0][:gender]
+
     # remove unused "$__" from map and give gray color
     unused_map_languages = map_langugaes - current_languages
     for unused_language in unused_map_languages
-      italian_gender = result_array.select{|x| x[:abbreviation] == "it" }[0][:gender]
-      french_gender = result_array.select{|x| x[:abbreviation] == "fr" }[0][:gender]
 
       file_source = file_source.sub("$" + unused_language, "")
       color_from_map = color_codes_array[languages_array.find_index(unused_language)]
 
-      if ["pms", "lij", "vnc", "nap", "scn", "sc"].include?(unused_language) && italian_gender != nil
+      if ["pms", "lij", "vnc", "nap", "scn", "sc"].include?(unused_language) && !italian_gender.nil?
         file_source = file_source.gsub("#" + color_from_map, "#" + gender_color_finder(italian_gender) )
-      elsif ["oc", "co", "br"].include?(unused_language) && french_gender != nil
+      elsif ["oc", "co", "br"].include?(unused_language) && !french_gender.nil? 
         file_source = file_source.gsub("#" + color_from_map, "#" + gender_color_finder(french_gender) )
       else
         file_source = file_source.gsub("#" + color_from_map, "#" + "ffffff" )
@@ -211,9 +212,9 @@ class CreateMapService
     send_map(file_source)
   end
 
+  # pick the right color for the matching gender
   def self.gender_color_finder(gender)
-    # pick the right color for the matching gender
-    
+  
     gender_color = ""
     case gender
     # when nil
