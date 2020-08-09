@@ -169,7 +169,7 @@ class CreateEtymologyMapService
       if num_latins.length > 1 && vulgar_latin_index
         current_etymology_array.delete_at(vulgar_latin_index)
         puts "fires, #{vulgar_latin_index}"
-        puts "current_etymology_arrayy=, #{current_etymology_array}"
+        puts "current_etymology_array=, #{current_etymology_array}"
         puts result.abbreviation
       end
 
