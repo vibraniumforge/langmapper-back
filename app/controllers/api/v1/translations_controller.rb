@@ -123,14 +123,14 @@ module Api::V1
     def find_all_genders_by_area_img
       # @translations = Translation.find_all_genders_by_area_img(params[:area], params[:word])
       @translations = CreateMapService.find_all_genders_by_area_img(params[:area], params[:word])
-      send_file @translations, disposition: :attachment
+      send_file @translations, disposition: :inline
       # render json: { message: "Translations by gender image successfully returned.", success: true, data: @translations }, status: 200
     end
 
     def find_all_etymologies_by_area_img
       @translations = CreateEtymologyMapService.find_all_etymologies_by_area_img(params[:area], params[:word])
       # @translations = Translation.find_all_etymologies_by_area_img(params[:area], params[:word])
-      send_file @translations, disposition: :attachment
+      send_file @translations, disposition: :inline
       # render json: { message: "Translations by etymology image successfully returned.", success: true, data: @translations }, status: 200
     end
 
