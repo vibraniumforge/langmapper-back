@@ -246,7 +246,7 @@ class CreateMapService
     when "n inan"
       gender_color = "D3D3D3"
     when "c"
-      gender_color = "D3D3D3"
+      gender_color = "EE82EE"
     else
       gender_color = "FFFFFF"
     end
