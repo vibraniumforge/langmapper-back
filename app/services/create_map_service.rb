@@ -132,8 +132,8 @@ class CreateMapService
     end
 
     # change the "$__" to the result translation
-    for language in result_array
-      map_code = map_code.sub("$" + language[:abbreviation], language[:translation])
+    for result in result_array
+      map_code = map_code.sub("$" + result[:abbreviation], result[:translation])
     end
 
     map_file.close
@@ -179,8 +179,10 @@ class CreateMapService
 
     # get the genders of French and Italian.
     # they are the base color to remove missing regional languages
-    italian_gender = result_array.select{|x| x[:abbreviation] == "it" }[0][:gender]
-    french_gender = result_array.select{|x| x[:abbreviation] == "fr" }[0][:gender]
+    italian_index = result_array.find_index{|x| x[:abbreviation] == "it" }
+    french_index = result_array.find_index{|x| x[:abbreviation] == "fr" }
+    italian_gender = !italian_index.nil? ? result_array[italian_index][:gender] : nil
+    french_gender = !french_index.nil? ? result_array[french_index][:gender] : nil
 
     # remove unused "$__" from map and give gray color
     unused_map_languages = map_languages - current_languages
@@ -204,19 +206,19 @@ class CreateMapService
 
     # change "$__" to result translation, 
     # change the color to the right color
-    for language in result_array
-      map_code = map_code.sub("$" + language[:abbreviation], language[:translation])
+    for result in result_array
+      map_code = map_code.sub("$" + result[:abbreviation], result[:translation])
 
       existing_color = nil
 
       # if the current language is on the map, find its corresponding color, existing_color
-      if languages_array.include?(language[:abbreviation])
-        existing_color = color_codes_array[languages_array.find_index(language[:abbreviation])]
+      if languages_array.include?(result[:abbreviation])
+        existing_color = color_codes_array[languages_array.find_index(result[:abbreviation])]
       end
 
       # change the existing_color to the gender_color on the map
       if !existing_color.nil?
-        map_code = map_code.gsub("#" + existing_color, "#" + gender_color_finder(language[:gender]))
+        map_code = map_code.gsub("#" + existing_color, "#" + gender_color_finder(result[:gender]))
       end
     end
 
