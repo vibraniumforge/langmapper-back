@@ -175,6 +175,7 @@ class CreateEtymologyMapService
       # Words that confuse the match
       remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "vulgar", "a", "modification", "root", "or"]
 
+      # Prefer "Latin" instead of "Vulgar Latin".
       # Account for "from Vulgar Latin "xe", from Latin "x" confusion.
       num_latins = current_etymology_array.select do |item|
         item.include?("Latin")
@@ -296,13 +297,13 @@ class CreateEtymologyMapService
     french_color = nil
     english_color = nil
     italian_color = nil
-    if result_array.select{|x| x[:abbreviation] == "it" }.length != 0
+    if !result_array.select{|x| x[:abbreviation] == "it" }.length.zero?
       italian_color = result_array.select{|x| x[:abbreviation] == "it" }[0][:color]
     end
-    if result_array.select{|x| x[:abbreviation] == "en" }.length != 0
+    if !result_array.select{|x| x[:abbreviation] == "en" }.length.zero?
       english_color = result_array.select{|x| x[:abbreviation] == "en" }[0][:color]
     end
-    if result_array.select{|x| x[:abbreviation] == "fr" }.length != 0
+    if !result_array.select{|x| x[:abbreviation] == "fr" }.length.zero?
       french_color = result_array.select{|x| x[:abbreviation] == "fr" }[0][:color]
     end
     # italian_color = result_array.select{|x| x[:abbreviation] == "it" } ? [0][:color]
