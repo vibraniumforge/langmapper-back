@@ -104,13 +104,18 @@ class CreateMapService
     # ["ar", "mt", ...]
 
     # get the selected blank map, open it, and get the $langs from it. Not hardcoded like before.
-    doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
-    map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+
+    # doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
+    # map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+
+    map_file = File.open("#{Rails.root.to_s}/public/my_europe_template.svg")
+    map_code = map_file.read
+    map_languages = map_code.scan(/[$][a-z]{2,3}/mi).sort.map{|x| x.gsub(/[$]/i, "")}
 
     # clean the result data for appending
     search_results.each do |result|
       # remove languages that ARE in the results, but NOT on this map
-      if !map_langugaes.include?(result.abbreviation)
+      if !map_languages.include?(result.abbreviation)
         next
       end
 
@@ -119,24 +124,23 @@ class CreateMapService
       current_languages << result.abbreviation
     end
 
-    filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
-    file_source = filename.read()
-
     # change the "$__" to result
     for language in result_array
-      file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
+      map_code = map_code.sub("$" + language[:abbreviation], language[:translation])
     end
     
     # languages that ARE on the map, but NOT in the reults
     # unused_map_languages = My_europe_svg - current_languages
-    unused_map_languages = map_langugaes - current_languages
+    unused_map_languages = map_languages - current_languages
     
     # change the "$__" to "" to hide missing info.
     for unused_language in unused_map_languages
-      file_source = file_source.sub("$" + unused_language, "")
+      map_code = map_code.sub("$" + unused_language, "")
     end
 
-    send_map(file_source)
+    map_file.close
+
+    send_map(map_code)
   end
 
   def self.find_all_genders_by_area_img(area, word)
@@ -145,13 +149,16 @@ class CreateMapService
     color_codes_array = Combo.map { |item| item[1] }
     result_array = []
     current_languages = []
-    doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
-    map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+
+    map_file = File.open("#{Rails.root.to_s}/public/my_europe_template.svg")
+    map_code = map_file.read
+    map_languages = map_code.scan(/[$][a-z]{2,3}/mi).sort.map{|x| x.gsub(/[$]/i, "")}
+    # map_file.close
 
     search_results.each do |result|
 
       # remove results that are not on this map
-      if !map_langugaes.include?(result.abbreviation)
+      if !map_languages.include?(result.abbreviation)
         next
       end
 
@@ -170,31 +177,28 @@ class CreateMapService
       current_languages << result.abbreviation
     end
 
-    filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
-    file_source = filename.read()
-
     italian_gender = result_array.select{|x| x[:abbreviation] == "it" }[0][:gender]
     french_gender = result_array.select{|x| x[:abbreviation] == "fr" }[0][:gender]
 
     # remove unused "$__" from map and give gray color
-    unused_map_languages = map_langugaes - current_languages
+    unused_map_languages = map_languages - current_languages
     for unused_language in unused_map_languages
 
-      file_source = file_source.sub("$" + unused_language, "")
+      map_code = map_code.sub("$" + unused_language, "")
       color_from_map = color_codes_array[languages_array.find_index(unused_language)]
 
       if ["pms", "lij", "vnc", "nap", "scn", "sc"].include?(unused_language) && !italian_gender.nil?
-        file_source = file_source.gsub("#" + color_from_map, "#" + gender_color_finder(italian_gender) )
+        map_code = map_code.gsub("#" + color_from_map, "#" + gender_color_finder(italian_gender) )
       elsif ["oc", "co", "br"].include?(unused_language) && !french_gender.nil? 
-        file_source = file_source.gsub("#" + color_from_map, "#" + gender_color_finder(french_gender) )
+        map_code = map_code.gsub("#" + color_from_map, "#" + gender_color_finder(french_gender) )
       else
-        file_source = file_source.gsub("#" + color_from_map, "#" + "ffffff" )
+        map_code = map_code.gsub("#" + color_from_map, "#" + "ffffff" )
       end
     end
 
     # Change "$__" to result
     for language in result_array
-      file_source = file_source.sub("$" + language[:abbreviation], language[:translation])
+      map_code = map_code.sub("$" + language[:abbreviation], language[:translation])
 
       existing_color = nil
 
@@ -205,11 +209,13 @@ class CreateMapService
 
       # change the existing_color to the gender_color on the map
       if !existing_color.nil?
-        file_source = file_source.gsub("#" + existing_color, "#" + gender_color_finder(language[:gender]))
+        map_code = map_code.gsub("#" + existing_color, "#" + gender_color_finder(language[:gender]))
       end
     end
 
-    send_map(file_source)
+    map_file.close
+    
+    send_map(map_code)
   end
 
   # pick the right color for the matching gender
@@ -253,10 +259,10 @@ class CreateMapService
     gender_color
   end
 
-  def self.send_map(file_source)
+  def self.send_map(map_code)
     FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
     the_new_map = open("public/my_europe_copy_template.svg", "w")
-    the_new_map.write(file_source)
+    the_new_map.write(map_code)
     # the_new_map.close()
     the_new_map
     # send_file the_new_map, disposition: :inline
