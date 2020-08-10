@@ -82,15 +82,17 @@ class CreateEtymologyMapService
   ]
 
   # The $___ from my_europe_template.svg
-  My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sh", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
+  My_europe_svg = ["ab", "ar", "az", "be", "bg", "br", "ca", "co", "cs", "cy", "da", "de", "el", "en", "es", "et", "eu", "fi", "fo", "fr", "fy", "ga", "gag", "gd", "gl", "hu", "hy", "is", "it", "ka", "kk", "krl", "lb", "lij", "lt", "lv", "mk", "mt", "nap", "nl", "no", "oc", "os", "pl", "pms", "pt", "rm", "ro", "ru", "sc", "scn", "sco", "se", "sh", "sk", "sl", "sq", "sv", "tk", "tt", "uk", "vnc", "xal"]
   # 65 with 2 dupe "sh" 63
 
   Families_list = ["Albanian", "Anatolian", "Armenian", "Ancient Greek", "Hellenic", "Latin", "Proto-Balto‑Slavic", "Proto-Slavic", "Proto-Baltic", "Proto-Celtic", "Proto-Germanic", "Proto-Indo-Iranian", "Proto-Tocharian", "Proto-Finnic", "Proto-Sami", "Proto-Ugric", "Proto-Basque", "Proto-Turkic", "Proto-Afro-Asiatic" , "Semitic", "Arabic", "Proto-Kartvelian", "Proto-Northwest Caucasian", "Proto-Northeast Caucasian" ] 
   # "Proto-Italic",
 
   def self.find_all_etymologies_by_area_img(area, word)
-    # below for just default map
+    t1 = Time.now
     # search_results = Translation.find_all_translations_by_area(area, word)
+
+    # below for just default map
     search_results = Translation.find_all_translations_by_area_europe_map(area, word)
     languages_array = Combo.map { |item| item[0] }
     color_codes_array = Combo.map { |item| item[1] }
@@ -109,9 +111,18 @@ class CreateEtymologyMapService
 
     #<Nokogiri::XML::Attr:0x3fc15a080254 name="style" value="fill:#ffffb1;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1">
 
-    doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
-    map_langugaes = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+    # doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
+    # map_languages = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
+
+
+    map_file = File.open("#{Rails.root.to_s}/public/my_europe_template.svg")
+    map_code = map_file.read
+    map_languages = map_code.scan(/[$][a-z]{2,3}/mi).sort.map{|x| x.gsub(/[$]/i, "")}
+    # map_file.close
     
+    # puts "map_languages= #{map_languages}"
+    
+    # map_colors = map_code.scan(/#[a-f0-9]{3}{1,2}/mi).sort.uniq
     # map_colors = doc.xpath('//*[contains(@style,"fill")]')[0].attributes["style"].children.to_s
     # x = doc.xpath('//*[contains(@style,"fill")]')
     # y = x[0].attributes["style"].children.to_s
@@ -139,7 +150,7 @@ class CreateEtymologyMapService
     search_results.each do |result|
 
       # ignore search_results that are not on this map
-      if !map_langugaes.include?(result.abbreviation)
+      if !map_languages.include?(result.abbreviation)
         next
       end
 
@@ -178,7 +189,7 @@ class CreateEtymologyMapService
         # puts result.abbreviation
       end
 
-      puts "current_etymology_array= #{current_etymology_array}"
+      # puts "current_etymology_array= #{current_etymology_array}"
 
       # matching logic
       current_etymology_array.each do |etymology|
@@ -230,7 +241,7 @@ class CreateEtymologyMapService
       if result.etymology.nil? || result.etymology == "Null"
         edited_result = romanization_helper(result)[0].to_h
         edited_result[:index] = nil
-        edited_result[:color] = "FFFFFF"
+        edited_result[:color] = "ffffff"
         result_array << edited_result
 
       # if result.etymology IS an etymology, but it is NOT in the array, it will have nil as index_in_ety_array
@@ -239,7 +250,7 @@ class CreateEtymologyMapService
       elsif index_in_ety_array.nil?
 
         # set default color to missing. If it later is found, use found_color
-        found_color = "FFFFFF"
+        found_color = "ffffff"
         if languages_array.find_index(result[:abbreviation])
           found_color = color_codes_array[languages_array.find_index(result[:abbreviation])] 
         end
@@ -278,8 +289,8 @@ class CreateEtymologyMapService
       end
     end
 
-    filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
-    file_source = filename.read()
+    # filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
+    # file_source = filename.read()
 
 
     french_color = nil
@@ -299,25 +310,25 @@ class CreateEtymologyMapService
     # french_color = result_array.select{|x| x[:abbreviation] == "fr" }&[0]&[:color]
 
     # remove unused langs $__ from map and color it blank
-    # remove unused regional langs and color to larger lang if necessary
-    unused_map_languages = map_langugaes - current_languages
+    # remove unused regional langs $__ and color it to larger lang
+    unused_map_languages = map_languages - current_languages
     for unused_language in unused_map_languages
 
-      # set the text to ""
-      file_source = file_source.sub("$" + unused_language, "")
+      # change the text to ""
+      map_code = map_code.sub("$" + unused_language, "")
 
       # find the corresponding color
       color_from_map = color_codes_array[languages_array.find_index(unused_language)]
 
       # change the color. 
       if ["pms", "lij", "vnc", "nap", "scn", "sc"].include?(unused_language) && !italian_color.nil? && italian_color != "ffffff"
-        file_source = file_source.gsub("#" + color_from_map, "#" + italian_color )
+        map_code = map_code.gsub("#" + color_from_map, "#" + italian_color )
       elsif unused_language == "sco" && !english_color.nil? && english_color != "ffffff"
-        file_source = file_source.gsub("#" + color_from_map, "#" + english_color )
+        map_code = map_code.gsub("#" + color_from_map, "#" + english_color )
       elsif ["oc", "co", "br"].include?(unused_language) && !french_color.nil? && french_color != "ffffff"
-        file_source = file_source.gsub("#" + color_from_map, "#" + french_color )
+        map_code = map_code.gsub("#" + color_from_map, "#" + french_color )
       else
-        file_source = file_source.gsub("#" + color_from_map, "#" + "ffffff" )
+        map_code = map_code.gsub("#" + color_from_map, "#" + "ffffff" )
       end
     end
 
@@ -325,34 +336,41 @@ class CreateEtymologyMapService
     for language in result_array
 
       # put the result text on the map. => [мідь - midʹ]
-      file_source = file_source.sub("$" + language[:abbreviation], "#{language[:translation]}")
+      map_code = map_code.sub("$" + language[:abbreviation], "#{language[:translation]}")
 
       # change the result color on the map
       color_from_map = "ffffff"
-      # color_from_map = "d9d9d9"
       if languages_array.include?(language[:abbreviation])
         color_from_map = color_codes_array[languages_array.find_index(language[:abbreviation])]
       end
-      file_source = file_source.gsub("#" + color_from_map, "#" + language[:color])
+      map_code = map_code.gsub("#" + color_from_map, "#" + language[:color])
     end
 
+    map_file.close
+
     pp etymology_array
+
     puts "\n"
-    puts "#{map_langugaes.length} languages on the map"
-    puts "#{search_results.length} matching languages in the DB for this word: #{word} in #{area}"
-    puts "#{unused_map_languages.length} unused languages"
+    puts "#{search_results.length} matching languages in the DB for the word: #{word} in: #{area}"
+    puts "#{map_languages.length} languages on the map"
+    puts "#{unused_map_languages.length} unused languages:"
+    print unused_map_languages
+    puts "\n"
     puts "#{current_languages.length} languages displayed"  
     puts "#{etymology_array.length} <== unique etymologies"
-    puts "#{(My_europe_svg - map_langugaes).count} languages missing between the two arrays"
+    puts "#{(My_europe_svg.length - map_languages.length)} languages missing between the two arrays:"
+    puts "#{My_europe_svg - map_languages} languages"
+    puts "\n"
+    puts "computed in #{Time.now - t1} seconds."
     puts "\n"
   
-    send_map(file_source)
+    send_map(map_code)
   end
 
-  def self.send_map(file_source)
+  def self.send_map(map_code)
     FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
     the_new_map = open("public/my_europe_copy_template.svg", "w")
-    the_new_map.write(file_source)
+    the_new_map.write(map_code)
     # the_new_map.close()
     the_new_map
     # send_file the_new_map, disposition: :inline
