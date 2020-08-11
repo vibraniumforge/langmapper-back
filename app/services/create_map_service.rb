@@ -269,8 +269,8 @@ class CreateMapService
   end
 
   def self.send_map(map_code)
-    FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_copy_template.svg", preserve = false, dereference = false, remove_destination = true)
-    the_new_map = open("public/my_europe_copy_template.svg", "w")
+    FileUtils.copy_entry("public/my_europe_template.svg", "public/my_europe_template_copy.svg", preserve = false, dereference = false, remove_destination = true)
+    the_new_map = open("public/my_europe_template_copy.svg", "w")
     the_new_map.write(map_code)
     # the_new_map.close
     the_new_map
