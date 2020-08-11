@@ -74,8 +74,8 @@ module Api::V1
     end
 
     def find_all_translations_by_word_gender
-      @genders = Translation.find_all_translations_by_word_gender(params[:word])
-      render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @genders }, status: 200
+      @translations = Translation.find_all_translations_by_word_gender(params[:word])
+      render json: { message: "Genders of #{params[:word]} successfully returned.", success: true, data: @translations }, status: 200
     end
 
     def find_etymology_containing
