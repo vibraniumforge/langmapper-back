@@ -158,11 +158,11 @@ Language.create({ name: "Uyghur", abbreviation: "ug", alphabet: "Latn", macrofam
 Language.create({ name: "Tatar", abbreviation: "tt", alphabet: "Cyrl", macrofamily: "Turkic", family: "Kipchak-Bulgar", subfamily: "", area1: "Central Asia", area2: "Altaic", area3: "Europe", notes: "", alive: true })
 
 # Mongolian
-Language.create({ name: "Mongolian", abbreviation: "mn", alphabet: "Mong", macrofamily: "Mongolic", family: "", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
-Language.create({ name: "Kalmyk", abbreviation: "xal", alphabet: "Cyrl", macrofamily: "Mongolic", family: "", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "Europe", notes: "", alive: true })
+Language.create({ name: "Mongolian", abbreviation: "mn", alphabet: "Mong", macrofamily: "Mongolic", family: "Central", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
+Language.create({ name: "Kalmyk", abbreviation: "xal", alphabet: "Cyrl", macrofamily: "Mongolic", family: "Central", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "Europe", notes: "", alive: true })
 
 # Tungusic
-Language.create({ name: "Xibe", abbreviation: "sjo", alphabet: "Mong", macrofamily: "Tungusic", family: "", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
+Language.create({ name: "Xibe", abbreviation: "sjo", alphabet: "Mong", macrofamily: "Tungusic", family: "Southwestern", subfamily: "", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
 
 # Japonic
 # Language.create({ name: "Japanese", abbreviation: "ja", alphabet: "Jpan", macrofamily: "Isolate", family: "Japonic", subfamily: "Altaic", area1: "East Asia", area2: "Altaic", area3: "", notes: "", alive: true })
