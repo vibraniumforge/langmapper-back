@@ -13,14 +13,15 @@ class Translation < ApplicationRecord
   end
 
   # Find all translations of a WORD in ALL LANGUAGES
-  def self.find_all_translations_by_word(query)
+  def self.find_all_translations_by_word(word)
     word_id = Word.find_by("word_name = ?", query.downcase).id
-    Translation.joins(:language, :word).select("translations.*, languages.name, languages.macrofamily, words.definition").where(word_id: word_id).order(:name)
+    Translation.joins(:language).select("translations.*, languages.name, languages.macrofamily").where(word_id: word_id).order(:name)
   end
 
-  # all translations of a WORD in a MACROFAMILY. Gender is inside
-  def self.find_all_translations_by_word_gender(word_name, macrofamily = "Indo-European")
-    word_id = Word.find_by(word_name: word_name.downcase).id
+  # all translations of a WORD in ALL LANGUAGES
+  # GET the gender
+  def self.find_all_translations_by_word_gender(word, macrofamily = "Indo-European")
+    word_id = Word.find_by(word_name: word.downcase).id
     Translation.joins(:language).select("translations.*, languages.*, languages.id as language_id, translations.id as id").where("word_id = ? AND macrofamily = ?", word_id, macrofamily).order(:family)
   end
 
