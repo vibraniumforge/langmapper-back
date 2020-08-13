@@ -41,6 +41,11 @@ class FindInfoService
       page = Nokogiri::HTML(open("https://en.wiktionary.org/#{layout_path}"))
     end
 
+    if chosen_word == "lead"
+      etymology_english = query_page.css("[id^='Etymology_1']")[0].parent.next_element.text
+      page = Nokogiri::HTML(open("https://en.wiktionary.org/wiki/lead/translations#Etymology_1"))
+    end
+    
     # there are two tables full of the links we need. Put them into the all_li_array
     first_table = page.css("td.translations-cell")[0].children.children
     second_table = page.css("td.translations-cell")[1].children.children
