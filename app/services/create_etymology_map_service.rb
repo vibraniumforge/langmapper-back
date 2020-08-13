@@ -173,7 +173,7 @@ class CreateEtymologyMapService
       matched = false
 
       # Words that confuse the match
-      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "vulgar", "a", "modification", "root", "or"]
+      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "vulgar", "a", "modification", "root", "or", "borrowing", "learned"]
 
       # Prefer "Latin" instead of "Vulgar Latin".
       # Account for "from Vulgar Latin "xe", from Latin "x" confusion.
@@ -195,7 +195,7 @@ class CreateEtymologyMapService
       # matching logic
       current_etymology_array.each do |etymology|
         # clean the current etymology
-        clean_etymology = etymology.strip.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ")
+        clean_etymology = etymology.strip.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ").parameterize(separator: " ")
         # puts "clean_etymology= #{clean_etymology}"
         # loop over the families. Try to match wods in clean_etymology to a family name.
         Families_list.each do |family|
