@@ -3,8 +3,8 @@ class Language < ApplicationRecord
   has_many :words, through: :translations
 
   validates :name, presence: true
-  validates :abbreviation, length: { in: 2..3 }, allow_blank: true
-  validates :alive, inclusion: { in: [true, false] }, allow_blank: true
+  validates :abbreviation, length: { in: 2..3 }, allow_blank: false
+  # validates :alive, inclusion: { in: [true, false] }, allow_blank: true
 
   def self.current_langauges_hash
     Language.select(:id, :name).order(:id)
