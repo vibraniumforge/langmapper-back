@@ -15,7 +15,7 @@ class Translation < ApplicationRecord
   # Find all translations of a WORD in ALL LANGUAGES
   def self.find_all_translations_by_word(word)
     word_id = Word.find_by("word_name = ?", word.downcase).id
-    Translation.joins(:language).select("translations.*, languages.name, languages.macrofamily").where(word_id: word_id).order(:name)
+    Translation.joins(:language).select("translations.*, languages.name, languages.macrofamily, languages.family").where(word_id: word_id).order(:name)
   end
 
   # all translations of a WORD in ALL LANGUAGES
@@ -32,7 +32,7 @@ class Translation < ApplicationRecord
 
     # all the translations of EVERY WORD in a MACROFAMILY
     def self.find_all_translations_by_macrofamily(macrofamily)
-      Translation.joins(:language, :word).select("translations.*, languages.*, words.word_name as word_name").where("macrofamily = ?", macrofamily).order(:family)
+      Translation.joins(:language, :word).select("translations.*, languages.*, languages.id as language_id, translations.id as id, words.word_name as word_name").where("macrofamily = ?", macrofamily).order(:family)
     end
   
     # all the TRANSLATIONS from a specified LANGUAGE
