@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       post "/auth", to: "application#authorized"
       # above needs to go outside api/v1 namespace.
 
+      get "/words/translation_seeds_test", to: "words#translation_seeds_test"
       
       # Custom routes
 
