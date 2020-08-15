@@ -36,7 +36,7 @@ Language.create({ name: "Galician", abbreviation: "gl", alphabet: "Latn", macrof
 Language.create({ name: "Mirandese", abbreviation: "mwl", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Ibero-Romance", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
 Language.create({ name: "Asturian", abbreviation: "ast", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Ibero-Romance", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
 # Language.create({ name: "Leonese", abbreviation: "", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Ibero-Romance", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
-Language.create({ name: "Spanish", abbreviation: "es", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Ibero-Romance", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
+Language.create({ name: "Spanish", abbreviation: "es", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Ibero-Romance", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "a.k.a. Castillian Spanish, Castellano", alive: true })
 Language.create({ name: "Aragonese", abbreviation: "an", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Ibero-Romance", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
 
 Language.create({ name: "Catalan", abbreviation: "ca", alphabet: "Latn", macrofamily: "Indo-European", family: "Italic", subfamily: "Occitano-Romance", area1: "Europe", area2: "Western Europe", area3: "Iberia", notes: "", alive: true })
