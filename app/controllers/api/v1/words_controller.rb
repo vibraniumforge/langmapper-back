@@ -30,7 +30,7 @@ module Api::V1
       end
       @word = Word.new(word_params)
       if @word.save
-        message = "Word #{@word} successfully created."
+        message = "Word #{@word.word_name} successfully created."
         puts "=> #{message}"
         puts "\n"
         render json: { message: message, success: true, data: @word }, status: 200
@@ -56,7 +56,7 @@ module Api::V1
         render json: { message: message, success: false }, status: 406
       end
       if @word.update(word_params)
-        message = "Word #{@word} successfully updated."
+        message = "Word #{@word.word_name} successfully updated."
         puts "=> #{message}"
         render json: { message: message, success: true, data: @word }, status: 200
       else
