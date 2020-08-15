@@ -1,7 +1,7 @@
 module Api::V1
   class WordsController < ApplicationController
     def index
-      @words = Word.all.order(:id)
+      @words = Word.all.order(id: :desc)
       render json: @words
       # functions, but still returns extra info
       # render json: { message: "Words successfully returned.", success: true, data: @words, each_serializer: WordSerializer }, status: 200
@@ -21,6 +21,7 @@ module Api::V1
     end
 
     def create
+      puts "params = #{params}"
       if !find_word_by_name.nil?
         message = "Word #{params[:word][:word_name.downcase]} already exists."
         puts "=> #{message}"
@@ -31,6 +32,7 @@ module Api::V1
       if @word.save
         message = "Word #{@word} successfully created."
         puts "=> #{message}"
+        puts "\n"
         render json: { message: message, success: true, data: @word }, status: 200
         # Translation.find_info(@word.word_name.downcase)
         FindInfoService.find_info(@word.word_name.downcase)
