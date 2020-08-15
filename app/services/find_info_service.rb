@@ -219,10 +219,11 @@ class FindInfoService
       # output this info to the console
       if !full_link_eng.nil? && @translation.save
         puts "\n"
-        puts "language_id: #{language_id}"
-        puts "#{index + 1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
-        puts "\n"
-        puts "================================================================="
+        # puts "language_id: #{language_id}"
+        puts "Lang: #{language_name}"
+        # puts "#{index + 1}. Lang: #{language_name} - Trans: #{translation ? translation : "NONE"} - Roman: #{romanization} - Gender: #{gender ? gender : "NONE"} - Ety: #{etymology ? etymology : "NONE"}"
+        # puts "\n"
+        # puts "================================================================="
         counter +=1
       else
         puts "Translation NOT saved for #{language_name}"
@@ -247,6 +248,7 @@ class FindInfoService
     puts "path1 = #{path1}"
     puts "path2 = #{path2}"
     puts "path3 = #{path3}"
+    puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   end
   
 end
