@@ -9,7 +9,7 @@ class Translation < ApplicationRecord
 
   # return flattened json for seeds
   def self.seeds
-    Translation.first(100)
+    Translation.all
   end
 
   # Find all translations of a WORD in ALL LANGUAGES
