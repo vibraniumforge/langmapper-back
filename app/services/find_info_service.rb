@@ -240,9 +240,9 @@ class FindInfoService
     time = t2 - t1
     puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     puts "\n"
-    puts "DONE with <<< #{chosen_word}, #{definition} >>> \n"
-    puts "Count: #{all_li_array.count} entries"
-    puts "#{counter} entries saved"
+    puts "DONE with <<< #{chosen_word.upcase}, #{definition} >>> \n"
+    puts "Count: #{all_li_array.count} entries on the table"
+    puts "#{counter} entries saved to DB"
     puts "in #{time.round(2)} seconds"
     puts "Errors: #{errors_ar}"
     puts "path1 = #{path1}"
