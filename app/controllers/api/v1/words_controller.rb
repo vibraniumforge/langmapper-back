@@ -108,10 +108,6 @@ module Api::V1
       @word_by_name = Word.find_by(word_name: params[:word][:word_name])
     end
 
-    def find_existing_word_definition
-      Word.find_by(word_name: params[:word])
-    end
-
     def word_params
       params.require(:word).permit(:word_name, :definition)
     end
