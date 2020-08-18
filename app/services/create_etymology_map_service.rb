@@ -166,14 +166,15 @@ class CreateEtymologyMapService
       # current_etymology_array = result.etymology.split(".")[0].split(/ *, *(?=[^\)]*?(?:\(|$))/)
       # current_etymology_array = result.etymology.gsub(/\(.*?\)/, '').split(".")[0].split(/ *, *(?=[^\)]*?(?:\(|$))/)
       # split(/[,\s ;\s] /)
-      current_etymology_array = result.etymology.gsub(/\s\(.*?\)/, "").gsub(/\s\[.*?\]/, "").split(".")[0].split(/[,\s][;\s]/)
+      # current_etymology_array = result.etymology.gsub(/\s\(.*?\)/, "").gsub(/\s\[.*?\]/, "").split(".")[0].split(/\s*[,;]\s*/)
+      current_etymology_array = result.etymology.gsub(/\s\(.*?\)/, "").gsub(/\(.*\)/, "").split(".")[0].split(/\s*[,;]\s*/)
       
       matching_family = nil
       matching_etymology = nil
       matched = false
 
       # Words that confuse the match
-      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "vulgar", "a", "modification", "root", "or", "borrowing", "learned", "semi-learned", "conflation"]
+      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "late", "vulgar", "a", "modification", "root", "or", "borrowing", "learned", "semi-learned", "conflation", "via", "taken", "either", "regularized", "regularised", "form"]
 
       # Prefer "Latin" instead of "Vulgar Latin".
       # Account for "from Vulgar Latin "xe", from Latin "x" confusion.
@@ -204,6 +205,7 @@ class CreateEtymologyMapService
           if clean_etymology.downcase.include?("from #{family.downcase}")
             # puts "MATCHED"
             matching_family = family
+            # should be first, nonclean etymology?
             matching_etymology = clean_etymology.slice(0,1).capitalize + clean_etymology.strip().slice(1..-1)
             matched = true
             break
@@ -357,7 +359,7 @@ class CreateEtymologyMapService
     puts "#{unused_map_languages.length} unused languages:"
     print unused_map_languages
     puts "\n"
-    puts "#{current_languages.length} languages displayed"  
+    puts "#{current_languages.length} used languages displayed"  
     puts "#{etymology_array.length} <== unique etymologies"
     puts "#{(My_europe_svg.length - map_languages.length)} languages missing between the two arrays:"
     puts "#{My_europe_svg - map_languages} languages"
