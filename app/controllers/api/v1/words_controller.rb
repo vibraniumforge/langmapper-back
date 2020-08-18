@@ -21,7 +21,6 @@ module Api::V1
     end
 
     def create
-      puts "params = #{params}"
       if !find_word_by_name.nil?
         message = "Word #{params[:word][:word_name.downcase]} already exists."
         puts "=> #{message}"
