@@ -214,6 +214,17 @@ class FindInfoService
         etymology = nil
       end
 
+      # account for Galician century in first sentence
+      if language_id == 19 
+        split_etymology = etymology.strip.split(".")
+        if split_etymology.length > 1
+          galician_first_sentence = split_etymology[0]
+          if (galician_first_sentence.downcase.include?("century") || galician_first_sentence.downcase.include?("attested")) && !galician_first_sentence.downcase.include?("from")
+            etymology = split_etymology.push(split_etymology.shift).join(". ").concat(".")
+          end
+        end
+      end
+
       # save all 7 things I need
       @translation = Translation.new({ language_id: language_id, word_id: word_id, translation: translation, romanization: romanization, link: full_link_eng, etymology: etymology, gender: gender })
       # output this info to the console
