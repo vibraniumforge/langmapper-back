@@ -94,6 +94,7 @@ class CreateEtymologyMapService
 
     # below for just default map
     search_results = Translation.find_all_translations_by_area_europe_map(area, word)
+    search_results_lang_array = search_results.map{|lang| lang.abbreviation}.sort
     languages_array = Combo.map { |item| item[0] }
     color_codes_array = Combo.map { |item| item[1] }
     result_array = []
@@ -114,13 +115,10 @@ class CreateEtymologyMapService
     # doc = File.open("#{Rails.root.to_s}/public/my_europe_template.svg"){ |f| Nokogiri::XML(f) }
     # map_languages = doc.css("tspan:contains('$')").text().split("$").sort.reject!{ |c| c.empty? }
 
-
     map_file = File.open("#{Rails.root.to_s}/public/my_europe_template.svg")
     map_code = map_file.read
     map_languages = map_code.scan(/[$][a-z]{2,3}/mi).sort.map{|x| x.gsub(/[$]/i, "")}
     # map_file.close
-    
-    # puts "map_languages= #{map_languages}"
     
     # map_colors = map_code.scan(/#[a-f0-9]{3}{1,2}/mi).sort.uniq
     # map_colors = doc.xpath('//*[contains(@style,"fill")]')[0].attributes["style"].children.to_s
@@ -165,16 +163,16 @@ class CreateEtymologyMapService
       # remove everything after first sentence. Split on commas.
       # current_etymology_array = result.etymology.split(".")[0].split(/ *, *(?=[^\)]*?(?:\(|$))/)
       # current_etymology_array = result.etymology.gsub(/\(.*?\)/, '').split(".")[0].split(/ *, *(?=[^\)]*?(?:\(|$))/)
-      # split(/[,\s ;\s] /)
       # current_etymology_array = result.etymology.gsub(/\s\(.*?\)/, "").gsub(/\s\[.*?\]/, "").split(".")[0].split(/\s*[,;]\s*/)
-      current_etymology_array = result.etymology.gsub(/\s\(.*?\)/, "").gsub(/\(.*\)/, "").split(".")[0].split(/\s*[,;]\s*/)
+      # current_etymology_array = result.etymology.gsub(/\s\(.*?\)/, "").gsub(/\(.*\)/, "").gsub(/\(.*\)/, "").split(".")[0].split(/\s*[,;]\s*/)
+      current_etymology_array = result.etymology.gsub(/\[.*?\]|\s\[.*?\]|\(.*?\)|\s\(.*?\)/, "").split(".")[0].split(/\s*[,;]\s*/)
       
       matching_family = nil
       matching_etymology = nil
       matched = false
 
       # Words that confuse the match
-      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "late", "vulgar", "a", "modification", "root", "or", "borrowing", "learned", "semi-learned", "conflation", "via", "taken", "either", "regularized", "regularised", "form", "medieval", "diminutive", "variant", "through", "prothesis"]
+      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "late", "vulgar", "a", "modification", "root", "or", "borrowing", "learned", "semi-learned", "conflation", "via", "taken", "either", "regularized", "regularised", "form", "medieval", "diminutive", "variant", "through", "prothesis", "literary", "taken", "reformation", "inherited", "feminine", "masculine", "hypothetical", "reborrowing", "plural"]
 
       # Prefer "Latin" instead of "Vulgar Latin".
       # Account for "from Vulgar Latin "xe", from Latin "x" confusion.
@@ -186,26 +184,18 @@ class CreateEtymologyMapService
       end
       if num_latins > 1 && vulgar_latin_index
         current_etymology_array.delete_at(vulgar_latin_index)
-        # puts "fires, #{vulgar_latin_index}"
-        # puts "current_etymology_array=, #{current_etymology_array}"
-        # puts result.abbreviation
       end
-
-      # puts "current_etymology_array= #{current_etymology_array}"
 
       # matching logic
       current_etymology_array.each do |etymology|
-        # clean the current etymology
-        clean_etymology = etymology.strip.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ").parameterize(separator: " ")
-        # puts "clean_etymology= #{clean_etymology}"
+        # clean the current etymology, one item in the current_etymology_array
+        # clean_etymology = etymology.strip.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ").parameterize(separator: " ")
+        clean_etymology = etymology.strip.split(" ").delete_if{|word| remove_words.include?(word.downcase)}.join(" ")
+
         # loop over the families. Try to match wods in clean_etymology to a family name.
         Families_list.each do |family|
-          # puts "matched=, #{matched}"
-          # puts "family=, #{family}"
-          if clean_etymology.downcase.include?("from #{family.downcase}")
-            # puts "MATCHED"
+          if clean_etymology.downcase.include?("from #{family.downcase}") || clean_etymology.downcase.include?("alteration #{family.downcase}")
             matching_family = family
-            # should be first, nonclean etymology?
             matching_etymology = clean_etymology.slice(0,1).capitalize + clean_etymology.strip().slice(1..-1)
             matched = true
             break
@@ -219,7 +209,7 @@ class CreateEtymologyMapService
         matching_family = result.family
       end
 
-      # if matchimatching_etymologyg_family, it may be new. use the result.etymology
+      # if matching_etymology, it may be new. use the result.etymology
       if matching_etymology.nil?
         matching_etymology = current_etymology_array.first
       end
@@ -295,7 +285,6 @@ class CreateEtymologyMapService
     # filename = open("#{Rails.root.to_s}/public/my_europe_template.svg", "r")
     # file_source = filename.read()
 
-
     french_color = nil
     english_color = nil
     italian_color = nil
@@ -353,20 +342,32 @@ class CreateEtymologyMapService
 
     pp etymology_array
 
+    langs_without_an_ety = (map_languages - current_languages).sort
+    unused_search_results = (map_languages - search_results_lang_array).sort
+    unused_map_languages2 = (search_results_lang_array - map_languages).sort
+
     puts "\n"
-    puts "#{search_results.length} matching languages in the DB for the word: #{word} in: #{area}"
+    puts "#{search_results.length} matching languages in the DB for the word: #{word.upcase} in: #{area}"
     puts "#{map_languages.length} languages on the map"
-    puts "#{unused_map_languages.length} unused languages:"
+    puts "#{unused_map_languages.length} unused languages(on map, but not in DB or no etymology)"
     print unused_map_languages
     puts "\n"
-    puts "#{current_languages.length} used languages displayed"  
+    puts "#{unused_search_results.length} unused languages(on map, but not in DB)"
+    print unused_search_results
+    puts "\n"
+    puts "#{unused_map_languages2.length} unused search languages(in search results, but not on map)"
+    if unused_map_languages2.length > 0
+      print unused_map_languages2
+    end
+    puts "\n"
+    puts "#{current_languages.length} languages in DB and map"  
     puts "#{etymology_array.length} <== unique etymologies"
-    puts "#{(My_europe_svg.length - map_languages.length)} languages missing between the two arrays:"
-    puts "#{My_europe_svg - map_languages} languages"
+    # puts "#{(My_europe_svg.length - map_languages.length)} languages missing between My_europe_svg and map_languages:"
+    # puts "They are: #{My_europe_svg - map_languages} languages"
     puts "\n"
     puts "computed in #{Time.now - t1} seconds."
     puts "\n"
-  
+
     send_map(map_code)
   end
 
