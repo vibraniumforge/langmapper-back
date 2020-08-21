@@ -1,6 +1,6 @@
 module Api::V1
   class WordsController < ApplicationController
-    before_action :authorized, only: [:new, :create, :edit, :update, :destroy]
+    before_action :authorized, only: [:show, :new, :create, :edit, :update, :destroy]
 
     def index
       @words = Word.all.order(id: :desc)
