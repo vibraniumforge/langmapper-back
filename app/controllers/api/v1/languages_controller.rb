@@ -1,6 +1,7 @@
 module Api::V1
   class LanguagesController < ApplicationController
-    before_action :authorized, only: [:show, :edit, :update, :destroy]
+    # before_action :authorized, only: [:show, :edit, :update, :destroy]
+    # skip_before_action: authorized, only: [:index]
     
     def index
       @languages = Language.all.order(:id)

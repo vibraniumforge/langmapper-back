@@ -1,7 +1,7 @@
 module Api::V1
   class TranslationsController < ApplicationController
-    before_action :authorized, only: [:show, :edit, :update, :destroy]
-    # skip_before_action: authorized, only: [:index, :show, :new, :create]
+    # before_action :authorized, only: [:show, :edit, :update, :destroy]
+    # skip_before_action: authorized, only: [:index, :new, :create]
 
     def index
       @translations = Translation.all
