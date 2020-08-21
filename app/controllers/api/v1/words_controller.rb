@@ -1,5 +1,7 @@
 module Api::V1
   class WordsController < ApplicationController
+    before_action :authorized, only: [:new, :create, :edit, :update, :destroy]
+
     def index
       @words = Word.all.order(id: :desc)
       render json: @words

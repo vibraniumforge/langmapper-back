@@ -1,5 +1,7 @@
 module Api::V1
   class LanguagesController < ApplicationController
+    before_action :authorized, only: [:edit, :update, :destroy]
+    
     def index
       @languages = Language.all.order(:id)
       render json: @languages
@@ -10,23 +12,23 @@ module Api::V1
       render json: @language
     end
 
-    def new
-      @language = Language.new
-    end
+    # def new
+    #   @language = Language.new
+    # end
 
-    def create
-      @language = Language.new(language_params)
-      if @language.save
-        message = "Language successfully created"
-        puts "=> #{message}"
-        render json: { message: message, success: true, data: @language }, status: 200
-      else
-        message = "Language NOT created"
-        puts "=> #{message}"
-        puts "Errors= #{@language.errors.full_messages.join(", ")}"
-        render json: { message: "#{message} because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
-      end
-    end
+    # def create
+    #   @language = Language.new(language_params)
+    #   if @language.save
+    #     message = "Language successfully created"
+    #     puts "=> #{message}"
+    #     render json: { message: message, success: true, data: @language }, status: 200
+    #   else
+    #     message = "Language NOT created"
+    #     puts "=> #{message}"
+    #     puts "Errors= #{@language.errors.full_messages.join(", ")}"
+    #     render json: { message: "#{message} because #{@language.errors.full_messages.join(", ")}", success: false, data: @language.errors.full_messages }, status: 406
+    #   end
+    # end
 
     def edit
       find_language
