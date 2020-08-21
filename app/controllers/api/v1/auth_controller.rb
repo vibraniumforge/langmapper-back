@@ -28,7 +28,7 @@ module Api::V1
     private
 
     def user_login_params
-      params.require(:auth).permit(:username, :password)
+      params.require(:auth).permit(:name, :password)
     end
 
   end
