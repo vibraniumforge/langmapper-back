@@ -215,7 +215,7 @@ class FindInfoService
       end
 
       # account for Galician century in first sentence
-      if language_id == 19 
+      if language_id == 19 && etymology
         split_etymology = etymology.strip.split(".")
         if split_etymology.length > 1
           galician_first_sentence = split_etymology[0]
