@@ -1,5 +1,8 @@
 module Api::V1
   class TranslationsController < ApplicationController
+    before_action :authorized, only: [:edit, :update, :destroy]
+    # skip_before_action: authorized, only: [:index, :show, :new, :create]
+
     def index
       @translations = Translation.all
       render json: @translations
