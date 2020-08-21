@@ -1,6 +1,7 @@
 module Api::V1
   class WordsController < ApplicationController
-    before_action :authorized, only: [:show, :new, :create, :edit, :update, :destroy]
+    # before_action :authorized, only: [:show, :new, :create, :edit, :update, :destroy]
+    # skip_before_action :authorized, only: [:index, :all_word_names, :words_count, :find_word_definition, :find_word, :find_word_by_name]
 
     def index
       @words = Word.all.order(id: :desc)
@@ -26,7 +27,7 @@ module Api::V1
       if !find_word_by_name.nil?
         message = "Word #{params[:word][:word_name.downcase]} already exists."
         puts "=> #{message}"
-        render json: { message: message, success: false, data: @word_by_name }, status: 200
+        render json: { message: message, success: false, data: @word_by_name.errors.full_messages }, status: 200
         return
       end
       @word = Word.new(word_params)
@@ -71,7 +72,7 @@ module Api::V1
     def destroy
       find_word
       if @word.destroy
-        message = "Word << #{@word} >> successfully deleted."
+        message = "Word << #{@word.word_name} >> successfully deleted."
         puts "=> #{message}"
         render json: { message: message, success: true, data: @word }, status: 200
       else
@@ -106,7 +107,7 @@ module Api::V1
     end
 
     def find_word_by_name
-      @word_by_name = Word.find_by(word_name: params[:word][:word_name])
+      @word_by_name = Word.find_by(word_name: params[:word][:word_name].downcase)
     end
 
     def word_params
