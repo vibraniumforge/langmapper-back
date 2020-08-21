@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  
+
   root "welcome#index"
   post "/auth", to: "application#authorized"
 
@@ -27,8 +27,6 @@ Rails.application.routes.draw do
       # ADMIN can only see and show a user. User is admin. Should only be one.
 
       post "/auth/login", to: "auth#login"
-      # post "/auth", to: "application#authorized"
-      # above needs to go outside api/v1 namespace.
 
       get "/words/translation_seeds_test", to: "words#translation_seeds_test"
       
