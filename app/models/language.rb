@@ -21,7 +21,11 @@ class Language < ApplicationRecord
   end
 
   def self.all_area_names
-    Language.select(:area1, :area2, :area3).distinct.pluck(:area1, :area2, :area3).flatten.uniq.reject{|x|x.blank?}.sort
+    # Language.select(:area1, :area2, :area3).distinct.pluck(:area1, :area2, :area3).flatten.uniq.reject{|x|x.blank?}.sort
+    # Language.distinct(:area1).pluck(:area1).union(Language.distinct(:area2).pluck(:area2)).union(Language.distinct(:area3).pluck(:area3))
+    # Language.distinct(:area1).where.not(area1: "").pluck(:area1).union(Language.distinct(:area2).where.not(area2: "").pluck(:area2)).union(Language.distinct(:area3).where.not(area3: "").pluck(:area3))
+    # Language.distinct("area1 as areas").where.not(area1: "").pluck(:area1).union(Language.distinct(:area2).where.not(area2: "").pluck(:area2)).union(Language.distinct(:area3).where.not(area3: "").pluck(:area3)).sort
+    Language.distinct.where.not(area1: "").pluck(:area1).union(Language.distinct(:area2).where.not(area2: "").pluck(:area2)).union(Language.distinct(:area3).where.not(area3: "").pluck(:area3)).sort
   end
 
   # searchers
@@ -35,3 +39,18 @@ class Language < ApplicationRecord
   end
 
 end
+
+
+# SELECT DISTINCT area1 
+# AS areas
+# 	FROM languages
+# 	WHERE NOT area1 = ''
+# 	UNION
+# 	SELECT DISTINCT area2 
+# 	FROM languages
+# 	WHERE NOT area2 = ''
+# 	UNION
+# 	SELECT DISTINCT area3 
+# 	FROM languages
+# 	WHERE NOT area3 = ''
+# ORDER BY languages.areas asc
