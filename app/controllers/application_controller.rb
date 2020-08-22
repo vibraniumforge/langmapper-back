@@ -6,10 +6,12 @@ class ApplicationController < ActionController::API
   end
 
   def auth_header
+    puts "auth_header fires"
     request.headers["Authorization"] #=> Bearer <token>
   end
 
   def decoded_token
+    puts "decoded_token fires"
     if auth_header
       token = auth_header.split(" ")[1]
     end
@@ -22,6 +24,7 @@ class ApplicationController < ActionController::API
   end
 
   def current_user
+    puts "current_user fires"
     if decoded_token
       user_id = decoded_token[0]["user_id"]
       @user = User.find(user_id)
@@ -35,6 +38,7 @@ class ApplicationController < ActionController::API
   end
 
   def authorized
+    puts "authorized fires"
     render json: {message: "Please log in", success: false} unless logged_in?
   end
 
