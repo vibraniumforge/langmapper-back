@@ -342,7 +342,6 @@ class CreateEtymologyMapService
 
     pp etymology_array
 
-    langs_without_an_ety = (map_languages - current_languages).sort
     unused_search_results = (map_languages - search_results_lang_array).sort
     unused_map_languages2 = (search_results_lang_array - map_languages).sort
 
