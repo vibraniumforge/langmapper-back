@@ -194,7 +194,7 @@ class CreateEtymologyMapService
 
         # loop over the families. Try to match wods in clean_etymology to a family name.
         Families_list.each do |family|
-          if clean_etymology.downcase.include?("from #{family.downcase}") || clean_etymology.downcase.include?("alteration #{family.downcase}")
+          if clean_etymology.downcase.include?("from #{family.downcase}") || clean_etymology.downcase.include?("From #{family.downcase}")
             matching_family = family
             matching_etymology = clean_etymology.slice(0,1).capitalize + clean_etymology.strip().slice(1..-1)
             matched = true
@@ -216,8 +216,8 @@ class CreateEtymologyMapService
 
       # find the index of the current_etymology in etymology_array, if any
       index_in_ety_array = etymology_array.find_index do |item| 
-        # item && item[:family].include?(matching_family)
-        item && item[:etymology].include?(matching_etymology)
+        # (item && item[:etymology].include?(matching_etymology))
+        (item && item[:etymology].parameterize.include?(matching_etymology.parameterize))
       end
      
       # puts "langauge= #{result.abbreviation}"
