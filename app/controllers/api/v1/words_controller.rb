@@ -26,6 +26,7 @@ module Api::V1
     def create
       if !find_word_by_name.nil?
         message = "Word #{params[:word][:word_name.downcase]} already exists."
+        puts "\n"
         puts "=> #{message}"
         render json: { message: message, success: false, data: @word_by_name.errors.full_messages }, status: 200
         return
