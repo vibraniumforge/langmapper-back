@@ -153,7 +153,7 @@ class CreateEtymologyMapService
       end
 
       # ignore search_results with no etymology
-      if result.etymology.nil?
+      if result.etymology.nil? || result.etymology.length.zero?
         next
       end
 
@@ -172,7 +172,7 @@ class CreateEtymologyMapService
       matched = false
 
       # Words that confuse the match
-      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "late", "vulgar", "a", "modification", "root", "or", "borrowing", "learned", "semi-learned", "conflation", "via", "taken", "either", "regularized", "regularised", "form", "medieval", "diminutive", "variant", "through", "prothesis", "literary", "taken", "reformation", "inherited", "feminine", "masculine", "hypothetical", "reborrowing", "plural"]
+      remove_words = ["ultimately", "derived", "borrowed", "shortened", "by", "metathesis", "both", "all", "the", "voiced", "verner", "alternant", "classical", "with", "change", "of", "ending", "itself", "probably", "later", "late", "vulgar", "a", "modification", "root", "or", "borrowing", "learned", "semi-learned", "conflation", "via", "taken", "either", "regularized", "regularised", "form", "medieval", "diminutive", "variant", "through", "prothesis", "literary", "taken", "reformation", "inherited", "feminine", "masculine", "hypothetical", "reborrowing", "plural", "despite", "being", "in", "fact", "uncertain", "origin"]
 
       # Prefer "Latin" instead of "Vulgar Latin".
       # Account for "from Vulgar Latin "xe", from Latin "x" confusion.
@@ -340,7 +340,7 @@ class CreateEtymologyMapService
 
     map_file.close
 
-    pp etymology_array
+    pp etymology_array.sort{|a,b| a[:family]<=>b[:family]}
 
     unused_search_results = (map_languages - search_results_lang_array).sort
     unused_map_languages2 = (search_results_lang_array - map_languages).sort
