@@ -1,5 +1,4 @@
 class Word < ApplicationRecord
-
   has_many :translations, dependent: :destroy
   has_many :languages, through: :translations
 
@@ -15,7 +14,6 @@ class Word < ApplicationRecord
   end
 
   def self.find_word_definition(word)
-    Word.where(word_name: word).pluck(:definition)
+    Word.where(word_name: word).pluck(:definition).first
   end
-
 end
