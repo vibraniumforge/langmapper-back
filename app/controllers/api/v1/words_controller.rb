@@ -1,6 +1,6 @@
 module Api::V1
   class WordsController < ApplicationController
-    # before_action :authorized, only: [:show, :new, :create, :edit, :update, :destroy]
+    before_action :authorized, only: [:show, :new, :create, :edit, :update, :destroy]
     # skip_before_action :authorized, only: [:index, :all_word_names, :words_count, :find_word_definition, :find_word, :find_word_by_name]
 
     def index
@@ -98,7 +98,7 @@ module Api::V1
 
     def find_word_definition
       @word_definition = Word.find_word_definition(params[:word])
-      render json: { message: "Word definition successfully returned.", success: true, data: @word_definition }, status: 200
+      render json: { message: "Word #{params[:word]} definition successfully returned.", success: true, data: @word_definition }, status: 200
     end
 
     private
