@@ -1,6 +1,6 @@
 module Api::V1
   class AuthController < ApplicationController
-    # skip_before_action :authorized, only: [:login]
+    skip_before_action :authorized, only: [:login], raise: false
 
     # def show
     #   @user = current_user
@@ -12,16 +12,17 @@ module Api::V1
     # end
 
     def login
+      puts "login fires"
       @user = User.find_by(name: params[:user][:name])
       if @user && @user.authenticate(params[:user][:password])
         message = "User Authenticated."
         puts "=> #{message}"
-        token = encode_token({ user_id: @user.id})
-        render json: {message: message, success: true, data: @user, jwt: token }
+        token = encode_token({ user_id: @user.id })
+        render json: { message: message, success: true, data: @user, jwt: token }
       else
         message = "Invalid username or password"
         puts "=> #{message}"
-        render json: {message: message, success: false }
+        render json: { message: message, success: false }
       end
     end
 
@@ -30,6 +31,5 @@ module Api::V1
     def user_login_params
       params.require(:auth).permit(:name, :password)
     end
-
   end
 end
