@@ -29,7 +29,7 @@ Rails.application.routes.draw do
       post "/auth/login", to: "auth#login"
 
       get "/words/translation_seeds_test", to: "words#translation_seeds_test"
-      
+
       # Custom routes
 
       # NAMING
@@ -46,9 +46,9 @@ Rails.application.routes.draw do
 
       # below is the way to show ONLY what is on the first Europe map
       get "/translations/search/area_europe_map/:area/:word", to: "translations#find_all_translations_by_area_europe_map"
- 
+
       # searchers
-      
+
       get "/words/search/definition/:word", to: "words#find_word_definition"
 
       get "/languages/search/area/:area", to: "languages#find_all_languages_by_area"
